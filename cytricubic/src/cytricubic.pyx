@@ -179,7 +179,7 @@ cdef class TricubicInterpolator:
         param: y   -- Double-precision coordinate along the y axis.
         param: z   -- Double-precision coordinate along the z axis.
         OPTIONAL:
-        param: kx -- Integer specifying the order of the partial derivative
+        param: kx  -- Integer specifying the order of the partial derivative
                         along the x axis. 0 <= kx <= 3. Default: kx = 0.
         param: ky  -- Integer specifying the order of the partial derivative
                         along the y axis. 0 <= ky <= 3. Default: ky = 0.
