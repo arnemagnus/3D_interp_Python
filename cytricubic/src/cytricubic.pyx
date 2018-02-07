@@ -56,9 +56,12 @@ cdef class TricubicInterpolator:
     conditions in all three dimensions is implicitly assumed.
 
     This particular implementation guarantees that the interpolated object
-    has continuous first derivatives, and *mixed* second derivatives, i.e.,
-    d2f/dxdy, d2f/dxdz and d2f/dydz.
-    In *some* cases, the
+    has continuous first derivatives, *mixed* second derivatives (i.e.,
+    d2f/dxdy, d2f/dxdz and d2f/dydz) in addition to d3f/dxdydz.
+
+    In *some* cases, the other second derivatives, that is, d2f/dx2, d2f/dy2
+    and d2f/dz2, may be continuous. The same applies to the third derivatives.
+    This depends strongly on the smoothness of the *actual* function.
     """
     cdef:
         # The minimum boundaries of the computational domain
@@ -109,18 +112,18 @@ cdef class TricubicInterpolator:
         a Cartesian, three-dimensional grid of rectangular parallelepipeds.
         The grid spacings need not be the same along any pair of axes.
 
-        param: x   -- A 1D numpy array of np.float64, defining the coordinates
-                      along the first axis, at which the function has been
-                      sampled. Must be strictly increasing.
-                      *IMPORTANT*: len(x) >= 4.
-        param: x   -- A 1D numpy array of np.float64, defining the coordinates
-                      along the second axis, at which the function has been
-                      sampled. Must be strictly increasing.
-                      *IMPORTANT*: len(y) >= 4.
-        param: z   -- A 1D numpy array of np.float64, defining the coordinates
-                      along the third axis, at which the function has been
-                      sampled. Must be strictly increasing.
-                      *IMPORTANT*: len(z) >= 4.
+        param: x    -- A 1D numpy array of np.float64, defining the coordinates
+                       along the first axis, at which the function has been
+                       sampled. Must be strictly increasing.
+                       *IMPORTANT*: len(x) >= 4.
+        param: x    -- A 1D numpy array of np.float64, defining the coordinates
+                       along the second axis, at which the function has been
+                       sampled. Must be strictly increasing.
+                       *IMPORTANT*: len(y) >= 4.
+        param: z    -- A 1D numpy array of np.float64, defining the coordinates
+                       along the third axis, at which the function has been
+                       sampled. Must be strictly increasing.
+                       *IMPORTANT*: len(z) >= 4.
         param: data -- A 3D numpy array of np.float64, containing the sampled
                        function values f(x,y,z) on the grid spanned by x, y
                        and z. Shape: (len(x),len(y),len(z)).
