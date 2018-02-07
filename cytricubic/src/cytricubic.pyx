@@ -332,7 +332,9 @@ cdef class TricubicInterpolator:
             int ny = y.shape[0]
             int nz = z.shape[0]
 
-        cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((nx, ny, nz),
+        cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],
+                                                             y.shape[0],
+                                                             z.shape[0]),
                                                             dtype=np.float64)
 
         for k in range(nz):
@@ -575,8 +577,8 @@ cdef class TricubicInterpolator:
         # from within the SciPy linear algebra library.
         #
         # Detailed documentation is available at e.g.
-        # 	http://www.netlib.org/lapack/explore-html/dc/da8/dgemv_8f.html
-        #	(checked Feb. 7, 2018)
+        #       http://www.netlib.org/lapack/explore-html/dc/da8/dgemv_8f.html
+        #       (checked Feb. 7, 2018)
         #
         # Information regarding the BLAS functions that are callable from
         # Cython, making use of the SciPy linear algebra library, can be found
@@ -602,7 +604,7 @@ cdef class TricubicInterpolator:
             # is stored in C-contiguous order, to the required form, is by
             # letting the low level BLAS routine perform matrix transposition
             # for us. Hence:
-            char* trans = 'T'
+            char *trans = 'T'
             # Other options: trans = 'N' -> No matrix transposition
             #                trans = 'C' -> Conjugate transpose (equivalent to
             #                               'T' when working with real numbers)
