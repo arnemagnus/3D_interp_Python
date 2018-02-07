@@ -1,4 +1,3 @@
-
 import numpy as np
 cimport numpy as np
 
@@ -68,10 +67,10 @@ cdef class TrilinearInterpolator:
         self.dx1 = x1[1]-x1[0]
         self.dx2 = x2[1]-x2[0]
         self.dx3 = x3[1]-x3[0]
-        self.n1 = x1.shape[0]
-        self.n2 = x2.shape[0]
-        self.n3 = x3.shape[0]
-        self.data = data
+        self.n1 = x1.shape[0]-1
+        self.n2 = x2.shape[0]-1
+        self.n3 = x3.shape[0]-1
+        self.data = data[:self.n1-1,:self.n2-1,:self.n3-1]
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
