@@ -70,18 +70,72 @@ cdef class TricubicInterpolator:
         int i1, i2, i3
 
     cdef _solve_by_blas_dgemv_(self):
+        # Computes matrix-vector product needed to identify interpolation
+        # coefficients within a given voxel.
+        #
+        # Does so by calling the BLAS level 2 function 'dgemv', included
+        # from within the SciPy linear algebra library.
+        #
+        # Detailed documentation is available at e.g.
+        # 	http://www.netlib.org/lapack/explore-html/dc/da8/dgemv_8f.html
+        #	(checked Feb. 7, 2018)
+	#
+	# Information regarding the BLAS functions that are callable
+        # Cython making use of the SciPy linear algebra library can be found
+        # at e.g.
+        #       https://docs.scipy.org/doc/scipy/reference/linalg.cython_blas.html
+        #       (checked Feb. 7, 2018)
+        #
+        # 'dgemv' performs one of the matrix-vector operations
+        #       y := alpha*A*x + beta*y
+        # or
+        #       y := alpha*A**T*x + beta*y
+        # where alpha and beta are scalars, x and y are (M- and N-)vectors, and
+        # A is an M-by-N matrix.
+        #
+        # For our purposes, we want to compute
+        #       self.coeffs := self.A*self.psi
+        # which is reflected in the definitions of the input variables to
+        # 'dgemv', in the following:
         cdef:
+            # The BLAS function requires data to be stored in Fortran-contiguous
+            # order. The simplest way to transform the system matrix, which
+            # is stored in C-contiguous order, to the required form, is by
+            # letting the low level BLAS routine perform matrix transposition
+            # for us. Hence:
             char* trans = 'T'
-            int M = 64
-            int N = 64
-            double alpha = 1
+            # Other options: trans = 'N' -> No matrix transposition
+            #                trans = 'C' -> Conjugate transpose (not relevant
+            #                               when working with double precision
+            #                               real numbers)
+            #
+            # 'dgemv' needs to know the number of rows (M) and columns (N)
+            # of the matrix A:
+            int M = 64, N = 64
+            # For our purposes, alpha = 1 and beta = 0:
+            double alpha = 1, beta = 0
+            # Leading dimension of A: The number of rows in A
             int LDA = 64
-            int INCX = 1
-            double beta = 0
-            int INCY = 1
+            # Increment in X: Increment for the elements of X (for our purposes,
+            #                   X = self.psi)
+            # Increment in Y: Increment for the elements of Y (for our purposes,
+            #                   Y = self.coeffs)
+            int INCX = 1, INCY = 1
 
-        cy_dgemv(trans,&M,&N,&alpha,&self.A[0][0],&LDA,&self.psi[0],&INCX,
-                &beta,&self.coeffs[0],&INCY)
+        # The function 'dgemv' from the Cython interface to the SciPy linear
+        # algebra library takes Fortran-style pointer arguments,
+        # leaving the actual function call somewhat convoluted:
+        cy_dgemv(trans, # Already a pointer
+                 &M,
+                 &N,
+                 &alpha,
+                 &self.A[0][0],
+                 &LDA,
+                 &self.psi[0],
+                 &INCX,
+                 &beta,
+                 &self.coeffs[0],
+                 &INCY)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
