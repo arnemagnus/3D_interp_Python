@@ -1518,7 +1518,7 @@ static CYTHON_INLINE void __Pyx_SafeReleaseBuffer(Py_buffer* info);
 static Py_ssize_t __Pyx_minusones[] = { -1, -1, -1, -1, -1, -1, -1, -1 };
 static Py_ssize_t __Pyx_zeros[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-#define __Pyx_BufPtrStrided3d(type, buf, i0, s0, i1, s1, i2, s2) (type)((char*)buf + i0 * s0 + i1 * s1 + i2 * s2)
+#define __Pyx_BufPtrCContig3d(type, buf, i0, s0, i1, s1, i2, s2) ((type)((char*)buf + i0 * s0 + i1 * s1) + i2)
 /* DictGetItem.proto */
 #if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
 static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
@@ -2109,7 +2109,7 @@ static void __pyx_memoryview_refcount_objects_in_slice(char *, Py_ssize_t *, Py_
 static void __pyx_memoryview_slice_assign_scalar(__Pyx_memviewslice *, int, size_t, void *, int); /*proto*/
 static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize_t *, int, size_t, void *); /*proto*/
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
-static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t = { "float64_t", NULL, sizeof(__pyx_t_5numpy_float64_t), { 0 }, 0, 'R', 0, 0 };
+static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_double_t = { "double_t", NULL, sizeof(__pyx_t_5numpy_double_t), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_double = { "double", NULL, sizeof(double), { 0 }, 0, 'R', 0, 0 };
 #define __Pyx_MODULE_NAME "cytricubic"
 extern int __pyx_module_is_main_cytricubic;
@@ -3834,14 +3834,14 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
  *             int ny = y.shape[0]
  *             int nz = z.shape[0]             # <<<<<<<<<<<<<<
  * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],
+ *         cdef np.ndarray[np.double_t,ndim=3,mode="c"] res = np.empty((x.shape[0],
  */
   __pyx_v_nz = (__pyx_v_z.shape[0]);
 
   /* "cytricubic.pyx":335
  *             int nz = z.shape[0]
  * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],             # <<<<<<<<<<<<<<
+ *         cdef np.ndarray[np.double_t,ndim=3,mode="c"] res = np.empty((x.shape[0],             # <<<<<<<<<<<<<<
  *                                                              y.shape[0],
  *                                                              z.shape[0]),
  */
@@ -3855,7 +3855,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
 
   /* "cytricubic.pyx":336
  * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],
+ *         cdef np.ndarray[np.double_t,ndim=3,mode="c"] res = np.empty((x.shape[0],
  *                                                              y.shape[0],             # <<<<<<<<<<<<<<
  *                                                              z.shape[0]),
  *                                                             dtype=np.float64)
@@ -3864,7 +3864,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
   __Pyx_GOTREF(__pyx_t_3);
 
   /* "cytricubic.pyx":337
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],
+ *         cdef np.ndarray[np.double_t,ndim=3,mode="c"] res = np.empty((x.shape[0],
  *                                                              y.shape[0],
  *                                                              z.shape[0]),             # <<<<<<<<<<<<<<
  *                                                             dtype=np.float64)
@@ -3876,7 +3876,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
   /* "cytricubic.pyx":335
  *             int nz = z.shape[0]
  * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],             # <<<<<<<<<<<<<<
+ *         cdef np.ndarray[np.double_t,ndim=3,mode="c"] res = np.empty((x.shape[0],             # <<<<<<<<<<<<<<
  *                                                              y.shape[0],
  *                                                              z.shape[0]),
  */
@@ -3917,7 +3917,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
   /* "cytricubic.pyx":335
  *             int nz = z.shape[0]
  * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],             # <<<<<<<<<<<<<<
+ *         cdef np.ndarray[np.double_t,ndim=3,mode="c"] res = np.empty((x.shape[0],             # <<<<<<<<<<<<<<
  *                                                              y.shape[0],
  *                                                              z.shape[0]),
  */
@@ -3930,7 +3930,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_res.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 3, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_res.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_nn___pyx_t_5numpy_double_t, PyBUF_FORMAT| PyBUF_C_CONTIGUOUS| PyBUF_WRITABLE, 3, 0, __pyx_stack) == -1)) {
       __pyx_v_res = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_res.rcbuffer->pybuffer.buf = NULL;
       __PYX_ERR(0, 335, __pyx_L1_error)
     } else {__pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_res.diminfo[2].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_res.diminfo[2].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[2];
@@ -3986,7 +3986,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
         __pyx_t_16 = __pyx_v_i;
         __pyx_t_17 = __pyx_v_j;
         __pyx_t_18 = __pyx_v_k;
-        *__Pyx_BufPtrStrided3d(__pyx_t_5numpy_float64_t *, __pyx_pybuffernd_res.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_res.diminfo[1].strides, __pyx_t_18, __pyx_pybuffernd_res.diminfo[2].strides) = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_(__pyx_v_self, (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_x.data) + __pyx_t_13)) ))), (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_y.data) + __pyx_t_14)) ))), (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_z.data) + __pyx_t_15)) ))), __pyx_v_kx, __pyx_v_ky, __pyx_v_kz);
+        *__Pyx_BufPtrCContig3d(__pyx_t_5numpy_double_t *, __pyx_pybuffernd_res.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_res.diminfo[1].strides, __pyx_t_18, __pyx_pybuffernd_res.diminfo[2].strides) = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_(__pyx_v_self, (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_x.data) + __pyx_t_13)) ))), (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_y.data) + __pyx_t_14)) ))), (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_z.data) + __pyx_t_15)) ))), __pyx_v_kx, __pyx_v_ky, __pyx_v_kz);
       }
     }
   }
