@@ -63,6 +63,8 @@ cdef class TricubicInterpolator:
     and d2f/dz2, may be continuous. The same applies to the third derivatives.
     This depends strongly on the smoothness of the *actual* function.
     """
+    # All extension type attributes must be pre-declared at compile time.
+    # Typed attributes are, by default, only accessible from Cython.
     cdef:
         # The minimum boundaries of the computational domain
         # (needed in order to properly transform input coordinates to
