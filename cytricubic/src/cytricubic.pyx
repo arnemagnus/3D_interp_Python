@@ -105,8 +105,8 @@ cdef class TricubicInterpolator:
     # In short: These should be used with caution.
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    def __cinit__(self,double[::1] x not None,double[::1] y not None,
-            double[::1] z not None,double[:,:,::1] data not None):
+    def __cinit__(self, double[::1] x not None, double[::1] y not None,
+            double[::1] z not None, double[:,:,::1] data not None):
         """
         TricubicInterpolator(x, y, z, data)
 
@@ -167,10 +167,10 @@ cdef class TricubicInterpolator:
                 self.A[i][j] = get_coeff(&i,&j)
 
     # A custom, thin Python wrapper for the _ev_ function, defined at C level;
-    def ev(self,double x, double y, double z,
+    def ev(self, double x, double y, double z,
             int kx = 0, int ky = 0, int kz = 0):
         """
-        TricubicInterpolator.ev(x,y,z,kx,ky,kz)
+        TricubicInterpolator.ev(x, y, z, kx, ky, kz)
 
         Evaluate the interpolated function, or its derivatives,  at a single
         point.
@@ -191,8 +191,7 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    cdef double _ev_(self,double x, double y, double z,
-                int kx, int ky, int kz):
+    cdef double _ev_(self, double x, double y, double z, int kx, int ky, int kz):
         cdef:
             double res = 0.
             int x_ind, y_ind, z_ind
@@ -223,7 +222,8 @@ cdef class TricubicInterpolator:
         y_ind = int(c_floor(y))
         z_ind = int(c_floor(z))
 
-        if(self.calibrated == 0 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
+        if(self.calibrated == 0
+                or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
             self._calibrate_(x_ind,y_ind,z_ind)
 
         x -= x_ind
@@ -234,27 +234,28 @@ cdef class TricubicInterpolator:
             double cont
             int w
 
-        for k in range(kz,4):
-            for j in range(ky,4):
-                for i in range(kx,4):
-                    cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)*c_pow(z,k-kz)
+        for k in range(kz, 4):
+            for j in range(ky, 4):
+                for i in range(kx, 4):
+                    cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)\
+                                                    *c_pow(z,k-kz)
                     for w in range(kx):
-                        cont *= (i-w)
+                        cont *= (i - w)
                     for w in range(ky):
-                        cont *= (j-w)
+                        cont *= (j - w)
                     for w in range(kz):
-                        cont *= (k-w)
+                        cont *= (k - w)
                     res += cont
         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
 
 
-    cdef int ijk2n(self,int i, int j, int k):
-        return(i+4*j+16*k)
+    cdef int ijk2n(self, int i, int j, int k):
+        return(i + 4*j + 16*k)
 
 
-    def ev_grid(self,double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,
+    def ev_grid(self, double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,
                     int kx = 0, int ky = 0, int kz = 0):
-        return self._ev_grid_(x,y,z,kx,ky,kz)
+        return self._ev_grid_(x, y, z, kx, ky, kz)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -280,15 +281,15 @@ cdef class TricubicInterpolator:
         for k in range(x_sh2):
             for j in range(x_sh1):
                 for i in range(x_sh0):
-                    res[i,j,k] = self._ev_(x[i,j,k],y[i,j,k],z[i,j,k],
-                                            kx,ky,kz)
+                    res[i,j,k] = self._ev_(x[i,j,k], y[i,j,k], z[i,j,k],
+                                            kx, ky, kz)
 
         return res
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    cdef _calibrate_(self,int x, int y, int z):
+    cdef _calibrate_(self, int x, int y, int z):
         cdef:
             int xm1, xp1, xp2
             int ym1, yp1, yp2
@@ -332,19 +333,19 @@ cdef class TricubicInterpolator:
             zp2 += self.nz
 
         # Values of f(x,y,z) at the corners of the voxel
-        self._set_values_(x,xp1,y,yp1,z,zp1)
+        self._set_values_(x, xp1, y, yp1, z, zp1)
         # First derivatives of f(x,y,z) at the corners of the voxel
-        self._set_first_derivatives_(x,xm1,xp1,xp2,
-                                        y,ym1,yp1,yp2,
-                                        z,zm1,zp1,zp2)
+        self._set_first_derivatives_(x, xm1, xp1, xp2,
+                                     y, ym1, yp1, yp2,
+                                     z, zm1, zp1, zp2)
         # Mixed second derivatives of f(x,y,z) at the corners of the voxel
-        self._set_second_drvtvs_(x,xm1,xp1,xp2,
-                                 y,ym1,yp1,yp2,
-                                 z,zm1,zp1,zp2)
+        self._set_second_drvtvs_(x, xm1, xp1, xp2,
+                                 y, ym1, yp1, yp2,
+                                 z, zm1, zp1, zp2)
         # Values of d3f/dxdydz at the corners of the voxel
-        self._set_third_drvtv_(x,xm1,xp1,xp2,
-                               y,ym1,yp1,yp2,
-                               z,zm1,zp1,zp2)
+        self._set_third_drvtv_(x, xm1, xp1, xp2,
+                               y, ym1, yp1, yp2,
+                               z, zm1, zp1, zp2)
         # Convert voxel values and partial derivatives to interpolation
         # coefficients
         self._solve_by_blas_dgemv_()
@@ -355,7 +356,7 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_values_(self,int x,int xp1,int y,int yp1,int z,int zp1):
+    cdef _set_values_(self, int x, int xp1, int y, int yp1, int z, int zp1):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
@@ -372,9 +373,9 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_first_derivatives_(self,int x,int xm1,int xp1,int xp2,
-                                        int y, int ym1, int yp1, int yp2,
-                                        int z, int zm1, int zp1, int zp2):
+    cdef _set_first_derivatives_(self, int x, int xm1, int xp1, int xp2,
+                                       int y, int ym1, int yp1, int yp2,
+                                       int z, int zm1, int zp1, int zp2):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
@@ -409,9 +410,9 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_second_drvtvs_(self,int x,int xm1,int xp1,int xp2,
-                                   int y,int ym1,int yp1,int yp2,
-                                   int z,int zm1,int zp1,int zp2):
+    cdef _set_second_drvtvs_(self, int x, int xm1, int xp1, int xp2,
+                                   int y, int ym1, int yp1, int yp2,
+                                   int z, int zm1, int zp1, int zp2):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
@@ -470,9 +471,9 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_third_drvtv_(self,int x,int xm1,int xp1,int xp2,
-                                int y,int ym1,int yp1,int yp2,
-                                int z,int zm1,int zp1,int zp2):
+    cdef _set_third_drvtv_(self,int x, int xm1, int xp1, int xp2,
+                                int y, int ym1, int yp1, int yp2,
+                                int z, int zm1, int zp1, int zp2):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
