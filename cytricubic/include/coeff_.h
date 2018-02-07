@@ -3,7 +3,8 @@
 //
 // It was retrieved from the github repository found at:
 //      https://github.com/nbigaouette/libtricubic
-// which contains the original interpolation library written by Lekien et al.
+// which contains the original interpolation library written in C
+// by Lekien et al.
 
 // A simple wrapper function is defined beneath the upcoming definition of
 // A, with a view to extracting the elements of A;

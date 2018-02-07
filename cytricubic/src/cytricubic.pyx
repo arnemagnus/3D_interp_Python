@@ -1,5 +1,5 @@
 #!python
-#cython: language_level=3, embedsignature=True
+#cython:
 
 """
 This module contains an implementation of a tricubic interpolation routine
@@ -7,10 +7,10 @@ in 3D, the theoretical foundation of which is found in
 
     Lekien, F and Marsden, J (2005):
         'Tricubic Interpolation in Three Dimensions',
-            in Journal of Numerical Methods and Engineering(63), pp. 455-471,
-            available at
-		http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.89.7835
-	    (checked February 5th, 2018)
+        in Journal of Numerical Methods and Engineering(63), pp. 455-471,
+        available at
+            http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.89.7835
+	(checked February 5th, 2018)
 
 The interpolation assumes periodic boundary conditions along all three
 abscissae.
@@ -166,9 +166,10 @@ cdef class TricubicInterpolator:
             for i in range(64):
                 self.A[i][j] = get_coeff(&i,&j)
 
-    # A custom, thin Python wrapper for the _ev_ function, defined at C level;
     def ev(self, double x, double y, double z,
             int kx = 0, int ky = 0, int kz = 0):
+        # A custom, thin Python wrapper for the _ev_ function, defined at C
+        # level
         """
         TricubicInterpolator.ev(x, y, z, kx, ky, kz)
 
