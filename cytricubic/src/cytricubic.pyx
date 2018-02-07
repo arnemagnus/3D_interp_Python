@@ -186,7 +186,7 @@ cdef class TricubicInterpolator:
         param: kz  -- Integer specifying the order of the partial derivative
                         along the z axis. 0 <= kz <= 3. Default: kz = 0.
         """
-        return self._ev_(x,y,z,kx,ky,kz)
+        return self._ev_(x, y, z, kx, ky, kz)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
