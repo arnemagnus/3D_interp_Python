@@ -2,4 +2,6 @@ build/
 
 *.ipynb
 
+.ipynb_checkpoints
 
+*.so
