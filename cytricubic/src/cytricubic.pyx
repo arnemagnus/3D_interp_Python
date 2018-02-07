@@ -21,7 +21,7 @@ cimport numpy as np
 
 cimport cython
 
-from scipy.linalg.blas import dgemv as sc_dgemv
+from scipy.linalg.cython_blas cimport dgemv as cy_dgemv
 
 from libc.math cimport fmod as c_fmod, floor as c_floor, pow as c_pow
 
@@ -35,25 +35,6 @@ from libc.math cimport fmod as c_fmod, floor as c_floor, pow as c_pow
 # the 64-times-64 coefficients by hand is out of the question.
 cdef extern from "../include/coeff_.h":
     int get_coeff(int*, int*)
-
-
-## Import matrix-vector product routine from BLAS level 2:
-#cdef extern from "cblas.h":
-#    ctypedef enum CBLAS_ORDER:
-#        CblasRowMajor
-#        CblasColumnMajor
-#    ctypedef enum CBLAS_TRANSPOSE:
-#        CblasNoTrans
-#        CblasTrans
-#        CblasConjTrans
-#    void dgemv "cblas_dgemv"(CBLAS_ORDER order,
-#                            CBLAS_TRANSPOSE transpose,
-#                            int M, int N,
-#                            double alpha, double *A, int lda,
-#                            double *X, int incX,
-#                            double beta, double *Y, int incY) nogil
-
-
 
 cdef class TricubicInterpolator:
     """
@@ -75,7 +56,7 @@ cdef class TricubicInterpolator:
         # The 3D-data to be interpolated
         double[:,:,::1] data
         # The 64-by-64 matrix which defines the linear 3D interpolation system
-        double B[64][64]
+        double A[64][64]
         # Container for the intermediate coefficients needed to compute
         # interpolation coefficients within a given voxel
         double psi[64]
@@ -90,21 +71,17 @@ cdef class TricubicInterpolator:
 
     cdef _solve_by_blas_dgemv_(self):
         cdef:
-            int i, j
-        # This function computes the matrix product which returns the
-        # interpolation coefficients within a given voxel, making
-        # use of the (C)BLAS routine dgemv.
-        #
-        # Detailed documentation of the
-        self.coeffs = sc_dgemv(1.,self.B,self.psi)
-#        for i in range(64):
-#            self.coeffs[i] = 0.
-#            for j in range(64):
-#                self.coeffs[i] += self.B[i][j]*self.psi[j]
+            char* trans = 'T'
+            int M = 64
+            int N = 64
+            double alpha = 1
+            int LDA = 64
+            int INCX = 1
+            double beta = 0
+            int INCY = 1
 
-
-#        dgemv(CblasRowMajor,CblasNoTrans,64,64,
-#                1.,&self.B[0][0],64,self.psi,1,0.,self.coeffs,1)
+        cy_dgemv(trans,&M,&N,&alpha,&self.A[0][0],&LDA,&self.psi[0],&INCX,
+                &beta,&self.coeffs[0],&INCY)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -155,11 +132,11 @@ cdef class TricubicInterpolator:
         self.n3 = x3.shape[0]-1
         self.data = data[:self.n1-1,:self.n2-1,:self.n3-1]
 
-        # Explicitly set each element of the matrix B, using the predefined
+        # Explicitly set each element of the matrix A, using the predefined
         # 64-by-64 matrix in the helper file coeff_.h
         for j in range(64):
             for i in range(64):
-                self.B[i][j] = get_coeff(&i,&j)
+                self.A[i][j] = get_coeff(&i,&j)
 
 
         self.calibrated = 0
