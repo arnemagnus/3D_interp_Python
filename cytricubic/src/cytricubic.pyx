@@ -240,11 +240,11 @@ cdef class TricubicInterpolator:
                     cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)\
                                                     *c_pow(z,k-kz)
                     for w in range(kx):
-                        cont *= (i - w)
+                        cont *= (i-w)
                     for w in range(ky):
-                        cont *= (j - w)
+                        cont *= (j-w)
                     for w in range(kz):
-                        cont *= (k - w)
+                        cont *= (k-w)
                     res += cont
         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
 
