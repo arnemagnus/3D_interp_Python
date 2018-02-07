@@ -66,7 +66,7 @@ cdef class TricubicInterpolator:
     # All extension type attributes must be pre-declared at compile time.
     # Typed attributes are, by default, only accessible from Cython.
     cdef:
-        # The minimum boundaries of the computational domain
+        # The minimum boundaries of the physical domain
         # (needed in order to properly transform input coordinates to
         # the relevant interpolation voxel)
         double x_min, y_min, z_min
@@ -181,37 +181,64 @@ cdef class TricubicInterpolator:
         param: z   -- Double-precision coordinate along the z axis.
         OPTIONAL:
         param: kx  -- Integer specifying the order of the partial derivative
-                        along the x axis. 0 <= kx <= 3. Default: kx = 0.
+                        along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.
         param: ky  -- Integer specifying the order of the partial derivative
-                        along the y axis. 0 <= ky <= 3. Default: ky = 0.
+                        along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.
         param: kz  -- Integer specifying the order of the partial derivative
-                        along the z axis. 0 <= kz <= 3. Default: kz = 0.
+                        along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.
+
+        return:       Double-precision interpolated value.
         """
         return self._ev_(x, y, z, kx, ky, kz)
 
+    # The following Cython compilation flags turn off the Pythonic
+    # bounds check and wraparound functionality with regards to
+    # array indexing, in addition to zero division / modulo zero safeguards.
+    #
+    # This is done for reasons of efficiency. Use with caution.
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
     cdef double _ev_(self, double x, double y, double z, int kx, int ky, int kz):
-        cdef:
-            double res = 0.
-            int x_ind, y_ind, z_ind
-            int i, j, k, ijk = 0
-            double *coeffs = self.coeffs
+        # The C-level function which evaluates the interpolated function (or
+        # its derivatives) in a single point.
 
+        # Local variables:
+        cdef:
+            double res = 0.             # Zero-initalizing the return variable
+            int x_ind, y_ind, z_ind     # Indices defining the reference
+                                        # corner within the interpolation voxel
+            int i, j, k, w              # Loop counters
+            double cont                 # Temporary variable, needed in order
+                                        # to properly compute the interpolated
+                                        # function value
+
+        # Derivatives of negative orders are not well-defined:
         if(kz < 0 or ky < 0 or kz < 0):
             raise RuntimeError("Derivative order must be nonnegative.")
 
+        # Seeing as this is a *cubic* interpolator, taking derivatives of higher
+        # order than 3 will return zero anyways:
         if(kx > 3 or ky > 3 or kz > 3):
             raise RuntimeError("Derivative order can't be larger than 3.")
 
 	# Determine the relative coordinates of the point in question, within
-	# its voxel
+	# the entire interpolation parallelepiped.
+        #
+        # In transforming the physical coordinates to voxel indices,
+        # we subtract the minimum boundary values of the physical domain.
+        # This is due to the interpolation parallelepiped being zero-indexed.
+        # Then, we divide through by the grid spacings, in order to obtain
+        # normalized voxel coordinates.
+        # Lastly, we take the modulo by the number of grid points in order to
+        # enforce periodic boundary conditions.
         x = c_fmod((x-self.x_min)/self.dx,self.nx)
         y = c_fmod((y-self.y_min)/self.dy,self.ny)
         z = c_fmod((z-self.z_min)/self.dz,self.nz)
 
-	# Enforce periodic BC
+	# As a second step on the path of enforcing periodic boundary positions,
+        # we ensure that the normalized coordinates lie within the intervals
+        # )0,ni(, i = x, y or z, respectively.
         while(x < 0):
             x += self.nx
         while(y < 0):
@@ -219,27 +246,33 @@ cdef class TricubicInterpolator:
         while(z < 0):
             z += self.nz
 
+        # The integer part of the normalized coordinates define the
+        # reference corner of the voxel within which we shall interpolate
         x_ind = int(c_floor(x))
         y_ind = int(c_floor(y))
         z_ind = int(c_floor(z))
 
-        if(self.calibrated == 0
-                or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
-            self._calibrate_(x_ind,y_ind,z_ind)
-
+        # The decimal part of the normalized coordinates are needed to
+        # evaluate the voxel-local tricubic polynomial, hence:
         x -= x_ind
         y -= y_ind
         z -= z_ind
 
-        cdef:
-            double cont
-            int w
+        # If the previous interpolator evaluation was performed within the
+        # same voxel as the one we're looking at now, we don't need to
+        # recompute the interpolation coefficients:
+        if(self.calibrated == 0
+                or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
+            self._calibrate_(x_ind,y_ind,z_ind)
 
+
+        # Loop over the required powers of the voxel coordinates
         for k in range(kz, 4):
             for j in range(ky, 4):
                 for i in range(kx, 4):
-                    cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)\
-                                                    *c_pow(z,k-kz)
+                    cont = self.coeffs[self.ind(i,j,k)]*c_pow(x,i-kx)\
+                                            *c_pow(y,j-ky)*c_pow(z,k-kz)
+                    # Explicitly handle prefactors from derivatives:
                     for w in range(kx):
                         cont *= (i-w)
                     for w in range(ky):
@@ -247,43 +280,65 @@ cdef class TricubicInterpolator:
                     for w in range(kz):
                         cont *= (k-w)
                     res += cont
+
+        # Because the derivatives, as computed in self._calibrated_, are not
+        # scaled with the grid spacings, we must do so explicitly in order
+        # to obtain a properly scaled return variable:
         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
 
-
-    cdef int ijk2n(self, int i, int j, int k):
+    cdef int ind(self, int i, int j, int k):
+        # A convenience function, used to transform (tuples of) integers to
+        # a single index for the interpolation coefficient array
         return(i + 4*j + 16*k)
 
 
-    def ev_grid(self, double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,
+    def ev_grid(self, double[::1] x, double[::1] y, double[::1] z,
                     int kx = 0, int ky = 0, int kz = 0):
+        # A custom, thin Python wrapper for the _ev_ function, defined at C
+        # level
+        """
+        TricubicInterpolator.ev_grid(x, y, z, kx, ky, kz)
+
+        Evaluate the interpolated function, or its derivatives, at the grid
+        spanned by the input x, y and z arrays.
+
+        param: x   -- A NumPy array of np.float64, containing the points along
+                        the x abscissa at which an interpolated value is sought
+        param: y   -- A NumPy array of np.float64, containing the points along
+                        the y abscissa at which an interpolated value is sought
+        param: z   -- A NumPy array of np.float64, containing the points along
+                        the z abscissa at which an interpolated value is sought
+        OPTIONAL:
+        param: kx  -- Integer specifying the order of the partial derivative
+                        along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.
+        param: ky  -- Integer specifying the order of the partial derivative
+                        along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.
+        param: kz  -- Integer specifying the order of the partial derivative
+                        along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.
+
+        return:       A NumPy array of np.float64 interpolated values.
+                        Shape: (len(x),len(y),len(z)).
+        """
         return self._ev_grid_(x, y, z, kx, ky, kz)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    cdef _ev_grid_(self,double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,
+    cdef _ev_grid_(self,double[::1] x, double[::1] y, double[::1] z,
                 int kx, int ky, int kz):
         cdef:
             int i, j, k
-            int x_sh0 = x.shape[0], x_sh1 = x.shape[1], x_sh2 = x.shape[2]
-            int y_sh0 = y.shape[0], y_sh1 = y.shape[1], y_sh2 = y.shape[2]
-            int z_sh0 = z.shape[0], z_sh1 = z.shape[1], z_sh2 = z.shape[2]
+            int nx = x.shape[0]
+            int ny = y.shape[0]
+            int nz = z.shape[0]
 
-        if(x_sh0 != y_sh0 or x_sh0 != z_sh0 or y_sh0 != z_sh0
-                or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1
-                or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):
-            raise RuntimeError("Array dimensions inconsistent!")
-
-        cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,
-                                                             x_sh1,
-                                                             x_sh2),
+        cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((nx, ny, nz),
                                                             dtype=np.float64)
 
-        for k in range(x_sh2):
-            for j in range(x_sh1):
-                for i in range(x_sh0):
-                    res[i,j,k] = self._ev_(x[i,j,k], y[i,j,k], z[i,j,k],
-                                            kx, ky, kz)
+        for k in range(nz):
+            for j in range(ny):
+                for i in range(nx):
+                    res[i,j,k] = self._ev_(x[i], y[j], z[k], kx, ky, kz)
 
         return res
 

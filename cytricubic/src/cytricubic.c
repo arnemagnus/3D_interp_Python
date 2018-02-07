@@ -1278,7 +1278,7 @@ struct __pyx_memoryviewslice_obj {
 
 struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator {
   double (*_ev_)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, double, double, double, int, int, int);
-  int (*ijk2n)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int);
+  int (*ind)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int);
   PyObject *(*_ev_grid_)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int);
   PyObject *(*_calibrate_)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int);
   PyObject *(*_set_values_)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int, int, int, int);
@@ -2024,7 +2024,7 @@ static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, double __pyx_v_x, double __pyx_v_y, double __pyx_v_z, int __pyx_v_kx, int __pyx_v_ky, int __pyx_v_kz); /* proto*/
-static int __pyx_f_10cytricubic_20TricubicInterpolator_ijk2n(CYTHON_UNUSED struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, int __pyx_v_i, int __pyx_v_j, int __pyx_v_k); /* proto*/
+static int __pyx_f_10cytricubic_20TricubicInterpolator_ind(CYTHON_UNUSED struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, int __pyx_v_i, int __pyx_v_j, int __pyx_v_k); /* proto*/
 static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, __Pyx_memviewslice __pyx_v_x, __Pyx_memviewslice __pyx_v_y, __Pyx_memviewslice __pyx_v_z, int __pyx_v_kx, int __pyx_v_ky, int __pyx_v_kz); /* proto*/
 static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, int __pyx_v_x, int __pyx_v_y, int __pyx_v_z); /* proto*/
 static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, int __pyx_v_x, int __pyx_v_xp1, int __pyx_v_y, int __pyx_v_yp1, int __pyx_v_z, int __pyx_v_zp1); /* proto*/
@@ -2228,7 +2228,6 @@ static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
-static const char __pyx_k_Array_dimensions_inconsistent[] = "Array dimensions inconsistent!";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
 static const char __pyx_k_Input_data_not_properly_aligned[] = "Input data not properly aligned. See                                constructor docstring for details.";
@@ -2255,7 +2254,6 @@ static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath
 static const char __pyx_k_unable_to_allocate_shape_and_str[] = "unable to allocate shape and strides.";
 static const char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
 static PyObject *__pyx_n_s_ASCII;
-static PyObject *__pyx_kp_s_Array_dimensions_inconsistent;
 static PyObject *__pyx_kp_s_Buffer_view_does_not_expose_stri;
 static PyObject *__pyx_kp_s_Can_only_create_a_buffer_that_is;
 static PyObject *__pyx_kp_s_Cannot_index_with_type_s;
@@ -2432,9 +2430,9 @@ static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_tuple__9;
+static PyObject *__pyx_slice__29;
 static PyObject *__pyx_slice__30;
 static PyObject *__pyx_slice__31;
-static PyObject *__pyx_slice__32;
 static PyObject *__pyx_tuple__10;
 static PyObject *__pyx_tuple__11;
 static PyObject *__pyx_tuple__12;
@@ -2454,7 +2452,7 @@ static PyObject *__pyx_tuple__25;
 static PyObject *__pyx_tuple__26;
 static PyObject *__pyx_tuple__27;
 static PyObject *__pyx_tuple__28;
-static PyObject *__pyx_tuple__29;
+static PyObject *__pyx_tuple__32;
 static PyObject *__pyx_tuple__33;
 static PyObject *__pyx_tuple__34;
 static PyObject *__pyx_tuple__35;
@@ -2463,8 +2461,7 @@ static PyObject *__pyx_tuple__37;
 static PyObject *__pyx_tuple__38;
 static PyObject *__pyx_tuple__39;
 static PyObject *__pyx_tuple__40;
-static PyObject *__pyx_tuple__41;
-static PyObject *__pyx_codeobj__42;
+static PyObject *__pyx_codeobj__41;
 
 /* "cytricubic.pyx":108
  *     @cython.boundscheck(False)
@@ -2935,7 +2932,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_self->data, 0);
 
 /* Python wrapper */
 static PyObject *__pyx_pw_10cytricubic_20TricubicInterpolator_3ev(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_10cytricubic_20TricubicInterpolator_2ev[] = "\n        TricubicInterpolator.ev(x, y, z, kx, ky, kz)\n\n        Evaluate the interpolated function, or its derivatives,  at a single\n        point.\n\n        param: x   -- Double-precision coordinate along the x axis.\n        param: y   -- Double-precision coordinate along the y axis.\n        param: z   -- Double-precision coordinate along the z axis.\n        OPTIONAL:\n        param: kx  -- Integer specifying the order of the partial derivative\n                        along the x axis. 0 <= kx <= 3. Default: kx = 0.\n        param: ky  -- Integer specifying the order of the partial derivative\n                        along the y axis. 0 <= ky <= 3. Default: ky = 0.\n        param: kz  -- Integer specifying the order of the partial derivative\n                        along the z axis. 0 <= kz <= 3. Default: kz = 0.\n        ";
+static char __pyx_doc_10cytricubic_20TricubicInterpolator_2ev[] = "\n        TricubicInterpolator.ev(x, y, z, kx, ky, kz)\n\n        Evaluate the interpolated function, or its derivatives,  at a single\n        point.\n\n        param: x   -- Double-precision coordinate along the x axis.\n        param: y   -- Double-precision coordinate along the y axis.\n        param: z   -- Double-precision coordinate along the z axis.\n        OPTIONAL:\n        param: kx  -- Integer specifying the order of the partial derivative\n                        along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.\n        param: ky  -- Integer specifying the order of the partial derivative\n                        along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.\n        param: kz  -- Integer specifying the order of the partial derivative\n                        along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.\n\n        return:       Double-precision interpolated value.\n        ";
 static PyObject *__pyx_pw_10cytricubic_20TricubicInterpolator_3ev(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_x;
   double __pyx_v_y;
@@ -3062,15 +3059,15 @@ static PyObject *__pyx_pf_10cytricubic_20TricubicInterpolator_2ev(struct __pyx_o
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("ev", 0);
 
-  /* "cytricubic.pyx":190
- *                         along the z axis. 0 <= kz <= 3. Default: kz = 0.
+  /* "cytricubic.pyx":192
+ *         return:       Double-precision interpolated value.
  *         """
  *         return self._ev_(x, y, z, kx, ky, kz)             # <<<<<<<<<<<<<<
  * 
- *     @cython.boundscheck(False)
+ *     # The following Cython compilation flags turn off the Pythonic
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_(__pyx_v_self, __pyx_v_x, __pyx_v_y, __pyx_v_z, __pyx_v_kx, __pyx_v_ky, __pyx_v_kz)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_(__pyx_v_self, __pyx_v_x, __pyx_v_y, __pyx_v_z, __pyx_v_kx, __pyx_v_ky, __pyx_v_kz)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3095,12 +3092,12 @@ static PyObject *__pyx_pf_10cytricubic_20TricubicInterpolator_2ev(struct __pyx_o
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":195
+/* "cytricubic.pyx":202
  *     @cython.wraparound(False)
  *     @cython.cdivision(True)
  *     cdef double _ev_(self, double x, double y, double z, int kx, int ky, int kz):             # <<<<<<<<<<<<<<
- *         cdef:
- *             double res = 0.
+ *         # The C-level function which evaluates the interpolated function (or
+ *         # its derivatives) in a single point.
  */
 
 static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, double __pyx_v_x, double __pyx_v_y, double __pyx_v_z, int __pyx_v_kx, int __pyx_v_ky, int __pyx_v_kz) {
@@ -3111,154 +3108,132 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
   int __pyx_v_i;
   int __pyx_v_j;
   int __pyx_v_k;
-  CYTHON_UNUSED int __pyx_v_ijk;
-  double *__pyx_v_coeffs;
-  double __pyx_v_cont;
   int __pyx_v_w;
+  double __pyx_v_cont;
   double __pyx_r;
   __Pyx_RefNannyDeclarations
-  double *__pyx_t_1;
+  int __pyx_t_1;
   int __pyx_t_2;
-  int __pyx_t_3;
-  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_t_4;
   int __pyx_t_5;
   int __pyx_t_6;
   int __pyx_t_7;
   int __pyx_t_8;
-  int __pyx_t_9;
   __Pyx_RefNannySetupContext("_ev_", 0);
 
-  /* "cytricubic.pyx":197
- *     cdef double _ev_(self, double x, double y, double z, int kx, int ky, int kz):
+  /* "cytricubic.pyx":208
+ *         # Local variables:
  *         cdef:
- *             double res = 0.             # <<<<<<<<<<<<<<
- *             int x_ind, y_ind, z_ind
- *             int i, j, k, ijk = 0
+ *             double res = 0.             # Zero-initalizing the return variable             # <<<<<<<<<<<<<<
+ *             int x_ind, y_ind, z_ind     # Indices defining the reference
+ *                                         # corner within the interpolation voxel
  */
   __pyx_v_res = 0.;
 
-  /* "cytricubic.pyx":199
- *             double res = 0.
- *             int x_ind, y_ind, z_ind
- *             int i, j, k, ijk = 0             # <<<<<<<<<<<<<<
- *             double *coeffs = self.coeffs
+  /* "cytricubic.pyx":217
  * 
- */
-  __pyx_v_ijk = 0;
-
-  /* "cytricubic.pyx":200
- *             int x_ind, y_ind, z_ind
- *             int i, j, k, ijk = 0
- *             double *coeffs = self.coeffs             # <<<<<<<<<<<<<<
- * 
- *         if(kz < 0 or ky < 0 or kz < 0):
- */
-  __pyx_t_1 = __pyx_v_self->coeffs;
-  __pyx_v_coeffs = __pyx_t_1;
-
-  /* "cytricubic.pyx":202
- *             double *coeffs = self.coeffs
- * 
+ *         # Derivatives of negative orders are not well-defined:
  *         if(kz < 0 or ky < 0 or kz < 0):             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Derivative order must be nonnegative.")
  * 
  */
-  __pyx_t_3 = ((__pyx_v_kz < 0) != 0);
-  if (!__pyx_t_3) {
+  __pyx_t_2 = ((__pyx_v_kz < 0) != 0);
+  if (!__pyx_t_2) {
   } else {
-    __pyx_t_2 = __pyx_t_3;
+    __pyx_t_1 = __pyx_t_2;
     goto __pyx_L4_bool_binop_done;
   }
-  __pyx_t_3 = ((__pyx_v_ky < 0) != 0);
-  if (!__pyx_t_3) {
+  __pyx_t_2 = ((__pyx_v_ky < 0) != 0);
+  if (!__pyx_t_2) {
   } else {
-    __pyx_t_2 = __pyx_t_3;
+    __pyx_t_1 = __pyx_t_2;
     goto __pyx_L4_bool_binop_done;
   }
-  __pyx_t_3 = ((__pyx_v_kz < 0) != 0);
-  __pyx_t_2 = __pyx_t_3;
+  __pyx_t_2 = ((__pyx_v_kz < 0) != 0);
+  __pyx_t_1 = __pyx_t_2;
   __pyx_L4_bool_binop_done:;
-  if (__pyx_t_2) {
+  if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":203
- * 
+    /* "cytricubic.pyx":218
+ *         # Derivatives of negative orders are not well-defined:
  *         if(kz < 0 or ky < 0 or kz < 0):
  *             raise RuntimeError("Derivative order must be nonnegative.")             # <<<<<<<<<<<<<<
  * 
- *         if(kx > 3 or ky > 3 or kz > 3):
+ *         # Seeing as this is a *cubic* interpolator, taking derivatives of higher
  */
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 203, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_Raise(__pyx_t_4, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __PYX_ERR(0, 203, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 218, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __PYX_ERR(0, 218, __pyx_L1_error)
 
-    /* "cytricubic.pyx":202
- *             double *coeffs = self.coeffs
+    /* "cytricubic.pyx":217
  * 
+ *         # Derivatives of negative orders are not well-defined:
  *         if(kz < 0 or ky < 0 or kz < 0):             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Derivative order must be nonnegative.")
  * 
  */
   }
 
-  /* "cytricubic.pyx":205
- *             raise RuntimeError("Derivative order must be nonnegative.")
- * 
+  /* "cytricubic.pyx":222
+ *         # Seeing as this is a *cubic* interpolator, taking derivatives of higher
+ *         # order than 3 will return zero anyways:
  *         if(kx > 3 or ky > 3 or kz > 3):             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Derivative order can't be larger than 3.")
  * 
  */
-  __pyx_t_3 = ((__pyx_v_kx > 3) != 0);
-  if (!__pyx_t_3) {
+  __pyx_t_2 = ((__pyx_v_kx > 3) != 0);
+  if (!__pyx_t_2) {
   } else {
-    __pyx_t_2 = __pyx_t_3;
+    __pyx_t_1 = __pyx_t_2;
     goto __pyx_L8_bool_binop_done;
   }
-  __pyx_t_3 = ((__pyx_v_ky > 3) != 0);
-  if (!__pyx_t_3) {
+  __pyx_t_2 = ((__pyx_v_ky > 3) != 0);
+  if (!__pyx_t_2) {
   } else {
-    __pyx_t_2 = __pyx_t_3;
+    __pyx_t_1 = __pyx_t_2;
     goto __pyx_L8_bool_binop_done;
   }
-  __pyx_t_3 = ((__pyx_v_kz > 3) != 0);
-  __pyx_t_2 = __pyx_t_3;
+  __pyx_t_2 = ((__pyx_v_kz > 3) != 0);
+  __pyx_t_1 = __pyx_t_2;
   __pyx_L8_bool_binop_done:;
-  if (__pyx_t_2) {
+  if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":206
- * 
+    /* "cytricubic.pyx":223
+ *         # order than 3 will return zero anyways:
  *         if(kx > 3 or ky > 3 or kz > 3):
  *             raise RuntimeError("Derivative order can't be larger than 3.")             # <<<<<<<<<<<<<<
  * 
  * 	# Determine the relative coordinates of the point in question, within
  */
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 206, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_Raise(__pyx_t_4, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __PYX_ERR(0, 206, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 223, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __PYX_ERR(0, 223, __pyx_L1_error)
 
-    /* "cytricubic.pyx":205
- *             raise RuntimeError("Derivative order must be nonnegative.")
- * 
+    /* "cytricubic.pyx":222
+ *         # Seeing as this is a *cubic* interpolator, taking derivatives of higher
+ *         # order than 3 will return zero anyways:
  *         if(kx > 3 or ky > 3 or kz > 3):             # <<<<<<<<<<<<<<
  *             raise RuntimeError("Derivative order can't be larger than 3.")
  * 
  */
   }
 
-  /* "cytricubic.pyx":210
- * 	# Determine the relative coordinates of the point in question, within
- * 	# its voxel
+  /* "cytricubic.pyx":235
+ *         # Lastly, we take the modulo by the number of grid points in order to
+ *         # enforce periodic boundary conditions.
  *         x = c_fmod((x-self.x_min)/self.dx,self.nx)             # <<<<<<<<<<<<<<
  *         y = c_fmod((y-self.y_min)/self.dy,self.ny)
  *         z = c_fmod((z-self.z_min)/self.dz,self.nz)
  */
   __pyx_v_x = fmod(((__pyx_v_x - __pyx_v_self->x_min) / __pyx_v_self->dx), __pyx_v_self->nx);
 
-  /* "cytricubic.pyx":211
- * 	# its voxel
+  /* "cytricubic.pyx":236
+ *         # enforce periodic boundary conditions.
  *         x = c_fmod((x-self.x_min)/self.dx,self.nx)
  *         y = c_fmod((y-self.y_min)/self.dy,self.ny)             # <<<<<<<<<<<<<<
  *         z = c_fmod((z-self.z_min)/self.dz,self.nz)
@@ -3266,28 +3241,28 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
  */
   __pyx_v_y = fmod(((__pyx_v_y - __pyx_v_self->y_min) / __pyx_v_self->dy), __pyx_v_self->ny);
 
-  /* "cytricubic.pyx":212
+  /* "cytricubic.pyx":237
  *         x = c_fmod((x-self.x_min)/self.dx,self.nx)
  *         y = c_fmod((y-self.y_min)/self.dy,self.ny)
  *         z = c_fmod((z-self.z_min)/self.dz,self.nz)             # <<<<<<<<<<<<<<
  * 
- * 	# Enforce periodic BC
+ * 	# As a second step on the path of enforcing periodic boundary positions,
  */
   __pyx_v_z = fmod(((__pyx_v_z - __pyx_v_self->z_min) / __pyx_v_self->dz), __pyx_v_self->nz);
 
-  /* "cytricubic.pyx":215
- * 
- * 	# Enforce periodic BC
+  /* "cytricubic.pyx":242
+ *         # we ensure that the normalized coordinates lie within the intervals
+ *         # )0,ni(, i = x, y or z, respectively.
  *         while(x < 0):             # <<<<<<<<<<<<<<
  *             x += self.nx
  *         while(y < 0):
  */
   while (1) {
-    __pyx_t_2 = ((__pyx_v_x < 0.0) != 0);
-    if (!__pyx_t_2) break;
+    __pyx_t_1 = ((__pyx_v_x < 0.0) != 0);
+    if (!__pyx_t_1) break;
 
-    /* "cytricubic.pyx":216
- * 	# Enforce periodic BC
+    /* "cytricubic.pyx":243
+ *         # )0,ni(, i = x, y or z, respectively.
  *         while(x < 0):
  *             x += self.nx             # <<<<<<<<<<<<<<
  *         while(y < 0):
@@ -3296,7 +3271,7 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
     __pyx_v_x = (__pyx_v_x + __pyx_v_self->nx);
   }
 
-  /* "cytricubic.pyx":217
+  /* "cytricubic.pyx":244
  *         while(x < 0):
  *             x += self.nx
  *         while(y < 0):             # <<<<<<<<<<<<<<
@@ -3304,10 +3279,10 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
  *         while(z < 0):
  */
   while (1) {
-    __pyx_t_2 = ((__pyx_v_y < 0.0) != 0);
-    if (!__pyx_t_2) break;
+    __pyx_t_1 = ((__pyx_v_y < 0.0) != 0);
+    if (!__pyx_t_1) break;
 
-    /* "cytricubic.pyx":218
+    /* "cytricubic.pyx":245
  *             x += self.nx
  *         while(y < 0):
  *             y += self.ny             # <<<<<<<<<<<<<<
@@ -3317,7 +3292,7 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
     __pyx_v_y = (__pyx_v_y + __pyx_v_self->ny);
   }
 
-  /* "cytricubic.pyx":219
+  /* "cytricubic.pyx":246
  *         while(y < 0):
  *             y += self.ny
  *         while(z < 0):             # <<<<<<<<<<<<<<
@@ -3325,30 +3300,30 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
  * 
  */
   while (1) {
-    __pyx_t_2 = ((__pyx_v_z < 0.0) != 0);
-    if (!__pyx_t_2) break;
+    __pyx_t_1 = ((__pyx_v_z < 0.0) != 0);
+    if (!__pyx_t_1) break;
 
-    /* "cytricubic.pyx":220
+    /* "cytricubic.pyx":247
  *             y += self.ny
  *         while(z < 0):
  *             z += self.nz             # <<<<<<<<<<<<<<
  * 
- *         x_ind = int(c_floor(x))
+ *         # The integer part of the normalized coordinates define the
  */
     __pyx_v_z = (__pyx_v_z + __pyx_v_self->nz);
   }
 
-  /* "cytricubic.pyx":222
- *             z += self.nz
- * 
+  /* "cytricubic.pyx":251
+ *         # The integer part of the normalized coordinates define the
+ *         # reference corner of the voxel within which we shall interpolate
  *         x_ind = int(c_floor(x))             # <<<<<<<<<<<<<<
  *         y_ind = int(c_floor(y))
  *         z_ind = int(c_floor(z))
  */
   __pyx_v_x_ind = ((int)floor(__pyx_v_x));
 
-  /* "cytricubic.pyx":223
- * 
+  /* "cytricubic.pyx":252
+ *         # reference corner of the voxel within which we shall interpolate
  *         x_ind = int(c_floor(x))
  *         y_ind = int(c_floor(y))             # <<<<<<<<<<<<<<
  *         z_ind = int(c_floor(z))
@@ -3356,92 +3331,26 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
  */
   __pyx_v_y_ind = ((int)floor(__pyx_v_y));
 
-  /* "cytricubic.pyx":224
+  /* "cytricubic.pyx":253
  *         x_ind = int(c_floor(x))
  *         y_ind = int(c_floor(y))
  *         z_ind = int(c_floor(z))             # <<<<<<<<<<<<<<
  * 
- *         if(self.calibrated == 0
+ *         # The decimal part of the normalized coordinates are needed to
  */
   __pyx_v_z_ind = ((int)floor(__pyx_v_z));
 
-  /* "cytricubic.pyx":226
- *         z_ind = int(c_floor(z))
- * 
- *         if(self.calibrated == 0             # <<<<<<<<<<<<<<
- *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
- *             self._calibrate_(x_ind,y_ind,z_ind)
- */
-  __pyx_t_3 = ((__pyx_v_self->calibrated == 0) != 0);
-  if (!__pyx_t_3) {
-  } else {
-    __pyx_t_2 = __pyx_t_3;
-    goto __pyx_L18_bool_binop_done;
-  }
-
-  /* "cytricubic.pyx":227
- * 
- *         if(self.calibrated == 0
- *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):             # <<<<<<<<<<<<<<
- *             self._calibrate_(x_ind,y_ind,z_ind)
- * 
- */
-  __pyx_t_3 = ((__pyx_v_x_ind != __pyx_v_self->xi) != 0);
-  if (!__pyx_t_3) {
-  } else {
-    __pyx_t_2 = __pyx_t_3;
-    goto __pyx_L18_bool_binop_done;
-  }
-  __pyx_t_3 = ((__pyx_v_y_ind != __pyx_v_self->yi) != 0);
-  if (!__pyx_t_3) {
-  } else {
-    __pyx_t_2 = __pyx_t_3;
-    goto __pyx_L18_bool_binop_done;
-  }
-  __pyx_t_3 = ((__pyx_v_z_ind != __pyx_v_self->zi) != 0);
-  __pyx_t_2 = __pyx_t_3;
-  __pyx_L18_bool_binop_done:;
-
-  /* "cytricubic.pyx":226
- *         z_ind = int(c_floor(z))
- * 
- *         if(self.calibrated == 0             # <<<<<<<<<<<<<<
- *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
- *             self._calibrate_(x_ind,y_ind,z_ind)
- */
-  if (__pyx_t_2) {
-
-    /* "cytricubic.pyx":228
- *         if(self.calibrated == 0
- *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
- *             self._calibrate_(x_ind,y_ind,z_ind)             # <<<<<<<<<<<<<<
- * 
- *         x -= x_ind
- */
-    __pyx_t_4 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_calibrate_(__pyx_v_self, __pyx_v_x_ind, __pyx_v_y_ind, __pyx_v_z_ind); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 228, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "cytricubic.pyx":226
- *         z_ind = int(c_floor(z))
- * 
- *         if(self.calibrated == 0             # <<<<<<<<<<<<<<
- *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
- *             self._calibrate_(x_ind,y_ind,z_ind)
- */
-  }
-
-  /* "cytricubic.pyx":230
- *             self._calibrate_(x_ind,y_ind,z_ind)
- * 
+  /* "cytricubic.pyx":257
+ *         # The decimal part of the normalized coordinates are needed to
+ *         # evaluate the voxel-local tricubic polynomial, hence:
  *         x -= x_ind             # <<<<<<<<<<<<<<
  *         y -= y_ind
  *         z -= z_ind
  */
   __pyx_v_x = (__pyx_v_x - __pyx_v_x_ind);
 
-  /* "cytricubic.pyx":231
- * 
+  /* "cytricubic.pyx":258
+ *         # evaluate the voxel-local tricubic polynomial, hence:
  *         x -= x_ind
  *         y -= y_ind             # <<<<<<<<<<<<<<
  *         z -= z_ind
@@ -3449,67 +3358,133 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
  */
   __pyx_v_y = (__pyx_v_y - __pyx_v_y_ind);
 
-  /* "cytricubic.pyx":232
+  /* "cytricubic.pyx":259
  *         x -= x_ind
  *         y -= y_ind
  *         z -= z_ind             # <<<<<<<<<<<<<<
  * 
- *         cdef:
+ *         # If the previous interpolator evaluation was performed within the
  */
   __pyx_v_z = (__pyx_v_z - __pyx_v_z_ind);
 
-  /* "cytricubic.pyx":238
- *             int w
+  /* "cytricubic.pyx":264
+ *         # same voxel as the one we're looking at now, we don't need to
+ *         # recompute the interpolation coefficients:
+ *         if(self.calibrated == 0             # <<<<<<<<<<<<<<
+ *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
+ *             self._calibrate_(x_ind,y_ind,z_ind)
+ */
+  __pyx_t_2 = ((__pyx_v_self->calibrated == 0) != 0);
+  if (!__pyx_t_2) {
+  } else {
+    __pyx_t_1 = __pyx_t_2;
+    goto __pyx_L18_bool_binop_done;
+  }
+
+  /* "cytricubic.pyx":265
+ *         # recompute the interpolation coefficients:
+ *         if(self.calibrated == 0
+ *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):             # <<<<<<<<<<<<<<
+ *             self._calibrate_(x_ind,y_ind,z_ind)
  * 
+ */
+  __pyx_t_2 = ((__pyx_v_x_ind != __pyx_v_self->xi) != 0);
+  if (!__pyx_t_2) {
+  } else {
+    __pyx_t_1 = __pyx_t_2;
+    goto __pyx_L18_bool_binop_done;
+  }
+  __pyx_t_2 = ((__pyx_v_y_ind != __pyx_v_self->yi) != 0);
+  if (!__pyx_t_2) {
+  } else {
+    __pyx_t_1 = __pyx_t_2;
+    goto __pyx_L18_bool_binop_done;
+  }
+  __pyx_t_2 = ((__pyx_v_z_ind != __pyx_v_self->zi) != 0);
+  __pyx_t_1 = __pyx_t_2;
+  __pyx_L18_bool_binop_done:;
+
+  /* "cytricubic.pyx":264
+ *         # same voxel as the one we're looking at now, we don't need to
+ *         # recompute the interpolation coefficients:
+ *         if(self.calibrated == 0             # <<<<<<<<<<<<<<
+ *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
+ *             self._calibrate_(x_ind,y_ind,z_ind)
+ */
+  if (__pyx_t_1) {
+
+    /* "cytricubic.pyx":266
+ *         if(self.calibrated == 0
+ *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
+ *             self._calibrate_(x_ind,y_ind,z_ind)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+    __pyx_t_3 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_calibrate_(__pyx_v_self, __pyx_v_x_ind, __pyx_v_y_ind, __pyx_v_z_ind); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 266, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+    /* "cytricubic.pyx":264
+ *         # same voxel as the one we're looking at now, we don't need to
+ *         # recompute the interpolation coefficients:
+ *         if(self.calibrated == 0             # <<<<<<<<<<<<<<
+ *                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
+ *             self._calibrate_(x_ind,y_ind,z_ind)
+ */
+  }
+
+  /* "cytricubic.pyx":270
+ * 
+ *         # Loop over the required powers of the voxel coordinates
  *         for k in range(kz, 4):             # <<<<<<<<<<<<<<
  *             for j in range(ky, 4):
  *                 for i in range(kx, 4):
  */
-  for (__pyx_t_5 = __pyx_v_kz; __pyx_t_5 < 4; __pyx_t_5+=1) {
-    __pyx_v_k = __pyx_t_5;
+  for (__pyx_t_4 = __pyx_v_kz; __pyx_t_4 < 4; __pyx_t_4+=1) {
+    __pyx_v_k = __pyx_t_4;
 
-    /* "cytricubic.pyx":239
- * 
+    /* "cytricubic.pyx":271
+ *         # Loop over the required powers of the voxel coordinates
  *         for k in range(kz, 4):
  *             for j in range(ky, 4):             # <<<<<<<<<<<<<<
  *                 for i in range(kx, 4):
- *                     cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)\
+ *                     cont = self.coeffs[self.ind(i,j,k)]*c_pow(x,i-kx)\
  */
-    for (__pyx_t_6 = __pyx_v_ky; __pyx_t_6 < 4; __pyx_t_6+=1) {
-      __pyx_v_j = __pyx_t_6;
+    for (__pyx_t_5 = __pyx_v_ky; __pyx_t_5 < 4; __pyx_t_5+=1) {
+      __pyx_v_j = __pyx_t_5;
 
-      /* "cytricubic.pyx":240
+      /* "cytricubic.pyx":272
  *         for k in range(kz, 4):
  *             for j in range(ky, 4):
  *                 for i in range(kx, 4):             # <<<<<<<<<<<<<<
- *                     cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)\
- *                                                     *c_pow(z,k-kz)
+ *                     cont = self.coeffs[self.ind(i,j,k)]*c_pow(x,i-kx)\
+ *                                             *c_pow(y,j-ky)*c_pow(z,k-kz)
  */
-      for (__pyx_t_7 = __pyx_v_kx; __pyx_t_7 < 4; __pyx_t_7+=1) {
-        __pyx_v_i = __pyx_t_7;
+      for (__pyx_t_6 = __pyx_v_kx; __pyx_t_6 < 4; __pyx_t_6+=1) {
+        __pyx_v_i = __pyx_t_6;
 
-        /* "cytricubic.pyx":242
+        /* "cytricubic.pyx":274
  *                 for i in range(kx, 4):
- *                     cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)\
- *                                                     *c_pow(z,k-kz)             # <<<<<<<<<<<<<<
+ *                     cont = self.coeffs[self.ind(i,j,k)]*c_pow(x,i-kx)\
+ *                                             *c_pow(y,j-ky)*c_pow(z,k-kz)             # <<<<<<<<<<<<<<
+ *                     # Explicitly handle prefactors from derivatives:
  *                     for w in range(kx):
- *                         cont *= (i-w)
  */
-        __pyx_v_cont = ((((__pyx_v_coeffs[((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->ijk2n(__pyx_v_self, __pyx_v_i, __pyx_v_j, __pyx_v_k)]) * pow(__pyx_v_x, (__pyx_v_i - __pyx_v_kx))) * pow(__pyx_v_y, (__pyx_v_j - __pyx_v_ky))) * pow(__pyx_v_z, (__pyx_v_k - __pyx_v_kz)));
+        __pyx_v_cont = ((((__pyx_v_self->coeffs[((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->ind(__pyx_v_self, __pyx_v_i, __pyx_v_j, __pyx_v_k)]) * pow(__pyx_v_x, (__pyx_v_i - __pyx_v_kx))) * pow(__pyx_v_y, (__pyx_v_j - __pyx_v_ky))) * pow(__pyx_v_z, (__pyx_v_k - __pyx_v_kz)));
 
-        /* "cytricubic.pyx":243
- *                     cont = coeffs[self.ijk2n(i,j,k)]*c_pow(x,i-kx)*c_pow(y,j-ky)\
- *                                                     *c_pow(z,k-kz)
+        /* "cytricubic.pyx":276
+ *                                             *c_pow(y,j-ky)*c_pow(z,k-kz)
+ *                     # Explicitly handle prefactors from derivatives:
  *                     for w in range(kx):             # <<<<<<<<<<<<<<
  *                         cont *= (i-w)
  *                     for w in range(ky):
  */
-        __pyx_t_8 = __pyx_v_kx;
-        for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
-          __pyx_v_w = __pyx_t_9;
+        __pyx_t_7 = __pyx_v_kx;
+        for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
+          __pyx_v_w = __pyx_t_8;
 
-          /* "cytricubic.pyx":244
- *                                                     *c_pow(z,k-kz)
+          /* "cytricubic.pyx":277
+ *                     # Explicitly handle prefactors from derivatives:
  *                     for w in range(kx):
  *                         cont *= (i-w)             # <<<<<<<<<<<<<<
  *                     for w in range(ky):
@@ -3518,18 +3493,18 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
           __pyx_v_cont = (__pyx_v_cont * (__pyx_v_i - __pyx_v_w));
         }
 
-        /* "cytricubic.pyx":245
+        /* "cytricubic.pyx":278
  *                     for w in range(kx):
  *                         cont *= (i-w)
  *                     for w in range(ky):             # <<<<<<<<<<<<<<
  *                         cont *= (j-w)
  *                     for w in range(kz):
  */
-        __pyx_t_8 = __pyx_v_ky;
-        for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
-          __pyx_v_w = __pyx_t_9;
+        __pyx_t_7 = __pyx_v_ky;
+        for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
+          __pyx_v_w = __pyx_t_8;
 
-          /* "cytricubic.pyx":246
+          /* "cytricubic.pyx":279
  *                         cont *= (i-w)
  *                     for w in range(ky):
  *                         cont *= (j-w)             # <<<<<<<<<<<<<<
@@ -3539,60 +3514,60 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
           __pyx_v_cont = (__pyx_v_cont * (__pyx_v_j - __pyx_v_w));
         }
 
-        /* "cytricubic.pyx":247
+        /* "cytricubic.pyx":280
  *                     for w in range(ky):
  *                         cont *= (j-w)
  *                     for w in range(kz):             # <<<<<<<<<<<<<<
  *                         cont *= (k-w)
  *                     res += cont
  */
-        __pyx_t_8 = __pyx_v_kz;
-        for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
-          __pyx_v_w = __pyx_t_9;
+        __pyx_t_7 = __pyx_v_kz;
+        for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
+          __pyx_v_w = __pyx_t_8;
 
-          /* "cytricubic.pyx":248
+          /* "cytricubic.pyx":281
  *                         cont *= (j-w)
  *                     for w in range(kz):
  *                         cont *= (k-w)             # <<<<<<<<<<<<<<
  *                     res += cont
- *         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
+ * 
  */
           __pyx_v_cont = (__pyx_v_cont * (__pyx_v_k - __pyx_v_w));
         }
 
-        /* "cytricubic.pyx":249
+        /* "cytricubic.pyx":282
  *                     for w in range(kz):
  *                         cont *= (k-w)
  *                     res += cont             # <<<<<<<<<<<<<<
- *         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
  * 
+ *         # Because the derivatives, as computed in self._calibrated_, are not
  */
         __pyx_v_res = (__pyx_v_res + __pyx_v_cont);
       }
     }
   }
 
-  /* "cytricubic.pyx":250
- *                         cont *= (k-w)
- *                     res += cont
+  /* "cytricubic.pyx":287
+ *         # scaled with the grid spacings, we must do so explicitly in order
+ *         # to obtain a properly scaled return variable:
  *         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))             # <<<<<<<<<<<<<<
  * 
- * 
+ *     cdef int ind(self, int i, int j, int k):
  */
   __pyx_r = (__pyx_v_res / ((pow(__pyx_v_self->dx, __pyx_v_kx) * pow(__pyx_v_self->dy, __pyx_v_ky)) * pow(__pyx_v_self->dz, __pyx_v_kz)));
   goto __pyx_L0;
 
-  /* "cytricubic.pyx":195
+  /* "cytricubic.pyx":202
  *     @cython.wraparound(False)
  *     @cython.cdivision(True)
  *     cdef double _ev_(self, double x, double y, double z, int kx, int ky, int kz):             # <<<<<<<<<<<<<<
- *         cdef:
- *             double res = 0.
+ *         # The C-level function which evaluates the interpolated function (or
+ *         # its derivatives) in a single point.
  */
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_3);
   __Pyx_WriteUnraisable("cytricubic.TricubicInterpolator._ev_", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   __pyx_L0:;
@@ -3600,22 +3575,22 @@ static double __pyx_f_10cytricubic_20TricubicInterpolator__ev_(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":253
+/* "cytricubic.pyx":289
+ *         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
  * 
- * 
- *     cdef int ijk2n(self, int i, int j, int k):             # <<<<<<<<<<<<<<
- *         return(i + 4*j + 16*k)
- * 
+ *     cdef int ind(self, int i, int j, int k):             # <<<<<<<<<<<<<<
+ *         # A convenience function, used to transform (tuples of) integers to
+ *         # a single index for the interpolation coefficient array
  */
 
-static int __pyx_f_10cytricubic_20TricubicInterpolator_ijk2n(CYTHON_UNUSED struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, int __pyx_v_i, int __pyx_v_j, int __pyx_v_k) {
+static int __pyx_f_10cytricubic_20TricubicInterpolator_ind(CYTHON_UNUSED struct __pyx_obj_10cytricubic_TricubicInterpolator *__pyx_v_self, int __pyx_v_i, int __pyx_v_j, int __pyx_v_k) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("ijk2n", 0);
+  __Pyx_RefNannySetupContext("ind", 0);
 
-  /* "cytricubic.pyx":254
- * 
- *     cdef int ijk2n(self, int i, int j, int k):
+  /* "cytricubic.pyx":292
+ *         # A convenience function, used to transform (tuples of) integers to
+ *         # a single index for the interpolation coefficient array
  *         return(i + 4*j + 16*k)             # <<<<<<<<<<<<<<
  * 
  * 
@@ -3623,12 +3598,12 @@ static int __pyx_f_10cytricubic_20TricubicInterpolator_ijk2n(CYTHON_UNUSED struc
   __pyx_r = ((__pyx_v_i + (4 * __pyx_v_j)) + (16 * __pyx_v_k));
   goto __pyx_L0;
 
-  /* "cytricubic.pyx":253
+  /* "cytricubic.pyx":289
+ *         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
  * 
- * 
- *     cdef int ijk2n(self, int i, int j, int k):             # <<<<<<<<<<<<<<
- *         return(i + 4*j + 16*k)
- * 
+ *     cdef int ind(self, int i, int j, int k):             # <<<<<<<<<<<<<<
+ *         # A convenience function, used to transform (tuples of) integers to
+ *         # a single index for the interpolation coefficient array
  */
 
   /* function exit code */
@@ -3637,16 +3612,17 @@ static int __pyx_f_10cytricubic_20TricubicInterpolator_ijk2n(CYTHON_UNUSED struc
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":257
+/* "cytricubic.pyx":295
  * 
  * 
- *     def ev_grid(self, double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,             # <<<<<<<<<<<<<<
+ *     def ev_grid(self, double[::1] x, double[::1] y, double[::1] z,             # <<<<<<<<<<<<<<
  *                     int kx = 0, int ky = 0, int kz = 0):
- *         return self._ev_grid_(x, y, z, kx, ky, kz)
+ *         # A custom, thin Python wrapper for the _ev_ function, defined at C
  */
 
 /* Python wrapper */
 static PyObject *__pyx_pw_10cytricubic_20TricubicInterpolator_5ev_grid(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_10cytricubic_20TricubicInterpolator_4ev_grid[] = "\n        TricubicInterpolator.ev_grid(x, y, z, kx, ky, kz)\n\n        Evaluate the interpolated function, or its derivatives, at the grid\n        spanned by the input x, y and z arrays.\n\n        param: x   -- A NumPy array of np.float64, containing the points along\n                        the x abscissa at which an interpolated value is sought\n        param: y   -- A NumPy array of np.float64, containing the points along\n                        the y abscissa at which an interpolated value is sought\n        param: z   -- A NumPy array of np.float64, containing the points along\n                        the z abscissa at which an interpolated value is sought\n        OPTIONAL:\n        param: kx  -- Integer specifying the order of the partial derivative\n                        along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.\n        param: ky  -- Integer specifying the order of the partial derivative\n                        along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.\n        param: kz  -- Integer specifying the order of the partial derivative\n                        along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.\n\n        return:       A NumPy array of np.float64 interpolated values.\n                        Shape: (len(x),len(y),len(z)).\n        ";
 static PyObject *__pyx_pw_10cytricubic_20TricubicInterpolator_5ev_grid(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_x = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_y = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -3688,13 +3664,13 @@ static PyObject *__pyx_pw_10cytricubic_20TricubicInterpolator_5ev_grid(PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_y)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("ev_grid", 0, 3, 6, 1); __PYX_ERR(0, 257, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("ev_grid", 0, 3, 6, 1); __PYX_ERR(0, 295, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_z)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("ev_grid", 0, 3, 6, 2); __PYX_ERR(0, 257, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("ev_grid", 0, 3, 6, 2); __PYX_ERR(0, 295, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -3716,7 +3692,7 @@ static PyObject *__pyx_pw_10cytricubic_20TricubicInterpolator_5ev_grid(PyObject 
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "ev_grid") < 0)) __PYX_ERR(0, 257, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "ev_grid") < 0)) __PYX_ERR(0, 295, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -3733,28 +3709,28 @@ static PyObject *__pyx_pw_10cytricubic_20TricubicInterpolator_5ev_grid(PyObject 
         default: goto __pyx_L5_argtuple_error;
       }
     }
-    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double(values[0]); if (unlikely(!__pyx_v_x.memview)) __PYX_ERR(0, 257, __pyx_L3_error)
-    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double(values[1]); if (unlikely(!__pyx_v_y.memview)) __PYX_ERR(0, 257, __pyx_L3_error)
-    __pyx_v_z = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_double(values[2]); if (unlikely(!__pyx_v_z.memview)) __PYX_ERR(0, 257, __pyx_L3_error)
+    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[0]); if (unlikely(!__pyx_v_x.memview)) __PYX_ERR(0, 295, __pyx_L3_error)
+    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[1]); if (unlikely(!__pyx_v_y.memview)) __PYX_ERR(0, 295, __pyx_L3_error)
+    __pyx_v_z = __Pyx_PyObject_to_MemoryviewSlice_dc_double(values[2]); if (unlikely(!__pyx_v_z.memview)) __PYX_ERR(0, 295, __pyx_L3_error)
     if (values[3]) {
-      __pyx_v_kx = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_kx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L3_error)
+      __pyx_v_kx = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_kx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 296, __pyx_L3_error)
     } else {
       __pyx_v_kx = ((int)0);
     }
     if (values[4]) {
-      __pyx_v_ky = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_ky == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L3_error)
+      __pyx_v_ky = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_ky == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 296, __pyx_L3_error)
     } else {
       __pyx_v_ky = ((int)0);
     }
     if (values[5]) {
-      __pyx_v_kz = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_kz == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L3_error)
+      __pyx_v_kz = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_kz == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 296, __pyx_L3_error)
     } else {
       __pyx_v_kz = ((int)0);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("ev_grid", 0, 3, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 257, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("ev_grid", 0, 3, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 295, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cytricubic.TricubicInterpolator.ev_grid", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3773,26 +3749,26 @@ static PyObject *__pyx_pf_10cytricubic_20TricubicInterpolator_4ev_grid(struct __
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("ev_grid", 0);
 
-  /* "cytricubic.pyx":259
- *     def ev_grid(self, double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,
- *                     int kx = 0, int ky = 0, int kz = 0):
+  /* "cytricubic.pyx":322
+ *                         Shape: (len(x),len(y),len(z)).
+ *         """
  *         return self._ev_grid_(x, y, z, kx, ky, kz)             # <<<<<<<<<<<<<<
  * 
  *     @cython.boundscheck(False)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_grid_(__pyx_v_self, __pyx_v_x, __pyx_v_y, __pyx_v_z, __pyx_v_kx, __pyx_v_ky, __pyx_v_kz); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_grid_(__pyx_v_self, __pyx_v_x, __pyx_v_y, __pyx_v_z, __pyx_v_kx, __pyx_v_ky, __pyx_v_kz); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "cytricubic.pyx":257
+  /* "cytricubic.pyx":295
  * 
  * 
- *     def ev_grid(self, double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,             # <<<<<<<<<<<<<<
+ *     def ev_grid(self, double[::1] x, double[::1] y, double[::1] z,             # <<<<<<<<<<<<<<
  *                     int kx = 0, int ky = 0, int kz = 0):
- *         return self._ev_grid_(x, y, z, kx, ky, kz)
+ *         # A custom, thin Python wrapper for the _ev_ function, defined at C
  */
 
   /* function exit code */
@@ -3809,10 +3785,10 @@ static PyObject *__pyx_pf_10cytricubic_20TricubicInterpolator_4ev_grid(struct __
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":264
+/* "cytricubic.pyx":327
  *     @cython.wraparound(False)
  *     @cython.cdivision(True)
- *     cdef _ev_grid_(self,double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,             # <<<<<<<<<<<<<<
+ *     cdef _ev_grid_(self,double[::1] x, double[::1] y, double[::1] z,             # <<<<<<<<<<<<<<
  *                 int kx, int ky, int kz):
  *         cdef:
  */
@@ -3821,360 +3797,196 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
   int __pyx_v_i;
   int __pyx_v_j;
   int __pyx_v_k;
-  int __pyx_v_x_sh0;
-  int __pyx_v_x_sh1;
-  int __pyx_v_x_sh2;
-  int __pyx_v_y_sh0;
-  int __pyx_v_y_sh1;
-  int __pyx_v_y_sh2;
-  int __pyx_v_z_sh0;
-  int __pyx_v_z_sh1;
-  int __pyx_v_z_sh2;
+  int __pyx_v_nx;
+  int __pyx_v_ny;
+  int __pyx_v_nz;
   PyArrayObject *__pyx_v_res = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_res;
   __Pyx_Buffer __pyx_pybuffer_res;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  PyObject *__pyx_t_7 = NULL;
-  PyArrayObject *__pyx_t_8 = NULL;
+  PyArrayObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  int __pyx_t_8;
   int __pyx_t_9;
   int __pyx_t_10;
   int __pyx_t_11;
   int __pyx_t_12;
-  int __pyx_t_13;
-  int __pyx_t_14;
+  Py_ssize_t __pyx_t_13;
+  Py_ssize_t __pyx_t_14;
   Py_ssize_t __pyx_t_15;
   Py_ssize_t __pyx_t_16;
   Py_ssize_t __pyx_t_17;
   Py_ssize_t __pyx_t_18;
-  Py_ssize_t __pyx_t_19;
-  Py_ssize_t __pyx_t_20;
-  Py_ssize_t __pyx_t_21;
-  Py_ssize_t __pyx_t_22;
-  Py_ssize_t __pyx_t_23;
-  Py_ssize_t __pyx_t_24;
-  Py_ssize_t __pyx_t_25;
-  Py_ssize_t __pyx_t_26;
   __Pyx_RefNannySetupContext("_ev_grid_", 0);
   __pyx_pybuffer_res.pybuffer.buf = NULL;
   __pyx_pybuffer_res.refcount = 0;
   __pyx_pybuffernd_res.data = NULL;
   __pyx_pybuffernd_res.rcbuffer = &__pyx_pybuffer_res;
 
-  /* "cytricubic.pyx":268
+  /* "cytricubic.pyx":331
  *         cdef:
  *             int i, j, k
- *             int x_sh0 = x.shape[0], x_sh1 = x.shape[1], x_sh2 = x.shape[2]             # <<<<<<<<<<<<<<
- *             int y_sh0 = y.shape[0], y_sh1 = y.shape[1], y_sh2 = y.shape[2]
- *             int z_sh0 = z.shape[0], z_sh1 = z.shape[1], z_sh2 = z.shape[2]
+ *             int nx = x.shape[0]             # <<<<<<<<<<<<<<
+ *             int ny = y.shape[0]
+ *             int nz = z.shape[0]
  */
-  __pyx_v_x_sh0 = (__pyx_v_x.shape[0]);
-  __pyx_v_x_sh1 = (__pyx_v_x.shape[1]);
-  __pyx_v_x_sh2 = (__pyx_v_x.shape[2]);
+  __pyx_v_nx = (__pyx_v_x.shape[0]);
 
-  /* "cytricubic.pyx":269
+  /* "cytricubic.pyx":332
  *             int i, j, k
- *             int x_sh0 = x.shape[0], x_sh1 = x.shape[1], x_sh2 = x.shape[2]
- *             int y_sh0 = y.shape[0], y_sh1 = y.shape[1], y_sh2 = y.shape[2]             # <<<<<<<<<<<<<<
- *             int z_sh0 = z.shape[0], z_sh1 = z.shape[1], z_sh2 = z.shape[2]
+ *             int nx = x.shape[0]
+ *             int ny = y.shape[0]             # <<<<<<<<<<<<<<
+ *             int nz = z.shape[0]
  * 
  */
-  __pyx_v_y_sh0 = (__pyx_v_y.shape[0]);
-  __pyx_v_y_sh1 = (__pyx_v_y.shape[1]);
-  __pyx_v_y_sh2 = (__pyx_v_y.shape[2]);
+  __pyx_v_ny = (__pyx_v_y.shape[0]);
 
-  /* "cytricubic.pyx":270
- *             int x_sh0 = x.shape[0], x_sh1 = x.shape[1], x_sh2 = x.shape[2]
- *             int y_sh0 = y.shape[0], y_sh1 = y.shape[1], y_sh2 = y.shape[2]
- *             int z_sh0 = z.shape[0], z_sh1 = z.shape[1], z_sh2 = z.shape[2]             # <<<<<<<<<<<<<<
+  /* "cytricubic.pyx":333
+ *             int nx = x.shape[0]
+ *             int ny = y.shape[0]
+ *             int nz = z.shape[0]             # <<<<<<<<<<<<<<
  * 
- *         if(x_sh0 != y_sh0 or x_sh0 != z_sh0 or y_sh0 != z_sh0
+ *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((nx, ny, nz),
  */
-  __pyx_v_z_sh0 = (__pyx_v_z.shape[0]);
-  __pyx_v_z_sh1 = (__pyx_v_z.shape[1]);
-  __pyx_v_z_sh2 = (__pyx_v_z.shape[2]);
+  __pyx_v_nz = (__pyx_v_z.shape[0]);
 
-  /* "cytricubic.pyx":272
- *             int z_sh0 = z.shape[0], z_sh1 = z.shape[1], z_sh2 = z.shape[2]
+  /* "cytricubic.pyx":335
+ *             int nz = z.shape[0]
  * 
- *         if(x_sh0 != y_sh0 or x_sh0 != z_sh0 or y_sh0 != z_sh0             # <<<<<<<<<<<<<<
- *                 or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1
- *                 or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):
- */
-  __pyx_t_2 = ((__pyx_v_x_sh0 != __pyx_v_y_sh0) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-  __pyx_t_2 = ((__pyx_v_x_sh0 != __pyx_v_z_sh0) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-
-  /* "cytricubic.pyx":273
- * 
- *         if(x_sh0 != y_sh0 or x_sh0 != z_sh0 or y_sh0 != z_sh0
- *                 or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1             # <<<<<<<<<<<<<<
- *                 or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):
- *             raise RuntimeError("Array dimensions inconsistent!")
- */
-  __pyx_t_2 = ((__pyx_v_y_sh0 != __pyx_v_z_sh0) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-  __pyx_t_2 = ((__pyx_v_x_sh1 != __pyx_v_y_sh1) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-  __pyx_t_2 = ((__pyx_v_x_sh1 != __pyx_v_z_sh1) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-
-  /* "cytricubic.pyx":274
- *         if(x_sh0 != y_sh0 or x_sh0 != z_sh0 or y_sh0 != z_sh0
- *                 or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1
- *                 or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):             # <<<<<<<<<<<<<<
- *             raise RuntimeError("Array dimensions inconsistent!")
+ *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((nx, ny, nz),             # <<<<<<<<<<<<<<
+ *                                                             dtype=np.float64)
  * 
  */
-  __pyx_t_2 = ((__pyx_v_y_sh1 != __pyx_v_z_sh1) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-  __pyx_t_2 = ((__pyx_v_x_sh2 != __pyx_v_y_sh2) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-  __pyx_t_2 = ((__pyx_v_x_sh2 != __pyx_v_z_sh2) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L4_bool_binop_done;
-  }
-  __pyx_t_2 = ((__pyx_v_y_sh2 != __pyx_v_z_sh2) != 0);
-  __pyx_t_1 = __pyx_t_2;
-  __pyx_L4_bool_binop_done:;
-
-  /* "cytricubic.pyx":272
- *             int z_sh0 = z.shape[0], z_sh1 = z.shape[1], z_sh2 = z.shape[2]
- * 
- *         if(x_sh0 != y_sh0 or x_sh0 != z_sh0 or y_sh0 != z_sh0             # <<<<<<<<<<<<<<
- *                 or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1
- *                 or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):
- */
-  if (__pyx_t_1) {
-
-    /* "cytricubic.pyx":275
- *                 or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1
- *                 or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):
- *             raise RuntimeError("Array dimensions inconsistent!")             # <<<<<<<<<<<<<<
- * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,
- */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 275, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 275, __pyx_L1_error)
-
-    /* "cytricubic.pyx":272
- *             int z_sh0 = z.shape[0], z_sh1 = z.shape[1], z_sh2 = z.shape[2]
- * 
- *         if(x_sh0 != y_sh0 or x_sh0 != z_sh0 or y_sh0 != z_sh0             # <<<<<<<<<<<<<<
- *                 or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1
- *                 or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):
- */
-  }
-
-  /* "cytricubic.pyx":277
- *             raise RuntimeError("Array dimensions inconsistent!")
- * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,             # <<<<<<<<<<<<<<
- *                                                              x_sh1,
- *                                                              x_sh2),
- */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_nx); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_ny); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_nz); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_x_sh0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 277, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-
-  /* "cytricubic.pyx":278
- * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,
- *                                                              x_sh1,             # <<<<<<<<<<<<<<
- *                                                              x_sh2),
- *                                                             dtype=np.float64)
- */
-  __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_x_sh1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 278, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 335, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-
-  /* "cytricubic.pyx":279
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,
- *                                                              x_sh1,
- *                                                              x_sh2),             # <<<<<<<<<<<<<<
- *                                                             dtype=np.float64)
- * 
- */
-  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_x_sh2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 279, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-
-  /* "cytricubic.pyx":277
- *             raise RuntimeError("Array dimensions inconsistent!")
- * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,             # <<<<<<<<<<<<<<
- *                                                              x_sh1,
- *                                                              x_sh2),
- */
-  __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 277, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_3);
-  PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3);
-  __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_5);
-  __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_4);
+  __pyx_t_1 = 0;
   __pyx_t_3 = 0;
+  __pyx_t_4 = 0;
+  __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_GIVEREF(__pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5);
   __pyx_t_5 = 0;
-  __pyx_t_6 = 0;
-  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 277, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __Pyx_GIVEREF(__pyx_t_7);
-  PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_7);
-  __pyx_t_7 = 0;
 
-  /* "cytricubic.pyx":280
- *                                                              x_sh1,
- *                                                              x_sh2),
+  /* "cytricubic.pyx":336
+ * 
+ *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((nx, ny, nz),
  *                                                             dtype=np.float64)             # <<<<<<<<<<<<<<
  * 
- *         for k in range(x_sh2):
+ *         for k in range(nz):
  */
-  __pyx_t_7 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 280, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 336, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_float64); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 336, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_dtype, __pyx_t_3) < 0) __PYX_ERR(0, 280, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float64); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 336, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_dtype, __pyx_t_1) < 0) __PYX_ERR(0, 336, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cytricubic.pyx":277
- *             raise RuntimeError("Array dimensions inconsistent!")
+  /* "cytricubic.pyx":335
+ *             int nz = z.shape[0]
  * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,             # <<<<<<<<<<<<<<
- *                                                              x_sh1,
- *                                                              x_sh2),
+ *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((nx, ny, nz),             # <<<<<<<<<<<<<<
+ *                                                             dtype=np.float64)
+ * 
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 277, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 277, __pyx_L1_error)
-  __pyx_t_8 = ((PyArrayObject *)__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 335, __pyx_L1_error)
+  __pyx_t_6 = ((PyArrayObject *)__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_res.rcbuffer->pybuffer, (PyObject*)__pyx_t_8, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 3, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_res.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 3, 0, __pyx_stack) == -1)) {
       __pyx_v_res = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_res.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 277, __pyx_L1_error)
+      __PYX_ERR(0, 335, __pyx_L1_error)
     } else {__pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_res.diminfo[2].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_res.diminfo[2].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[2];
     }
   }
-  __pyx_t_8 = 0;
-  __pyx_v_res = ((PyArrayObject *)__pyx_t_3);
-  __pyx_t_3 = 0;
+  __pyx_t_6 = 0;
+  __pyx_v_res = ((PyArrayObject *)__pyx_t_1);
+  __pyx_t_1 = 0;
 
-  /* "cytricubic.pyx":282
+  /* "cytricubic.pyx":338
  *                                                             dtype=np.float64)
  * 
- *         for k in range(x_sh2):             # <<<<<<<<<<<<<<
- *             for j in range(x_sh1):
- *                 for i in range(x_sh0):
+ *         for k in range(nz):             # <<<<<<<<<<<<<<
+ *             for j in range(ny):
+ *                 for i in range(nx):
  */
-  __pyx_t_9 = __pyx_v_x_sh2;
-  for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
-    __pyx_v_k = __pyx_t_10;
+  __pyx_t_7 = __pyx_v_nz;
+  for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
+    __pyx_v_k = __pyx_t_8;
 
-    /* "cytricubic.pyx":283
+    /* "cytricubic.pyx":339
  * 
- *         for k in range(x_sh2):
- *             for j in range(x_sh1):             # <<<<<<<<<<<<<<
- *                 for i in range(x_sh0):
- *                     res[i,j,k] = self._ev_(x[i,j,k], y[i,j,k], z[i,j,k],
+ *         for k in range(nz):
+ *             for j in range(ny):             # <<<<<<<<<<<<<<
+ *                 for i in range(nx):
+ *                     res[i,j,k] = self._ev_(x[i], y[j], z[k], kx, ky, kz)
  */
-    __pyx_t_11 = __pyx_v_x_sh1;
-    for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
-      __pyx_v_j = __pyx_t_12;
+    __pyx_t_9 = __pyx_v_ny;
+    for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
+      __pyx_v_j = __pyx_t_10;
 
-      /* "cytricubic.pyx":284
- *         for k in range(x_sh2):
- *             for j in range(x_sh1):
- *                 for i in range(x_sh0):             # <<<<<<<<<<<<<<
- *                     res[i,j,k] = self._ev_(x[i,j,k], y[i,j,k], z[i,j,k],
- *                                             kx, ky, kz)
- */
-      __pyx_t_13 = __pyx_v_x_sh0;
-      for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
-        __pyx_v_i = __pyx_t_14;
-
-        /* "cytricubic.pyx":285
- *             for j in range(x_sh1):
- *                 for i in range(x_sh0):
- *                     res[i,j,k] = self._ev_(x[i,j,k], y[i,j,k], z[i,j,k],             # <<<<<<<<<<<<<<
- *                                             kx, ky, kz)
+      /* "cytricubic.pyx":340
+ *         for k in range(nz):
+ *             for j in range(ny):
+ *                 for i in range(nx):             # <<<<<<<<<<<<<<
+ *                     res[i,j,k] = self._ev_(x[i], y[j], z[k], kx, ky, kz)
  * 
  */
-        __pyx_t_15 = __pyx_v_i;
-        __pyx_t_16 = __pyx_v_j;
-        __pyx_t_17 = __pyx_v_k;
-        __pyx_t_18 = __pyx_v_i;
-        __pyx_t_19 = __pyx_v_j;
-        __pyx_t_20 = __pyx_v_k;
-        __pyx_t_21 = __pyx_v_i;
-        __pyx_t_22 = __pyx_v_j;
-        __pyx_t_23 = __pyx_v_k;
+      __pyx_t_11 = __pyx_v_nx;
+      for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+        __pyx_v_i = __pyx_t_12;
 
-        /* "cytricubic.pyx":286
- *                 for i in range(x_sh0):
- *                     res[i,j,k] = self._ev_(x[i,j,k], y[i,j,k], z[i,j,k],
- *                                             kx, ky, kz)             # <<<<<<<<<<<<<<
+        /* "cytricubic.pyx":341
+ *             for j in range(ny):
+ *                 for i in range(nx):
+ *                     res[i,j,k] = self._ev_(x[i], y[j], z[k], kx, ky, kz)             # <<<<<<<<<<<<<<
  * 
  *         return res
  */
-        __pyx_t_24 = __pyx_v_i;
-        __pyx_t_25 = __pyx_v_j;
-        __pyx_t_26 = __pyx_v_k;
-        *__Pyx_BufPtrStrided3d(__pyx_t_5numpy_float64_t *, __pyx_pybuffernd_res.rcbuffer->pybuffer.buf, __pyx_t_24, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_25, __pyx_pybuffernd_res.diminfo[1].strides, __pyx_t_26, __pyx_pybuffernd_res.diminfo[2].strides) = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_(__pyx_v_self, (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_x.data + __pyx_t_15 * __pyx_v_x.strides[0]) ) + __pyx_t_16 * __pyx_v_x.strides[1]) )) + __pyx_t_17)) ))), (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_y.data + __pyx_t_18 * __pyx_v_y.strides[0]) ) + __pyx_t_19 * __pyx_v_y.strides[1]) )) + __pyx_t_20)) ))), (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_z.data + __pyx_t_21 * __pyx_v_z.strides[0]) ) + __pyx_t_22 * __pyx_v_z.strides[1]) )) + __pyx_t_23)) ))), __pyx_v_kx, __pyx_v_ky, __pyx_v_kz);
+        __pyx_t_13 = __pyx_v_i;
+        __pyx_t_14 = __pyx_v_j;
+        __pyx_t_15 = __pyx_v_k;
+        __pyx_t_16 = __pyx_v_i;
+        __pyx_t_17 = __pyx_v_j;
+        __pyx_t_18 = __pyx_v_k;
+        *__Pyx_BufPtrStrided3d(__pyx_t_5numpy_float64_t *, __pyx_pybuffernd_res.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_res.diminfo[1].strides, __pyx_t_18, __pyx_pybuffernd_res.diminfo[2].strides) = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_ev_(__pyx_v_self, (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_x.data) + __pyx_t_13)) ))), (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_y.data) + __pyx_t_14)) ))), (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_z.data) + __pyx_t_15)) ))), __pyx_v_kx, __pyx_v_ky, __pyx_v_kz);
       }
     }
   }
 
-  /* "cytricubic.pyx":288
- *                                             kx, ky, kz)
+  /* "cytricubic.pyx":343
+ *                     res[i,j,k] = self._ev_(x[i], y[j], z[k], kx, ky, kz)
  * 
  *         return res             # <<<<<<<<<<<<<<
  * 
@@ -4185,21 +3997,21 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
   __pyx_r = ((PyObject *)__pyx_v_res);
   goto __pyx_L0;
 
-  /* "cytricubic.pyx":264
+  /* "cytricubic.pyx":327
  *     @cython.wraparound(False)
  *     @cython.cdivision(True)
- *     cdef _ev_grid_(self,double[:,:,::1] x, double[:,:,::1] y, double[:,:,::1] z,             # <<<<<<<<<<<<<<
+ *     cdef _ev_grid_(self,double[::1] x, double[::1] y, double[::1] z,             # <<<<<<<<<<<<<<
  *                 int kx, int ky, int kz):
  *         cdef:
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_PyThreadState_declare
     __Pyx_PyThreadState_assign
@@ -4218,7 +4030,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_(struct __
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":293
+/* "cytricubic.pyx":348
  *     @cython.wraparound(False)
  *     @cython.cdivision(True)
  *     cdef _calibrate_(self, int x, int y, int z):             # <<<<<<<<<<<<<<
@@ -4245,7 +4057,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("_calibrate_", 0);
 
-  /* "cytricubic.pyx":303
+  /* "cytricubic.pyx":358
  *         # feature, so that we can disable it at a Python level (to enhance
  *         # performance)
  *         xm1 = (x-1)%self.nx             # <<<<<<<<<<<<<<
@@ -4254,7 +4066,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_xm1 = ((__pyx_v_x - 1) % __pyx_v_self->nx);
 
-  /* "cytricubic.pyx":304
+  /* "cytricubic.pyx":359
  *         # performance)
  *         xm1 = (x-1)%self.nx
  *         xp1 = (x+1)%self.nx             # <<<<<<<<<<<<<<
@@ -4263,7 +4075,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_xp1 = ((__pyx_v_x + 1) % __pyx_v_self->nx);
 
-  /* "cytricubic.pyx":305
+  /* "cytricubic.pyx":360
  *         xm1 = (x-1)%self.nx
  *         xp1 = (x+1)%self.nx
  *         xp2 = (x+2)%self.nx             # <<<<<<<<<<<<<<
@@ -4272,7 +4084,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_xp2 = ((__pyx_v_x + 2) % __pyx_v_self->nx);
 
-  /* "cytricubic.pyx":307
+  /* "cytricubic.pyx":362
  *         xp2 = (x+2)%self.nx
  * 
  *         ym1 = (y-1)%self.ny             # <<<<<<<<<<<<<<
@@ -4281,7 +4093,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_ym1 = ((__pyx_v_y - 1) % __pyx_v_self->ny);
 
-  /* "cytricubic.pyx":308
+  /* "cytricubic.pyx":363
  * 
  *         ym1 = (y-1)%self.ny
  *         yp1 = (y+1)%self.ny             # <<<<<<<<<<<<<<
@@ -4290,7 +4102,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_yp1 = ((__pyx_v_y + 1) % __pyx_v_self->ny);
 
-  /* "cytricubic.pyx":309
+  /* "cytricubic.pyx":364
  *         ym1 = (y-1)%self.ny
  *         yp1 = (y+1)%self.ny
  *         yp2 = (y+2)%self.ny             # <<<<<<<<<<<<<<
@@ -4299,7 +4111,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_yp2 = ((__pyx_v_y + 2) % __pyx_v_self->ny);
 
-  /* "cytricubic.pyx":311
+  /* "cytricubic.pyx":366
  *         yp2 = (y+2)%self.ny
  * 
  *         zm1 = (z-1)%self.nz             # <<<<<<<<<<<<<<
@@ -4308,7 +4120,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_zm1 = ((__pyx_v_z - 1) % __pyx_v_self->nz);
 
-  /* "cytricubic.pyx":312
+  /* "cytricubic.pyx":367
  * 
  *         zm1 = (z-1)%self.nz
  *         zp1 = (z+1)%self.nz             # <<<<<<<<<<<<<<
@@ -4317,7 +4129,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_zp1 = ((__pyx_v_z + 1) % __pyx_v_self->nz);
 
-  /* "cytricubic.pyx":313
+  /* "cytricubic.pyx":368
  *         zm1 = (z-1)%self.nz
  *         zp1 = (z+1)%self.nz
  *         zp2 = (z+2)%self.nz             # <<<<<<<<<<<<<<
@@ -4326,7 +4138,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_zp2 = ((__pyx_v_z + 2) % __pyx_v_self->nz);
 
-  /* "cytricubic.pyx":315
+  /* "cytricubic.pyx":370
  *         zp2 = (z+2)%self.nz
  * 
  *         if(xm1 < 0):             # <<<<<<<<<<<<<<
@@ -4336,7 +4148,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_xm1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":316
+    /* "cytricubic.pyx":371
  * 
  *         if(xm1 < 0):
  *             xm1 += self.nx             # <<<<<<<<<<<<<<
@@ -4345,7 +4157,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_xm1 = (__pyx_v_xm1 + __pyx_v_self->nx);
 
-    /* "cytricubic.pyx":315
+    /* "cytricubic.pyx":370
  *         zp2 = (z+2)%self.nz
  * 
  *         if(xm1 < 0):             # <<<<<<<<<<<<<<
@@ -4354,7 +4166,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":317
+  /* "cytricubic.pyx":372
  *         if(xm1 < 0):
  *             xm1 += self.nx
  *         if(xp1 < 0):             # <<<<<<<<<<<<<<
@@ -4364,7 +4176,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_xp1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":318
+    /* "cytricubic.pyx":373
  *             xm1 += self.nx
  *         if(xp1 < 0):
  *             xp1 += self.nx             # <<<<<<<<<<<<<<
@@ -4373,7 +4185,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_xp1 = (__pyx_v_xp1 + __pyx_v_self->nx);
 
-    /* "cytricubic.pyx":317
+    /* "cytricubic.pyx":372
  *         if(xm1 < 0):
  *             xm1 += self.nx
  *         if(xp1 < 0):             # <<<<<<<<<<<<<<
@@ -4382,7 +4194,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":319
+  /* "cytricubic.pyx":374
  *         if(xp1 < 0):
  *             xp1 += self.nx
  *         if(xp2 < 0):             # <<<<<<<<<<<<<<
@@ -4392,7 +4204,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_xp2 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":320
+    /* "cytricubic.pyx":375
  *             xp1 += self.nx
  *         if(xp2 < 0):
  *             xp2 += self.nx             # <<<<<<<<<<<<<<
@@ -4401,7 +4213,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_xp2 = (__pyx_v_xp2 + __pyx_v_self->nx);
 
-    /* "cytricubic.pyx":319
+    /* "cytricubic.pyx":374
  *         if(xp1 < 0):
  *             xp1 += self.nx
  *         if(xp2 < 0):             # <<<<<<<<<<<<<<
@@ -4410,7 +4222,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":322
+  /* "cytricubic.pyx":377
  *             xp2 += self.nx
  * 
  *         if(ym1 < 0):             # <<<<<<<<<<<<<<
@@ -4420,7 +4232,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_ym1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":323
+    /* "cytricubic.pyx":378
  * 
  *         if(ym1 < 0):
  *             ym1 += self.ny             # <<<<<<<<<<<<<<
@@ -4429,7 +4241,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_ym1 = (__pyx_v_ym1 + __pyx_v_self->ny);
 
-    /* "cytricubic.pyx":322
+    /* "cytricubic.pyx":377
  *             xp2 += self.nx
  * 
  *         if(ym1 < 0):             # <<<<<<<<<<<<<<
@@ -4438,7 +4250,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":324
+  /* "cytricubic.pyx":379
  *         if(ym1 < 0):
  *             ym1 += self.ny
  *         if(yp1 < 0):             # <<<<<<<<<<<<<<
@@ -4448,7 +4260,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_yp1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":325
+    /* "cytricubic.pyx":380
  *             ym1 += self.ny
  *         if(yp1 < 0):
  *             yp1 += self.ny             # <<<<<<<<<<<<<<
@@ -4457,7 +4269,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_yp1 = (__pyx_v_yp1 + __pyx_v_self->ny);
 
-    /* "cytricubic.pyx":324
+    /* "cytricubic.pyx":379
  *         if(ym1 < 0):
  *             ym1 += self.ny
  *         if(yp1 < 0):             # <<<<<<<<<<<<<<
@@ -4466,7 +4278,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":326
+  /* "cytricubic.pyx":381
  *         if(yp1 < 0):
  *             yp1 += self.ny
  *         if(yp2 < 0):             # <<<<<<<<<<<<<<
@@ -4476,7 +4288,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_yp2 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":327
+    /* "cytricubic.pyx":382
  *             yp1 += self.ny
  *         if(yp2 < 0):
  *             yp2 += self.ny             # <<<<<<<<<<<<<<
@@ -4485,7 +4297,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_yp2 = (__pyx_v_yp2 + __pyx_v_self->ny);
 
-    /* "cytricubic.pyx":326
+    /* "cytricubic.pyx":381
  *         if(yp1 < 0):
  *             yp1 += self.ny
  *         if(yp2 < 0):             # <<<<<<<<<<<<<<
@@ -4494,7 +4306,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":329
+  /* "cytricubic.pyx":384
  *             yp2 += self.ny
  * 
  *         if(zm1 < 0):             # <<<<<<<<<<<<<<
@@ -4504,7 +4316,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_zm1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":330
+    /* "cytricubic.pyx":385
  * 
  *         if(zm1 < 0):
  *             zm1 += self.nz             # <<<<<<<<<<<<<<
@@ -4513,7 +4325,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_zm1 = (__pyx_v_zm1 + __pyx_v_self->nz);
 
-    /* "cytricubic.pyx":329
+    /* "cytricubic.pyx":384
  *             yp2 += self.ny
  * 
  *         if(zm1 < 0):             # <<<<<<<<<<<<<<
@@ -4522,7 +4334,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":331
+  /* "cytricubic.pyx":386
  *         if(zm1 < 0):
  *             zm1 += self.nz
  *         if(zp1 < 0):             # <<<<<<<<<<<<<<
@@ -4532,7 +4344,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_zp1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":332
+    /* "cytricubic.pyx":387
  *             zm1 += self.nz
  *         if(zp1 < 0):
  *             zp1 += self.nz             # <<<<<<<<<<<<<<
@@ -4541,7 +4353,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_zp1 = (__pyx_v_zp1 + __pyx_v_self->nz);
 
-    /* "cytricubic.pyx":331
+    /* "cytricubic.pyx":386
  *         if(zm1 < 0):
  *             zm1 += self.nz
  *         if(zp1 < 0):             # <<<<<<<<<<<<<<
@@ -4550,7 +4362,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":333
+  /* "cytricubic.pyx":388
  *         if(zp1 < 0):
  *             zp1 += self.nz
  *         if(zp2 < 0):             # <<<<<<<<<<<<<<
@@ -4560,7 +4372,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_t_1 = ((__pyx_v_zp2 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "cytricubic.pyx":334
+    /* "cytricubic.pyx":389
  *             zp1 += self.nz
  *         if(zp2 < 0):
  *             zp2 += self.nz             # <<<<<<<<<<<<<<
@@ -4569,7 +4381,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
     __pyx_v_zp2 = (__pyx_v_zp2 + __pyx_v_self->nz);
 
-    /* "cytricubic.pyx":333
+    /* "cytricubic.pyx":388
  *         if(zp1 < 0):
  *             zp1 += self.nz
  *         if(zp2 < 0):             # <<<<<<<<<<<<<<
@@ -4578,62 +4390,62 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   }
 
-  /* "cytricubic.pyx":337
+  /* "cytricubic.pyx":392
  * 
  *         # Values of f(x,y,z) at the corners of the voxel
  *         self._set_values_(x, xp1, y, yp1, z, zp1)             # <<<<<<<<<<<<<<
  *         # First derivatives of f(x,y,z) at the corners of the voxel
  *         self._set_first_derivatives_(x, xm1, xp1, xp2,
  */
-  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_values_(__pyx_v_self, __pyx_v_x, __pyx_v_xp1, __pyx_v_y, __pyx_v_yp1, __pyx_v_z, __pyx_v_zp1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 337, __pyx_L1_error)
+  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_values_(__pyx_v_self, __pyx_v_x, __pyx_v_xp1, __pyx_v_y, __pyx_v_yp1, __pyx_v_z, __pyx_v_zp1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cytricubic.pyx":339
+  /* "cytricubic.pyx":394
  *         self._set_values_(x, xp1, y, yp1, z, zp1)
  *         # First derivatives of f(x,y,z) at the corners of the voxel
  *         self._set_first_derivatives_(x, xm1, xp1, xp2,             # <<<<<<<<<<<<<<
  *                                      y, ym1, yp1, yp2,
  *                                      z, zm1, zp1, zp2)
  */
-  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_first_derivatives_(__pyx_v_self, __pyx_v_x, __pyx_v_xm1, __pyx_v_xp1, __pyx_v_xp2, __pyx_v_y, __pyx_v_ym1, __pyx_v_yp1, __pyx_v_yp2, __pyx_v_z, __pyx_v_zm1, __pyx_v_zp1, __pyx_v_zp2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_first_derivatives_(__pyx_v_self, __pyx_v_x, __pyx_v_xm1, __pyx_v_xp1, __pyx_v_xp2, __pyx_v_y, __pyx_v_ym1, __pyx_v_yp1, __pyx_v_yp2, __pyx_v_z, __pyx_v_zm1, __pyx_v_zp1, __pyx_v_zp2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 394, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cytricubic.pyx":343
+  /* "cytricubic.pyx":398
  *                                      z, zm1, zp1, zp2)
  *         # Mixed second derivatives of f(x,y,z) at the corners of the voxel
  *         self._set_second_drvtvs_(x, xm1, xp1, xp2,             # <<<<<<<<<<<<<<
  *                                  y, ym1, yp1, yp2,
  *                                  z, zm1, zp1, zp2)
  */
-  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_second_drvtvs_(__pyx_v_self, __pyx_v_x, __pyx_v_xm1, __pyx_v_xp1, __pyx_v_xp2, __pyx_v_y, __pyx_v_ym1, __pyx_v_yp1, __pyx_v_yp2, __pyx_v_z, __pyx_v_zm1, __pyx_v_zp1, __pyx_v_zp2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 343, __pyx_L1_error)
+  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_second_drvtvs_(__pyx_v_self, __pyx_v_x, __pyx_v_xm1, __pyx_v_xp1, __pyx_v_xp2, __pyx_v_y, __pyx_v_ym1, __pyx_v_yp1, __pyx_v_yp2, __pyx_v_z, __pyx_v_zm1, __pyx_v_zp1, __pyx_v_zp2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 398, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cytricubic.pyx":347
+  /* "cytricubic.pyx":402
  *                                  z, zm1, zp1, zp2)
  *         # Values of d3f/dxdydz at the corners of the voxel
  *         self._set_third_drvtv_(x, xm1, xp1, xp2,             # <<<<<<<<<<<<<<
  *                                y, ym1, yp1, yp2,
  *                                z, zm1, zp1, zp2)
  */
-  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_third_drvtv_(__pyx_v_self, __pyx_v_x, __pyx_v_xm1, __pyx_v_xp1, __pyx_v_xp2, __pyx_v_y, __pyx_v_ym1, __pyx_v_yp1, __pyx_v_yp2, __pyx_v_z, __pyx_v_zm1, __pyx_v_zp1, __pyx_v_zp2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 347, __pyx_L1_error)
+  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_set_third_drvtv_(__pyx_v_self, __pyx_v_x, __pyx_v_xm1, __pyx_v_xp1, __pyx_v_xp2, __pyx_v_y, __pyx_v_ym1, __pyx_v_yp1, __pyx_v_yp2, __pyx_v_z, __pyx_v_zm1, __pyx_v_zp1, __pyx_v_zp2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 402, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cytricubic.pyx":352
+  /* "cytricubic.pyx":407
  *         # Convert voxel values and partial derivatives to interpolation
  *         # coefficients
  *         self._solve_by_blas_dgemv_()             # <<<<<<<<<<<<<<
  *         # Remember the configuration for the next call
  *         self.xi, self.yi, self.zi = x, y, z
  */
-  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_solve_by_blas_dgemv_(__pyx_v_self); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 352, __pyx_L1_error)
+  __pyx_t_2 = ((struct __pyx_vtabstruct_10cytricubic_TricubicInterpolator *)__pyx_v_self->__pyx_vtab)->_solve_by_blas_dgemv_(__pyx_v_self); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 407, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "cytricubic.pyx":354
+  /* "cytricubic.pyx":409
  *         self._solve_by_blas_dgemv_()
  *         # Remember the configuration for the next call
  *         self.xi, self.yi, self.zi = x, y, z             # <<<<<<<<<<<<<<
@@ -4647,7 +4459,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   __pyx_v_self->yi = __pyx_t_4;
   __pyx_v_self->zi = __pyx_t_5;
 
-  /* "cytricubic.pyx":355
+  /* "cytricubic.pyx":410
  *         # Remember the configuration for the next call
  *         self.xi, self.yi, self.zi = x, y, z
  *         self.calibrated = 1             # <<<<<<<<<<<<<<
@@ -4656,7 +4468,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
  */
   __pyx_v_self->calibrated = 1;
 
-  /* "cytricubic.pyx":293
+  /* "cytricubic.pyx":348
  *     @cython.wraparound(False)
  *     @cython.cdivision(True)
  *     cdef _calibrate_(self, int x, int y, int z):             # <<<<<<<<<<<<<<
@@ -4677,7 +4489,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_(struct 
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":360
+/* "cytricubic.pyx":415
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_values_(self, int x, int xp1, int y, int yp1, int z, int zp1):             # <<<<<<<<<<<<<<
@@ -4717,7 +4529,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   Py_ssize_t __pyx_t_25;
   __Pyx_RefNannySetupContext("_set_values_", 0);
 
-  /* "cytricubic.pyx":362
+  /* "cytricubic.pyx":417
  *     cdef _set_values_(self, int x, int xp1, int y, int yp1, int z, int zp1):
  *         cdef:
  *             double *psi = &self.psi[0]             # <<<<<<<<<<<<<<
@@ -4726,7 +4538,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
  */
   __pyx_v_psi = (&(__pyx_v_self->psi[0]));
 
-  /* "cytricubic.pyx":363
+  /* "cytricubic.pyx":418
  *         cdef:
  *             double *psi = &self.psi[0]
  *             double[:,:,::1] data = self.data             # <<<<<<<<<<<<<<
@@ -4739,7 +4551,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
 
-  /* "cytricubic.pyx":365
+  /* "cytricubic.pyx":420
  *             double[:,:,::1] data = self.data
  *         # Values of f(x,y,z) at the corners of the voxel
  *         psi[0]  = data[x,y,z]             # <<<<<<<<<<<<<<
@@ -4751,7 +4563,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_4 = __pyx_v_z;
   (__pyx_v_psi[0]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_2 * __pyx_v_data.strides[0]) ) + __pyx_t_3 * __pyx_v_data.strides[1]) )) + __pyx_t_4)) )));
 
-  /* "cytricubic.pyx":366
+  /* "cytricubic.pyx":421
  *         # Values of f(x,y,z) at the corners of the voxel
  *         psi[0]  = data[x,y,z]
  *         psi[1]  = data[xp1,y,z]             # <<<<<<<<<<<<<<
@@ -4763,7 +4575,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_7 = __pyx_v_z;
   (__pyx_v_psi[1]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_5 * __pyx_v_data.strides[0]) ) + __pyx_t_6 * __pyx_v_data.strides[1]) )) + __pyx_t_7)) )));
 
-  /* "cytricubic.pyx":367
+  /* "cytricubic.pyx":422
  *         psi[0]  = data[x,y,z]
  *         psi[1]  = data[xp1,y,z]
  *         psi[2]  = data[x,yp1,z]             # <<<<<<<<<<<<<<
@@ -4775,7 +4587,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_10 = __pyx_v_z;
   (__pyx_v_psi[2]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_8 * __pyx_v_data.strides[0]) ) + __pyx_t_9 * __pyx_v_data.strides[1]) )) + __pyx_t_10)) )));
 
-  /* "cytricubic.pyx":368
+  /* "cytricubic.pyx":423
  *         psi[1]  = data[xp1,y,z]
  *         psi[2]  = data[x,yp1,z]
  *         psi[3]  = data[xp1,yp1,z]             # <<<<<<<<<<<<<<
@@ -4787,7 +4599,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_13 = __pyx_v_z;
   (__pyx_v_psi[3]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_11 * __pyx_v_data.strides[0]) ) + __pyx_t_12 * __pyx_v_data.strides[1]) )) + __pyx_t_13)) )));
 
-  /* "cytricubic.pyx":369
+  /* "cytricubic.pyx":424
  *         psi[2]  = data[x,yp1,z]
  *         psi[3]  = data[xp1,yp1,z]
  *         psi[4]  = data[x,y,zp1]             # <<<<<<<<<<<<<<
@@ -4799,7 +4611,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_16 = __pyx_v_zp1;
   (__pyx_v_psi[4]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_14 * __pyx_v_data.strides[0]) ) + __pyx_t_15 * __pyx_v_data.strides[1]) )) + __pyx_t_16)) )));
 
-  /* "cytricubic.pyx":370
+  /* "cytricubic.pyx":425
  *         psi[3]  = data[xp1,yp1,z]
  *         psi[4]  = data[x,y,zp1]
  *         psi[5]  = data[xp1,y,zp1]             # <<<<<<<<<<<<<<
@@ -4811,7 +4623,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_19 = __pyx_v_zp1;
   (__pyx_v_psi[5]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_17 * __pyx_v_data.strides[0]) ) + __pyx_t_18 * __pyx_v_data.strides[1]) )) + __pyx_t_19)) )));
 
-  /* "cytricubic.pyx":371
+  /* "cytricubic.pyx":426
  *         psi[4]  = data[x,y,zp1]
  *         psi[5]  = data[xp1,y,zp1]
  *         psi[6]  = data[x,yp1,zp1]             # <<<<<<<<<<<<<<
@@ -4823,7 +4635,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_22 = __pyx_v_zp1;
   (__pyx_v_psi[6]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_20 * __pyx_v_data.strides[0]) ) + __pyx_t_21 * __pyx_v_data.strides[1]) )) + __pyx_t_22)) )));
 
-  /* "cytricubic.pyx":372
+  /* "cytricubic.pyx":427
  *         psi[5]  = data[xp1,y,zp1]
  *         psi[6]  = data[x,yp1,zp1]
  *         psi[7]  = data[xp1,yp1,zp1]             # <<<<<<<<<<<<<<
@@ -4835,7 +4647,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   __pyx_t_25 = __pyx_v_zp1;
   (__pyx_v_psi[7]) = (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_23 * __pyx_v_data.strides[0]) ) + __pyx_t_24 * __pyx_v_data.strides[1]) )) + __pyx_t_25)) )));
 
-  /* "cytricubic.pyx":360
+  /* "cytricubic.pyx":415
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_values_(self, int x, int xp1, int y, int yp1, int z, int zp1):             # <<<<<<<<<<<<<<
@@ -4851,7 +4663,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_values_(struct
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":377
+/* "cytricubic.pyx":432
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_first_derivatives_(self, int x, int xm1, int xp1, int xp2,             # <<<<<<<<<<<<<<
@@ -5011,7 +4823,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   Py_ssize_t __pyx_t_145;
   __Pyx_RefNannySetupContext("_set_first_derivatives_", 0);
 
-  /* "cytricubic.pyx":381
+  /* "cytricubic.pyx":436
  *                                        int z, int zm1, int zp1, int zp2):
  *         cdef:
  *             double *psi = &self.psi[0]             # <<<<<<<<<<<<<<
@@ -5020,7 +4832,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
  */
   __pyx_v_psi = (&(__pyx_v_self->psi[0]));
 
-  /* "cytricubic.pyx":382
+  /* "cytricubic.pyx":437
  *         cdef:
  *             double *psi = &self.psi[0]
  *             double[:,:,::1] data = self.data             # <<<<<<<<<<<<<<
@@ -5033,7 +4845,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
 
-  /* "cytricubic.pyx":384
+  /* "cytricubic.pyx":439
  *             double[:,:,::1] data = self.data
  *         # Values of df/dx at the corners of the voxel
  *         psi[8]  = 0.5*(data[xp1,y,z]-data[xm1,y,z])             # <<<<<<<<<<<<<<
@@ -5048,7 +4860,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_7 = __pyx_v_z;
   (__pyx_v_psi[8]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_2 * __pyx_v_data.strides[0]) ) + __pyx_t_3 * __pyx_v_data.strides[1]) )) + __pyx_t_4)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_5 * __pyx_v_data.strides[0]) ) + __pyx_t_6 * __pyx_v_data.strides[1]) )) + __pyx_t_7)) )))));
 
-  /* "cytricubic.pyx":385
+  /* "cytricubic.pyx":440
  *         # Values of df/dx at the corners of the voxel
  *         psi[8]  = 0.5*(data[xp1,y,z]-data[xm1,y,z])
  *         psi[9]  = 0.5*(data[xp2,y,z]-data[x,y,z])             # <<<<<<<<<<<<<<
@@ -5063,7 +4875,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_13 = __pyx_v_z;
   (__pyx_v_psi[9]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_8 * __pyx_v_data.strides[0]) ) + __pyx_t_9 * __pyx_v_data.strides[1]) )) + __pyx_t_10)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_11 * __pyx_v_data.strides[0]) ) + __pyx_t_12 * __pyx_v_data.strides[1]) )) + __pyx_t_13)) )))));
 
-  /* "cytricubic.pyx":386
+  /* "cytricubic.pyx":441
  *         psi[8]  = 0.5*(data[xp1,y,z]-data[xm1,y,z])
  *         psi[9]  = 0.5*(data[xp2,y,z]-data[x,y,z])
  *         psi[10] = 0.5*(data[xp1,yp1,z]-data[xm1,yp1,z])             # <<<<<<<<<<<<<<
@@ -5078,7 +4890,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_19 = __pyx_v_z;
   (__pyx_v_psi[10]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_14 * __pyx_v_data.strides[0]) ) + __pyx_t_15 * __pyx_v_data.strides[1]) )) + __pyx_t_16)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_17 * __pyx_v_data.strides[0]) ) + __pyx_t_18 * __pyx_v_data.strides[1]) )) + __pyx_t_19)) )))));
 
-  /* "cytricubic.pyx":387
+  /* "cytricubic.pyx":442
  *         psi[9]  = 0.5*(data[xp2,y,z]-data[x,y,z])
  *         psi[10] = 0.5*(data[xp1,yp1,z]-data[xm1,yp1,z])
  *         psi[11] = 0.5*(data[xp2,yp1,z]-data[x,yp1,z])             # <<<<<<<<<<<<<<
@@ -5093,7 +4905,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_25 = __pyx_v_z;
   (__pyx_v_psi[11]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_20 * __pyx_v_data.strides[0]) ) + __pyx_t_21 * __pyx_v_data.strides[1]) )) + __pyx_t_22)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_23 * __pyx_v_data.strides[0]) ) + __pyx_t_24 * __pyx_v_data.strides[1]) )) + __pyx_t_25)) )))));
 
-  /* "cytricubic.pyx":388
+  /* "cytricubic.pyx":443
  *         psi[10] = 0.5*(data[xp1,yp1,z]-data[xm1,yp1,z])
  *         psi[11] = 0.5*(data[xp2,yp1,z]-data[x,yp1,z])
  *         psi[12] = 0.5*(data[xp1,y,zp1]-data[xm1,y,zp1])             # <<<<<<<<<<<<<<
@@ -5108,7 +4920,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_31 = __pyx_v_zp1;
   (__pyx_v_psi[12]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_26 * __pyx_v_data.strides[0]) ) + __pyx_t_27 * __pyx_v_data.strides[1]) )) + __pyx_t_28)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_29 * __pyx_v_data.strides[0]) ) + __pyx_t_30 * __pyx_v_data.strides[1]) )) + __pyx_t_31)) )))));
 
-  /* "cytricubic.pyx":389
+  /* "cytricubic.pyx":444
  *         psi[11] = 0.5*(data[xp2,yp1,z]-data[x,yp1,z])
  *         psi[12] = 0.5*(data[xp1,y,zp1]-data[xm1,y,zp1])
  *         psi[13] = 0.5*(data[xp2,y,zp1]-data[x,y,zp1])             # <<<<<<<<<<<<<<
@@ -5123,7 +4935,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_37 = __pyx_v_zp1;
   (__pyx_v_psi[13]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_32 * __pyx_v_data.strides[0]) ) + __pyx_t_33 * __pyx_v_data.strides[1]) )) + __pyx_t_34)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_35 * __pyx_v_data.strides[0]) ) + __pyx_t_36 * __pyx_v_data.strides[1]) )) + __pyx_t_37)) )))));
 
-  /* "cytricubic.pyx":390
+  /* "cytricubic.pyx":445
  *         psi[12] = 0.5*(data[xp1,y,zp1]-data[xm1,y,zp1])
  *         psi[13] = 0.5*(data[xp2,y,zp1]-data[x,y,zp1])
  *         psi[14] = 0.5*(data[xp1,yp1,zp1]-data[xm1,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -5138,7 +4950,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_43 = __pyx_v_zp1;
   (__pyx_v_psi[14]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_38 * __pyx_v_data.strides[0]) ) + __pyx_t_39 * __pyx_v_data.strides[1]) )) + __pyx_t_40)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_41 * __pyx_v_data.strides[0]) ) + __pyx_t_42 * __pyx_v_data.strides[1]) )) + __pyx_t_43)) )))));
 
-  /* "cytricubic.pyx":391
+  /* "cytricubic.pyx":446
  *         psi[13] = 0.5*(data[xp2,y,zp1]-data[x,y,zp1])
  *         psi[14] = 0.5*(data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *         psi[15] = 0.5*(data[xp2,yp1,zp1]-data[x,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -5153,7 +4965,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_49 = __pyx_v_zp1;
   (__pyx_v_psi[15]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_44 * __pyx_v_data.strides[0]) ) + __pyx_t_45 * __pyx_v_data.strides[1]) )) + __pyx_t_46)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_47 * __pyx_v_data.strides[0]) ) + __pyx_t_48 * __pyx_v_data.strides[1]) )) + __pyx_t_49)) )))));
 
-  /* "cytricubic.pyx":393
+  /* "cytricubic.pyx":448
  *         psi[15] = 0.5*(data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *         # Values of df/dy at the corners of the voxel
  *         psi[16] = 0.5*(data[x,yp1,z]-data[x,ym1,z])             # <<<<<<<<<<<<<<
@@ -5168,7 +4980,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_55 = __pyx_v_z;
   (__pyx_v_psi[16]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_50 * __pyx_v_data.strides[0]) ) + __pyx_t_51 * __pyx_v_data.strides[1]) )) + __pyx_t_52)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_53 * __pyx_v_data.strides[0]) ) + __pyx_t_54 * __pyx_v_data.strides[1]) )) + __pyx_t_55)) )))));
 
-  /* "cytricubic.pyx":394
+  /* "cytricubic.pyx":449
  *         # Values of df/dy at the corners of the voxel
  *         psi[16] = 0.5*(data[x,yp1,z]-data[x,ym1,z])
  *         psi[17] = 0.5*(data[xp1,yp1,z]-data[xp1,ym1,z])             # <<<<<<<<<<<<<<
@@ -5183,7 +4995,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_61 = __pyx_v_z;
   (__pyx_v_psi[17]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_56 * __pyx_v_data.strides[0]) ) + __pyx_t_57 * __pyx_v_data.strides[1]) )) + __pyx_t_58)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_59 * __pyx_v_data.strides[0]) ) + __pyx_t_60 * __pyx_v_data.strides[1]) )) + __pyx_t_61)) )))));
 
-  /* "cytricubic.pyx":395
+  /* "cytricubic.pyx":450
  *         psi[16] = 0.5*(data[x,yp1,z]-data[x,ym1,z])
  *         psi[17] = 0.5*(data[xp1,yp1,z]-data[xp1,ym1,z])
  *         psi[18] = 0.5*(data[x,yp2,z]-data[x,y,z])             # <<<<<<<<<<<<<<
@@ -5198,7 +5010,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_67 = __pyx_v_z;
   (__pyx_v_psi[18]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_62 * __pyx_v_data.strides[0]) ) + __pyx_t_63 * __pyx_v_data.strides[1]) )) + __pyx_t_64)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_65 * __pyx_v_data.strides[0]) ) + __pyx_t_66 * __pyx_v_data.strides[1]) )) + __pyx_t_67)) )))));
 
-  /* "cytricubic.pyx":396
+  /* "cytricubic.pyx":451
  *         psi[17] = 0.5*(data[xp1,yp1,z]-data[xp1,ym1,z])
  *         psi[18] = 0.5*(data[x,yp2,z]-data[x,y,z])
  *         psi[19] = 0.5*(data[xp1,yp2,z]-data[xp1,y,z])             # <<<<<<<<<<<<<<
@@ -5213,7 +5025,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_73 = __pyx_v_z;
   (__pyx_v_psi[19]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_68 * __pyx_v_data.strides[0]) ) + __pyx_t_69 * __pyx_v_data.strides[1]) )) + __pyx_t_70)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_71 * __pyx_v_data.strides[0]) ) + __pyx_t_72 * __pyx_v_data.strides[1]) )) + __pyx_t_73)) )))));
 
-  /* "cytricubic.pyx":397
+  /* "cytricubic.pyx":452
  *         psi[18] = 0.5*(data[x,yp2,z]-data[x,y,z])
  *         psi[19] = 0.5*(data[xp1,yp2,z]-data[xp1,y,z])
  *         psi[20] = 0.5*(data[x,yp1,zp1]-data[x,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -5228,7 +5040,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_79 = __pyx_v_zp1;
   (__pyx_v_psi[20]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_74 * __pyx_v_data.strides[0]) ) + __pyx_t_75 * __pyx_v_data.strides[1]) )) + __pyx_t_76)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_77 * __pyx_v_data.strides[0]) ) + __pyx_t_78 * __pyx_v_data.strides[1]) )) + __pyx_t_79)) )))));
 
-  /* "cytricubic.pyx":398
+  /* "cytricubic.pyx":453
  *         psi[19] = 0.5*(data[xp1,yp2,z]-data[xp1,y,z])
  *         psi[20] = 0.5*(data[x,yp1,zp1]-data[x,ym1,zp1])
  *         psi[21] = 0.5*(data[xp1,yp1,zp1]-data[xp1,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -5243,7 +5055,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_85 = __pyx_v_zp1;
   (__pyx_v_psi[21]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_80 * __pyx_v_data.strides[0]) ) + __pyx_t_81 * __pyx_v_data.strides[1]) )) + __pyx_t_82)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_83 * __pyx_v_data.strides[0]) ) + __pyx_t_84 * __pyx_v_data.strides[1]) )) + __pyx_t_85)) )))));
 
-  /* "cytricubic.pyx":399
+  /* "cytricubic.pyx":454
  *         psi[20] = 0.5*(data[x,yp1,zp1]-data[x,ym1,zp1])
  *         psi[21] = 0.5*(data[xp1,yp1,zp1]-data[xp1,ym1,zp1])
  *         psi[22] = 0.5*(data[x,yp2,zp1]-data[x,y,zp1])             # <<<<<<<<<<<<<<
@@ -5258,7 +5070,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_91 = __pyx_v_zp1;
   (__pyx_v_psi[22]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_86 * __pyx_v_data.strides[0]) ) + __pyx_t_87 * __pyx_v_data.strides[1]) )) + __pyx_t_88)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_89 * __pyx_v_data.strides[0]) ) + __pyx_t_90 * __pyx_v_data.strides[1]) )) + __pyx_t_91)) )))));
 
-  /* "cytricubic.pyx":400
+  /* "cytricubic.pyx":455
  *         psi[21] = 0.5*(data[xp1,yp1,zp1]-data[xp1,ym1,zp1])
  *         psi[22] = 0.5*(data[x,yp2,zp1]-data[x,y,zp1])
  *         psi[23] = 0.5*(data[xp1,yp2,zp1]-data[xp1,y,zp1])             # <<<<<<<<<<<<<<
@@ -5273,7 +5085,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_97 = __pyx_v_zp1;
   (__pyx_v_psi[23]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_92 * __pyx_v_data.strides[0]) ) + __pyx_t_93 * __pyx_v_data.strides[1]) )) + __pyx_t_94)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_95 * __pyx_v_data.strides[0]) ) + __pyx_t_96 * __pyx_v_data.strides[1]) )) + __pyx_t_97)) )))));
 
-  /* "cytricubic.pyx":402
+  /* "cytricubic.pyx":457
  *         psi[23] = 0.5*(data[xp1,yp2,zp1]-data[xp1,y,zp1])
  *         # Values of df/dz at the corners of the voxel
  *         psi[24] = 0.5*(data[x,y,zp1]-data[x,y,zm1])             # <<<<<<<<<<<<<<
@@ -5288,7 +5100,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_103 = __pyx_v_zm1;
   (__pyx_v_psi[24]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_98 * __pyx_v_data.strides[0]) ) + __pyx_t_99 * __pyx_v_data.strides[1]) )) + __pyx_t_100)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_101 * __pyx_v_data.strides[0]) ) + __pyx_t_102 * __pyx_v_data.strides[1]) )) + __pyx_t_103)) )))));
 
-  /* "cytricubic.pyx":403
+  /* "cytricubic.pyx":458
  *         # Values of df/dz at the corners of the voxel
  *         psi[24] = 0.5*(data[x,y,zp1]-data[x,y,zm1])
  *         psi[25] = 0.5*(data[xp1,y,zp1]-data[xp1,y,zm1])             # <<<<<<<<<<<<<<
@@ -5303,7 +5115,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_109 = __pyx_v_zm1;
   (__pyx_v_psi[25]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_104 * __pyx_v_data.strides[0]) ) + __pyx_t_105 * __pyx_v_data.strides[1]) )) + __pyx_t_106)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_107 * __pyx_v_data.strides[0]) ) + __pyx_t_108 * __pyx_v_data.strides[1]) )) + __pyx_t_109)) )))));
 
-  /* "cytricubic.pyx":404
+  /* "cytricubic.pyx":459
  *         psi[24] = 0.5*(data[x,y,zp1]-data[x,y,zm1])
  *         psi[25] = 0.5*(data[xp1,y,zp1]-data[xp1,y,zm1])
  *         psi[26] = 0.5*(data[x,yp1,zp1]-data[x,yp1,zm1])             # <<<<<<<<<<<<<<
@@ -5318,7 +5130,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_115 = __pyx_v_zm1;
   (__pyx_v_psi[26]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_110 * __pyx_v_data.strides[0]) ) + __pyx_t_111 * __pyx_v_data.strides[1]) )) + __pyx_t_112)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_113 * __pyx_v_data.strides[0]) ) + __pyx_t_114 * __pyx_v_data.strides[1]) )) + __pyx_t_115)) )))));
 
-  /* "cytricubic.pyx":405
+  /* "cytricubic.pyx":460
  *         psi[25] = 0.5*(data[xp1,y,zp1]-data[xp1,y,zm1])
  *         psi[26] = 0.5*(data[x,yp1,zp1]-data[x,yp1,zm1])
  *         psi[27] = 0.5*(data[xp1,yp1,zp1]-data[xp1,yp1,zm1])             # <<<<<<<<<<<<<<
@@ -5333,7 +5145,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_121 = __pyx_v_zm1;
   (__pyx_v_psi[27]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_116 * __pyx_v_data.strides[0]) ) + __pyx_t_117 * __pyx_v_data.strides[1]) )) + __pyx_t_118)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_119 * __pyx_v_data.strides[0]) ) + __pyx_t_120 * __pyx_v_data.strides[1]) )) + __pyx_t_121)) )))));
 
-  /* "cytricubic.pyx":406
+  /* "cytricubic.pyx":461
  *         psi[26] = 0.5*(data[x,yp1,zp1]-data[x,yp1,zm1])
  *         psi[27] = 0.5*(data[xp1,yp1,zp1]-data[xp1,yp1,zm1])
  *         psi[28] = 0.5*(data[x,y,zp2]-data[x,y,z])             # <<<<<<<<<<<<<<
@@ -5348,7 +5160,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_127 = __pyx_v_z;
   (__pyx_v_psi[28]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_122 * __pyx_v_data.strides[0]) ) + __pyx_t_123 * __pyx_v_data.strides[1]) )) + __pyx_t_124)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_125 * __pyx_v_data.strides[0]) ) + __pyx_t_126 * __pyx_v_data.strides[1]) )) + __pyx_t_127)) )))));
 
-  /* "cytricubic.pyx":407
+  /* "cytricubic.pyx":462
  *         psi[27] = 0.5*(data[xp1,yp1,zp1]-data[xp1,yp1,zm1])
  *         psi[28] = 0.5*(data[x,y,zp2]-data[x,y,z])
  *         psi[29] = 0.5*(data[xp1,y,zp2]-data[xp1,y,z])             # <<<<<<<<<<<<<<
@@ -5363,7 +5175,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_133 = __pyx_v_z;
   (__pyx_v_psi[29]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_128 * __pyx_v_data.strides[0]) ) + __pyx_t_129 * __pyx_v_data.strides[1]) )) + __pyx_t_130)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_131 * __pyx_v_data.strides[0]) ) + __pyx_t_132 * __pyx_v_data.strides[1]) )) + __pyx_t_133)) )))));
 
-  /* "cytricubic.pyx":408
+  /* "cytricubic.pyx":463
  *         psi[28] = 0.5*(data[x,y,zp2]-data[x,y,z])
  *         psi[29] = 0.5*(data[xp1,y,zp2]-data[xp1,y,z])
  *         psi[30] = 0.5*(data[x,yp1,zp2]-data[x,yp1,z])             # <<<<<<<<<<<<<<
@@ -5378,7 +5190,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_139 = __pyx_v_z;
   (__pyx_v_psi[30]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_134 * __pyx_v_data.strides[0]) ) + __pyx_t_135 * __pyx_v_data.strides[1]) )) + __pyx_t_136)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_137 * __pyx_v_data.strides[0]) ) + __pyx_t_138 * __pyx_v_data.strides[1]) )) + __pyx_t_139)) )))));
 
-  /* "cytricubic.pyx":409
+  /* "cytricubic.pyx":464
  *         psi[29] = 0.5*(data[xp1,y,zp2]-data[xp1,y,z])
  *         psi[30] = 0.5*(data[x,yp1,zp2]-data[x,yp1,z])
  *         psi[31] = 0.5*(data[xp1,yp1,zp2]-data[xp1,yp1,z])             # <<<<<<<<<<<<<<
@@ -5393,7 +5205,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   __pyx_t_145 = __pyx_v_z;
   (__pyx_v_psi[31]) = (0.5 * ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_140 * __pyx_v_data.strides[0]) ) + __pyx_t_141 * __pyx_v_data.strides[1]) )) + __pyx_t_142)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_143 * __pyx_v_data.strides[0]) ) + __pyx_t_144 * __pyx_v_data.strides[1]) )) + __pyx_t_145)) )))));
 
-  /* "cytricubic.pyx":377
+  /* "cytricubic.pyx":432
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_first_derivatives_(self, int x, int xm1, int xp1, int xp2,             # <<<<<<<<<<<<<<
@@ -5409,7 +5221,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_first_derivati
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":414
+/* "cytricubic.pyx":469
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_second_drvtvs_(self, int x, int xm1, int xp1, int xp2,             # <<<<<<<<<<<<<<
@@ -5713,7 +5525,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   Py_ssize_t __pyx_t_289;
   __Pyx_RefNannySetupContext("_set_second_drvtvs_", 0);
 
-  /* "cytricubic.pyx":418
+  /* "cytricubic.pyx":473
  *                                    int z, int zm1, int zp1, int zp2):
  *         cdef:
  *             double *psi = &self.psi[0]             # <<<<<<<<<<<<<<
@@ -5722,7 +5534,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   __pyx_v_psi = (&(__pyx_v_self->psi[0]));
 
-  /* "cytricubic.pyx":419
+  /* "cytricubic.pyx":474
  *         cdef:
  *             double *psi = &self.psi[0]
  *             double[:,:,::1] data = self.data             # <<<<<<<<<<<<<<
@@ -5735,7 +5547,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
 
-  /* "cytricubic.pyx":421
+  /* "cytricubic.pyx":476
  *             double[:,:,::1] data = self.data
  *         # Values of d2f/dxdy at the corners of the voxel
  *         psi[32] = 0.25*((data[xp1,yp1,z]-data[xm1,yp1,z])             # <<<<<<<<<<<<<<
@@ -5749,7 +5561,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_6 = __pyx_v_yp1;
   __pyx_t_7 = __pyx_v_z;
 
-  /* "cytricubic.pyx":422
+  /* "cytricubic.pyx":477
  *         # Values of d2f/dxdy at the corners of the voxel
  *         psi[32] = 0.25*((data[xp1,yp1,z]-data[xm1,yp1,z])
  *                             - (data[xp1,ym1,z]-data[xm1,ym1,z]))             # <<<<<<<<<<<<<<
@@ -5763,7 +5575,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_12 = __pyx_v_ym1;
   __pyx_t_13 = __pyx_v_z;
 
-  /* "cytricubic.pyx":421
+  /* "cytricubic.pyx":476
  *             double[:,:,::1] data = self.data
  *         # Values of d2f/dxdy at the corners of the voxel
  *         psi[32] = 0.25*((data[xp1,yp1,z]-data[xm1,yp1,z])             # <<<<<<<<<<<<<<
@@ -5772,7 +5584,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[32]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_2 * __pyx_v_data.strides[0]) ) + __pyx_t_3 * __pyx_v_data.strides[1]) )) + __pyx_t_4)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_5 * __pyx_v_data.strides[0]) ) + __pyx_t_6 * __pyx_v_data.strides[1]) )) + __pyx_t_7)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_8 * __pyx_v_data.strides[0]) ) + __pyx_t_9 * __pyx_v_data.strides[1]) )) + __pyx_t_10)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_11 * __pyx_v_data.strides[0]) ) + __pyx_t_12 * __pyx_v_data.strides[1]) )) + __pyx_t_13)) ))))));
 
-  /* "cytricubic.pyx":423
+  /* "cytricubic.pyx":478
  *         psi[32] = 0.25*((data[xp1,yp1,z]-data[xm1,yp1,z])
  *                             - (data[xp1,ym1,z]-data[xm1,ym1,z]))
  *         psi[33] = 0.25*((data[xp2,yp1,z]-data[x,yp1,z])             # <<<<<<<<<<<<<<
@@ -5786,7 +5598,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_18 = __pyx_v_yp1;
   __pyx_t_19 = __pyx_v_z;
 
-  /* "cytricubic.pyx":424
+  /* "cytricubic.pyx":479
  *                             - (data[xp1,ym1,z]-data[xm1,ym1,z]))
  *         psi[33] = 0.25*((data[xp2,yp1,z]-data[x,yp1,z])
  *                             -(data[xp2,ym1,z]-data[x,ym1,z]))             # <<<<<<<<<<<<<<
@@ -5800,7 +5612,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_24 = __pyx_v_ym1;
   __pyx_t_25 = __pyx_v_z;
 
-  /* "cytricubic.pyx":423
+  /* "cytricubic.pyx":478
  *         psi[32] = 0.25*((data[xp1,yp1,z]-data[xm1,yp1,z])
  *                             - (data[xp1,ym1,z]-data[xm1,ym1,z]))
  *         psi[33] = 0.25*((data[xp2,yp1,z]-data[x,yp1,z])             # <<<<<<<<<<<<<<
@@ -5809,7 +5621,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[33]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_14 * __pyx_v_data.strides[0]) ) + __pyx_t_15 * __pyx_v_data.strides[1]) )) + __pyx_t_16)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_17 * __pyx_v_data.strides[0]) ) + __pyx_t_18 * __pyx_v_data.strides[1]) )) + __pyx_t_19)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_20 * __pyx_v_data.strides[0]) ) + __pyx_t_21 * __pyx_v_data.strides[1]) )) + __pyx_t_22)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_23 * __pyx_v_data.strides[0]) ) + __pyx_t_24 * __pyx_v_data.strides[1]) )) + __pyx_t_25)) ))))));
 
-  /* "cytricubic.pyx":425
+  /* "cytricubic.pyx":480
  *         psi[33] = 0.25*((data[xp2,yp1,z]-data[x,yp1,z])
  *                             -(data[xp2,ym1,z]-data[x,ym1,z]))
  *         psi[34] = 0.25*((data[xp1,yp2,z]-data[xm1,y,z])             # <<<<<<<<<<<<<<
@@ -5823,7 +5635,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_30 = __pyx_v_y;
   __pyx_t_31 = __pyx_v_z;
 
-  /* "cytricubic.pyx":426
+  /* "cytricubic.pyx":481
  *                             -(data[xp2,ym1,z]-data[x,ym1,z]))
  *         psi[34] = 0.25*((data[xp1,yp2,z]-data[xm1,y,z])
  *                             -(data[xp1,y,z]-data[xm1,y,z]))             # <<<<<<<<<<<<<<
@@ -5837,7 +5649,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_36 = __pyx_v_y;
   __pyx_t_37 = __pyx_v_z;
 
-  /* "cytricubic.pyx":425
+  /* "cytricubic.pyx":480
  *         psi[33] = 0.25*((data[xp2,yp1,z]-data[x,yp1,z])
  *                             -(data[xp2,ym1,z]-data[x,ym1,z]))
  *         psi[34] = 0.25*((data[xp1,yp2,z]-data[xm1,y,z])             # <<<<<<<<<<<<<<
@@ -5846,7 +5658,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[34]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_26 * __pyx_v_data.strides[0]) ) + __pyx_t_27 * __pyx_v_data.strides[1]) )) + __pyx_t_28)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_29 * __pyx_v_data.strides[0]) ) + __pyx_t_30 * __pyx_v_data.strides[1]) )) + __pyx_t_31)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_32 * __pyx_v_data.strides[0]) ) + __pyx_t_33 * __pyx_v_data.strides[1]) )) + __pyx_t_34)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_35 * __pyx_v_data.strides[0]) ) + __pyx_t_36 * __pyx_v_data.strides[1]) )) + __pyx_t_37)) ))))));
 
-  /* "cytricubic.pyx":427
+  /* "cytricubic.pyx":482
  *         psi[34] = 0.25*((data[xp1,yp2,z]-data[xm1,y,z])
  *                             -(data[xp1,y,z]-data[xm1,y,z]))
  *         psi[35] = 0.25*((data[xp2,yp2,z]-data[x,yp2,z])             # <<<<<<<<<<<<<<
@@ -5860,7 +5672,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_42 = __pyx_v_yp2;
   __pyx_t_43 = __pyx_v_z;
 
-  /* "cytricubic.pyx":428
+  /* "cytricubic.pyx":483
  *                             -(data[xp1,y,z]-data[xm1,y,z]))
  *         psi[35] = 0.25*((data[xp2,yp2,z]-data[x,yp2,z])
  *                             -(data[xp2,y,z]-data[x,y,z]))             # <<<<<<<<<<<<<<
@@ -5874,7 +5686,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_48 = __pyx_v_y;
   __pyx_t_49 = __pyx_v_z;
 
-  /* "cytricubic.pyx":427
+  /* "cytricubic.pyx":482
  *         psi[34] = 0.25*((data[xp1,yp2,z]-data[xm1,y,z])
  *                             -(data[xp1,y,z]-data[xm1,y,z]))
  *         psi[35] = 0.25*((data[xp2,yp2,z]-data[x,yp2,z])             # <<<<<<<<<<<<<<
@@ -5883,7 +5695,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[35]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_38 * __pyx_v_data.strides[0]) ) + __pyx_t_39 * __pyx_v_data.strides[1]) )) + __pyx_t_40)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_41 * __pyx_v_data.strides[0]) ) + __pyx_t_42 * __pyx_v_data.strides[1]) )) + __pyx_t_43)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_44 * __pyx_v_data.strides[0]) ) + __pyx_t_45 * __pyx_v_data.strides[1]) )) + __pyx_t_46)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_47 * __pyx_v_data.strides[0]) ) + __pyx_t_48 * __pyx_v_data.strides[1]) )) + __pyx_t_49)) ))))));
 
-  /* "cytricubic.pyx":429
+  /* "cytricubic.pyx":484
  *         psi[35] = 0.25*((data[xp2,yp2,z]-data[x,yp2,z])
  *                             -(data[xp2,y,z]-data[x,y,z]))
  *         psi[36] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -5897,7 +5709,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_54 = __pyx_v_yp1;
   __pyx_t_55 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":430
+  /* "cytricubic.pyx":485
  *                             -(data[xp2,y,z]-data[x,y,z]))
  *         psi[36] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                             -(data[xp1,ym1,zp1]-data[xm1,ym1,zp1]))             # <<<<<<<<<<<<<<
@@ -5911,7 +5723,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_60 = __pyx_v_ym1;
   __pyx_t_61 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":429
+  /* "cytricubic.pyx":484
  *         psi[35] = 0.25*((data[xp2,yp2,z]-data[x,yp2,z])
  *                             -(data[xp2,y,z]-data[x,y,z]))
  *         psi[36] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -5920,7 +5732,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[36]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_50 * __pyx_v_data.strides[0]) ) + __pyx_t_51 * __pyx_v_data.strides[1]) )) + __pyx_t_52)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_53 * __pyx_v_data.strides[0]) ) + __pyx_t_54 * __pyx_v_data.strides[1]) )) + __pyx_t_55)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_56 * __pyx_v_data.strides[0]) ) + __pyx_t_57 * __pyx_v_data.strides[1]) )) + __pyx_t_58)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_59 * __pyx_v_data.strides[0]) ) + __pyx_t_60 * __pyx_v_data.strides[1]) )) + __pyx_t_61)) ))))));
 
-  /* "cytricubic.pyx":431
+  /* "cytricubic.pyx":486
  *         psi[36] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                             -(data[xp1,ym1,zp1]-data[xm1,ym1,zp1]))
  *         psi[37] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -5934,7 +5746,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_66 = __pyx_v_yp1;
   __pyx_t_67 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":432
+  /* "cytricubic.pyx":487
  *                             -(data[xp1,ym1,zp1]-data[xm1,ym1,zp1]))
  *         psi[37] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                             -(data[xp2,ym1,zp1]-data[x,ym1,zp1]))             # <<<<<<<<<<<<<<
@@ -5948,7 +5760,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_72 = __pyx_v_ym1;
   __pyx_t_73 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":431
+  /* "cytricubic.pyx":486
  *         psi[36] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                             -(data[xp1,ym1,zp1]-data[xm1,ym1,zp1]))
  *         psi[37] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -5957,7 +5769,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[37]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_62 * __pyx_v_data.strides[0]) ) + __pyx_t_63 * __pyx_v_data.strides[1]) )) + __pyx_t_64)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_65 * __pyx_v_data.strides[0]) ) + __pyx_t_66 * __pyx_v_data.strides[1]) )) + __pyx_t_67)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_68 * __pyx_v_data.strides[0]) ) + __pyx_t_69 * __pyx_v_data.strides[1]) )) + __pyx_t_70)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_71 * __pyx_v_data.strides[0]) ) + __pyx_t_72 * __pyx_v_data.strides[1]) )) + __pyx_t_73)) ))))));
 
-  /* "cytricubic.pyx":433
+  /* "cytricubic.pyx":488
  *         psi[37] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                             -(data[xp2,ym1,zp1]-data[x,ym1,zp1]))
  *         psi[38] = 0.25*((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -5971,7 +5783,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_78 = __pyx_v_yp2;
   __pyx_t_79 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":434
+  /* "cytricubic.pyx":489
  *                             -(data[xp2,ym1,zp1]-data[x,ym1,zp1]))
  *         psi[38] = 0.25*((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])
  *                             -(data[xp1,y,zp1]-data[xm1,y,zp1]))             # <<<<<<<<<<<<<<
@@ -5985,7 +5797,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_84 = __pyx_v_y;
   __pyx_t_85 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":433
+  /* "cytricubic.pyx":488
  *         psi[37] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                             -(data[xp2,ym1,zp1]-data[x,ym1,zp1]))
  *         psi[38] = 0.25*((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -5994,7 +5806,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[38]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_74 * __pyx_v_data.strides[0]) ) + __pyx_t_75 * __pyx_v_data.strides[1]) )) + __pyx_t_76)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_77 * __pyx_v_data.strides[0]) ) + __pyx_t_78 * __pyx_v_data.strides[1]) )) + __pyx_t_79)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_80 * __pyx_v_data.strides[0]) ) + __pyx_t_81 * __pyx_v_data.strides[1]) )) + __pyx_t_82)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_83 * __pyx_v_data.strides[0]) ) + __pyx_t_84 * __pyx_v_data.strides[1]) )) + __pyx_t_85)) ))))));
 
-  /* "cytricubic.pyx":435
+  /* "cytricubic.pyx":490
  *         psi[38] = 0.25*((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])
  *                             -(data[xp1,y,zp1]-data[xm1,y,zp1]))
  *         psi[39] = 0.25*((data[xp2,yp2,zp1]-data[x,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -6008,7 +5820,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_90 = __pyx_v_yp2;
   __pyx_t_91 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":436
+  /* "cytricubic.pyx":491
  *                             -(data[xp1,y,zp1]-data[xm1,y,zp1]))
  *         psi[39] = 0.25*((data[xp2,yp2,zp1]-data[x,yp2,zp1])
  *                             -(data[xp2,y,zp1]-data[x,y,zp1]))             # <<<<<<<<<<<<<<
@@ -6022,7 +5834,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_96 = __pyx_v_y;
   __pyx_t_97 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":435
+  /* "cytricubic.pyx":490
  *         psi[38] = 0.25*((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])
  *                             -(data[xp1,y,zp1]-data[xm1,y,zp1]))
  *         psi[39] = 0.25*((data[xp2,yp2,zp1]-data[x,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -6031,7 +5843,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[39]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_86 * __pyx_v_data.strides[0]) ) + __pyx_t_87 * __pyx_v_data.strides[1]) )) + __pyx_t_88)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_89 * __pyx_v_data.strides[0]) ) + __pyx_t_90 * __pyx_v_data.strides[1]) )) + __pyx_t_91)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_92 * __pyx_v_data.strides[0]) ) + __pyx_t_93 * __pyx_v_data.strides[1]) )) + __pyx_t_94)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_95 * __pyx_v_data.strides[0]) ) + __pyx_t_96 * __pyx_v_data.strides[1]) )) + __pyx_t_97)) ))))));
 
-  /* "cytricubic.pyx":438
+  /* "cytricubic.pyx":493
  *                             -(data[xp2,y,zp1]-data[x,y,zp1]))
  *         # Values of d2f/dxdz at the corners of the voxel
  *         psi[40] = 0.25*((data[xp1,y,zp1]-data[xm1,y,zp1])             # <<<<<<<<<<<<<<
@@ -6045,7 +5857,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_102 = __pyx_v_y;
   __pyx_t_103 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":439
+  /* "cytricubic.pyx":494
  *         # Values of d2f/dxdz at the corners of the voxel
  *         psi[40] = 0.25*((data[xp1,y,zp1]-data[xm1,y,zp1])
  *                             -(data[xp1,y,zm1]-data[xm1,y,zm1]))             # <<<<<<<<<<<<<<
@@ -6059,7 +5871,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_108 = __pyx_v_y;
   __pyx_t_109 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":438
+  /* "cytricubic.pyx":493
  *                             -(data[xp2,y,zp1]-data[x,y,zp1]))
  *         # Values of d2f/dxdz at the corners of the voxel
  *         psi[40] = 0.25*((data[xp1,y,zp1]-data[xm1,y,zp1])             # <<<<<<<<<<<<<<
@@ -6068,7 +5880,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[40]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_98 * __pyx_v_data.strides[0]) ) + __pyx_t_99 * __pyx_v_data.strides[1]) )) + __pyx_t_100)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_101 * __pyx_v_data.strides[0]) ) + __pyx_t_102 * __pyx_v_data.strides[1]) )) + __pyx_t_103)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_104 * __pyx_v_data.strides[0]) ) + __pyx_t_105 * __pyx_v_data.strides[1]) )) + __pyx_t_106)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_107 * __pyx_v_data.strides[0]) ) + __pyx_t_108 * __pyx_v_data.strides[1]) )) + __pyx_t_109)) ))))));
 
-  /* "cytricubic.pyx":440
+  /* "cytricubic.pyx":495
  *         psi[40] = 0.25*((data[xp1,y,zp1]-data[xm1,y,zp1])
  *                             -(data[xp1,y,zm1]-data[xm1,y,zm1]))
  *         psi[41] = 0.25*((data[xp2,y,zp1]-data[x,y,zp1])             # <<<<<<<<<<<<<<
@@ -6082,7 +5894,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_114 = __pyx_v_y;
   __pyx_t_115 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":441
+  /* "cytricubic.pyx":496
  *                             -(data[xp1,y,zm1]-data[xm1,y,zm1]))
  *         psi[41] = 0.25*((data[xp2,y,zp1]-data[x,y,zp1])
  *                             -(data[xp2,y,zm1]-data[x,y,zm1]))             # <<<<<<<<<<<<<<
@@ -6096,7 +5908,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_120 = __pyx_v_y;
   __pyx_t_121 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":440
+  /* "cytricubic.pyx":495
  *         psi[40] = 0.25*((data[xp1,y,zp1]-data[xm1,y,zp1])
  *                             -(data[xp1,y,zm1]-data[xm1,y,zm1]))
  *         psi[41] = 0.25*((data[xp2,y,zp1]-data[x,y,zp1])             # <<<<<<<<<<<<<<
@@ -6105,7 +5917,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[41]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_110 * __pyx_v_data.strides[0]) ) + __pyx_t_111 * __pyx_v_data.strides[1]) )) + __pyx_t_112)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_113 * __pyx_v_data.strides[0]) ) + __pyx_t_114 * __pyx_v_data.strides[1]) )) + __pyx_t_115)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_116 * __pyx_v_data.strides[0]) ) + __pyx_t_117 * __pyx_v_data.strides[1]) )) + __pyx_t_118)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_119 * __pyx_v_data.strides[0]) ) + __pyx_t_120 * __pyx_v_data.strides[1]) )) + __pyx_t_121)) ))))));
 
-  /* "cytricubic.pyx":442
+  /* "cytricubic.pyx":497
  *         psi[41] = 0.25*((data[xp2,y,zp1]-data[x,y,zp1])
  *                             -(data[xp2,y,zm1]-data[x,y,zm1]))
  *         psi[42] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6119,7 +5931,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_126 = __pyx_v_yp1;
   __pyx_t_127 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":443
+  /* "cytricubic.pyx":498
  *                             -(data[xp2,y,zm1]-data[x,y,zm1]))
  *         psi[42] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                             -(data[xp1,yp1,zm1]-data[xm1,yp1,zm1]))             # <<<<<<<<<<<<<<
@@ -6133,7 +5945,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_132 = __pyx_v_yp1;
   __pyx_t_133 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":442
+  /* "cytricubic.pyx":497
  *         psi[41] = 0.25*((data[xp2,y,zp1]-data[x,y,zp1])
  *                             -(data[xp2,y,zm1]-data[x,y,zm1]))
  *         psi[42] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6142,7 +5954,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[42]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_122 * __pyx_v_data.strides[0]) ) + __pyx_t_123 * __pyx_v_data.strides[1]) )) + __pyx_t_124)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_125 * __pyx_v_data.strides[0]) ) + __pyx_t_126 * __pyx_v_data.strides[1]) )) + __pyx_t_127)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_128 * __pyx_v_data.strides[0]) ) + __pyx_t_129 * __pyx_v_data.strides[1]) )) + __pyx_t_130)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_131 * __pyx_v_data.strides[0]) ) + __pyx_t_132 * __pyx_v_data.strides[1]) )) + __pyx_t_133)) ))))));
 
-  /* "cytricubic.pyx":444
+  /* "cytricubic.pyx":499
  *         psi[42] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                             -(data[xp1,yp1,zm1]-data[xm1,yp1,zm1]))
  *         psi[43] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6156,7 +5968,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_138 = __pyx_v_yp1;
   __pyx_t_139 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":445
+  /* "cytricubic.pyx":500
  *                             -(data[xp1,yp1,zm1]-data[xm1,yp1,zm1]))
  *         psi[43] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                             -(data[xp2,yp1,zm1]-data[x,yp1,zm1]))             # <<<<<<<<<<<<<<
@@ -6170,7 +5982,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_144 = __pyx_v_yp1;
   __pyx_t_145 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":444
+  /* "cytricubic.pyx":499
  *         psi[42] = 0.25*((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                             -(data[xp1,yp1,zm1]-data[xm1,yp1,zm1]))
  *         psi[43] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6179,7 +5991,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[43]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_134 * __pyx_v_data.strides[0]) ) + __pyx_t_135 * __pyx_v_data.strides[1]) )) + __pyx_t_136)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_137 * __pyx_v_data.strides[0]) ) + __pyx_t_138 * __pyx_v_data.strides[1]) )) + __pyx_t_139)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_140 * __pyx_v_data.strides[0]) ) + __pyx_t_141 * __pyx_v_data.strides[1]) )) + __pyx_t_142)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_143 * __pyx_v_data.strides[0]) ) + __pyx_t_144 * __pyx_v_data.strides[1]) )) + __pyx_t_145)) ))))));
 
-  /* "cytricubic.pyx":446
+  /* "cytricubic.pyx":501
  *         psi[43] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                             -(data[xp2,yp1,zm1]-data[x,yp1,zm1]))
  *         psi[44] = 0.25*((data[xp1,y,zp2])-data[xm1,y,zp2]             # <<<<<<<<<<<<<<
@@ -6193,7 +6005,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_150 = __pyx_v_y;
   __pyx_t_151 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":447
+  /* "cytricubic.pyx":502
  *                             -(data[xp2,yp1,zm1]-data[x,yp1,zm1]))
  *         psi[44] = 0.25*((data[xp1,y,zp2])-data[xm1,y,zp2]
  *                             -(data[xp1,y,z]-data[xm1,y,z]))             # <<<<<<<<<<<<<<
@@ -6207,7 +6019,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_156 = __pyx_v_y;
   __pyx_t_157 = __pyx_v_z;
 
-  /* "cytricubic.pyx":446
+  /* "cytricubic.pyx":501
  *         psi[43] = 0.25*((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                             -(data[xp2,yp1,zm1]-data[x,yp1,zm1]))
  *         psi[44] = 0.25*((data[xp1,y,zp2])-data[xm1,y,zp2]             # <<<<<<<<<<<<<<
@@ -6216,7 +6028,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[44]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_146 * __pyx_v_data.strides[0]) ) + __pyx_t_147 * __pyx_v_data.strides[1]) )) + __pyx_t_148)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_149 * __pyx_v_data.strides[0]) ) + __pyx_t_150 * __pyx_v_data.strides[1]) )) + __pyx_t_151)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_152 * __pyx_v_data.strides[0]) ) + __pyx_t_153 * __pyx_v_data.strides[1]) )) + __pyx_t_154)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_155 * __pyx_v_data.strides[0]) ) + __pyx_t_156 * __pyx_v_data.strides[1]) )) + __pyx_t_157)) ))))));
 
-  /* "cytricubic.pyx":448
+  /* "cytricubic.pyx":503
  *         psi[44] = 0.25*((data[xp1,y,zp2])-data[xm1,y,zp2]
  *                             -(data[xp1,y,z]-data[xm1,y,z]))
  *         psi[45] = 0.25*((data[xp2,y,zp2]-data[x,y,zp2])             # <<<<<<<<<<<<<<
@@ -6230,7 +6042,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_162 = __pyx_v_y;
   __pyx_t_163 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":449
+  /* "cytricubic.pyx":504
  *                             -(data[xp1,y,z]-data[xm1,y,z]))
  *         psi[45] = 0.25*((data[xp2,y,zp2]-data[x,y,zp2])
  *                             -(data[xp2,y,z]-data[x,y,z]))             # <<<<<<<<<<<<<<
@@ -6244,7 +6056,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_168 = __pyx_v_y;
   __pyx_t_169 = __pyx_v_z;
 
-  /* "cytricubic.pyx":448
+  /* "cytricubic.pyx":503
  *         psi[44] = 0.25*((data[xp1,y,zp2])-data[xm1,y,zp2]
  *                             -(data[xp1,y,z]-data[xm1,y,z]))
  *         psi[45] = 0.25*((data[xp2,y,zp2]-data[x,y,zp2])             # <<<<<<<<<<<<<<
@@ -6253,7 +6065,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[45]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_158 * __pyx_v_data.strides[0]) ) + __pyx_t_159 * __pyx_v_data.strides[1]) )) + __pyx_t_160)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_161 * __pyx_v_data.strides[0]) ) + __pyx_t_162 * __pyx_v_data.strides[1]) )) + __pyx_t_163)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_164 * __pyx_v_data.strides[0]) ) + __pyx_t_165 * __pyx_v_data.strides[1]) )) + __pyx_t_166)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_167 * __pyx_v_data.strides[0]) ) + __pyx_t_168 * __pyx_v_data.strides[1]) )) + __pyx_t_169)) ))))));
 
-  /* "cytricubic.pyx":450
+  /* "cytricubic.pyx":505
  *         psi[45] = 0.25*((data[xp2,y,zp2]-data[x,y,zp2])
  *                             -(data[xp2,y,z]-data[x,y,z]))
  *         psi[46] = 0.25*((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -6267,7 +6079,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_174 = __pyx_v_yp2;
   __pyx_t_175 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":451
+  /* "cytricubic.pyx":506
  *                             -(data[xp2,y,z]-data[x,y,z]))
  *         psi[46] = 0.25*((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])
  *                             -(data[xp1,yp2,z]-data[xm1,yp2,z]))             # <<<<<<<<<<<<<<
@@ -6281,7 +6093,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_180 = __pyx_v_yp2;
   __pyx_t_181 = __pyx_v_z;
 
-  /* "cytricubic.pyx":450
+  /* "cytricubic.pyx":505
  *         psi[45] = 0.25*((data[xp2,y,zp2]-data[x,y,zp2])
  *                             -(data[xp2,y,z]-data[x,y,z]))
  *         psi[46] = 0.25*((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -6290,7 +6102,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[46]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_170 * __pyx_v_data.strides[0]) ) + __pyx_t_171 * __pyx_v_data.strides[1]) )) + __pyx_t_172)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_173 * __pyx_v_data.strides[0]) ) + __pyx_t_174 * __pyx_v_data.strides[1]) )) + __pyx_t_175)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_176 * __pyx_v_data.strides[0]) ) + __pyx_t_177 * __pyx_v_data.strides[1]) )) + __pyx_t_178)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_179 * __pyx_v_data.strides[0]) ) + __pyx_t_180 * __pyx_v_data.strides[1]) )) + __pyx_t_181)) ))))));
 
-  /* "cytricubic.pyx":452
+  /* "cytricubic.pyx":507
  *         psi[46] = 0.25*((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])
  *                             -(data[xp1,yp2,z]-data[xm1,yp2,z]))
  *         psi[47] = 0.25*((data[xp2,yp2,zp2]-data[x,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -6304,7 +6116,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_186 = __pyx_v_yp2;
   __pyx_t_187 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":453
+  /* "cytricubic.pyx":508
  *                             -(data[xp1,yp2,z]-data[xm1,yp2,z]))
  *         psi[47] = 0.25*((data[xp2,yp2,zp2]-data[x,yp2,zp2])
  *                             -(data[xp2,yp2,z]-data[x,yp2,z]))             # <<<<<<<<<<<<<<
@@ -6318,7 +6130,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_192 = __pyx_v_yp2;
   __pyx_t_193 = __pyx_v_z;
 
-  /* "cytricubic.pyx":452
+  /* "cytricubic.pyx":507
  *         psi[46] = 0.25*((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])
  *                             -(data[xp1,yp2,z]-data[xm1,yp2,z]))
  *         psi[47] = 0.25*((data[xp2,yp2,zp2]-data[x,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -6327,7 +6139,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[47]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_182 * __pyx_v_data.strides[0]) ) + __pyx_t_183 * __pyx_v_data.strides[1]) )) + __pyx_t_184)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_185 * __pyx_v_data.strides[0]) ) + __pyx_t_186 * __pyx_v_data.strides[1]) )) + __pyx_t_187)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_188 * __pyx_v_data.strides[0]) ) + __pyx_t_189 * __pyx_v_data.strides[1]) )) + __pyx_t_190)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_191 * __pyx_v_data.strides[0]) ) + __pyx_t_192 * __pyx_v_data.strides[1]) )) + __pyx_t_193)) ))))));
 
-  /* "cytricubic.pyx":455
+  /* "cytricubic.pyx":510
  *                             -(data[xp2,yp2,z]-data[x,yp2,z]))
  *         # Values of d2f/dydz at the corners of the voxel
  *         psi[48] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -6341,7 +6153,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_198 = __pyx_v_ym1;
   __pyx_t_199 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":456
+  /* "cytricubic.pyx":511
  *         # Values of d2f/dydz at the corners of the voxel
  *         psi[48] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))             # <<<<<<<<<<<<<<
@@ -6355,7 +6167,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_204 = __pyx_v_ym1;
   __pyx_t_205 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":455
+  /* "cytricubic.pyx":510
  *                             -(data[xp2,yp2,z]-data[x,yp2,z]))
  *         # Values of d2f/dydz at the corners of the voxel
  *         psi[48] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -6364,7 +6176,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[48]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_194 * __pyx_v_data.strides[0]) ) + __pyx_t_195 * __pyx_v_data.strides[1]) )) + __pyx_t_196)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_197 * __pyx_v_data.strides[0]) ) + __pyx_t_198 * __pyx_v_data.strides[1]) )) + __pyx_t_199)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_200 * __pyx_v_data.strides[0]) ) + __pyx_t_201 * __pyx_v_data.strides[1]) )) + __pyx_t_202)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_203 * __pyx_v_data.strides[0]) ) + __pyx_t_204 * __pyx_v_data.strides[1]) )) + __pyx_t_205)) ))))));
 
-  /* "cytricubic.pyx":457
+  /* "cytricubic.pyx":512
  *         psi[48] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))
  *         psi[49] = 0.25*((data[xp1,yp1,zp1]-data[xp1,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -6378,7 +6190,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_210 = __pyx_v_ym1;
   __pyx_t_211 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":458
+  /* "cytricubic.pyx":513
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))
  *         psi[49] = 0.25*((data[xp1,yp1,zp1]-data[xp1,ym1,zp1])
  *                             -(data[xp1,yp1,zm1]-data[xp1,ym1,zm1]))             # <<<<<<<<<<<<<<
@@ -6392,7 +6204,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_216 = __pyx_v_ym1;
   __pyx_t_217 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":457
+  /* "cytricubic.pyx":512
  *         psi[48] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))
  *         psi[49] = 0.25*((data[xp1,yp1,zp1]-data[xp1,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -6401,7 +6213,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[49]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_206 * __pyx_v_data.strides[0]) ) + __pyx_t_207 * __pyx_v_data.strides[1]) )) + __pyx_t_208)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_209 * __pyx_v_data.strides[0]) ) + __pyx_t_210 * __pyx_v_data.strides[1]) )) + __pyx_t_211)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_212 * __pyx_v_data.strides[0]) ) + __pyx_t_213 * __pyx_v_data.strides[1]) )) + __pyx_t_214)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_215 * __pyx_v_data.strides[0]) ) + __pyx_t_216 * __pyx_v_data.strides[1]) )) + __pyx_t_217)) ))))));
 
-  /* "cytricubic.pyx":459
+  /* "cytricubic.pyx":514
  *         psi[49] = 0.25*((data[xp1,yp1,zp1]-data[xp1,ym1,zp1])
  *                             -(data[xp1,yp1,zm1]-data[xp1,ym1,zm1]))
  *         psi[50] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -6415,7 +6227,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_222 = __pyx_v_ym1;
   __pyx_t_223 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":460
+  /* "cytricubic.pyx":515
  *                             -(data[xp1,yp1,zm1]-data[xp1,ym1,zm1]))
  *         psi[50] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))             # <<<<<<<<<<<<<<
@@ -6429,7 +6241,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_228 = __pyx_v_ym1;
   __pyx_t_229 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":459
+  /* "cytricubic.pyx":514
  *         psi[49] = 0.25*((data[xp1,yp1,zp1]-data[xp1,ym1,zp1])
  *                             -(data[xp1,yp1,zm1]-data[xp1,ym1,zm1]))
  *         psi[50] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])             # <<<<<<<<<<<<<<
@@ -6438,7 +6250,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[50]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_218 * __pyx_v_data.strides[0]) ) + __pyx_t_219 * __pyx_v_data.strides[1]) )) + __pyx_t_220)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_221 * __pyx_v_data.strides[0]) ) + __pyx_t_222 * __pyx_v_data.strides[1]) )) + __pyx_t_223)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_224 * __pyx_v_data.strides[0]) ) + __pyx_t_225 * __pyx_v_data.strides[1]) )) + __pyx_t_226)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_227 * __pyx_v_data.strides[0]) ) + __pyx_t_228 * __pyx_v_data.strides[1]) )) + __pyx_t_229)) ))))));
 
-  /* "cytricubic.pyx":461
+  /* "cytricubic.pyx":516
  *         psi[50] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))
  *         psi[51] = 0.25*((data[xp1,yp2,zp1]-data[xp1,y,zp1])             # <<<<<<<<<<<<<<
@@ -6452,7 +6264,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_234 = __pyx_v_y;
   __pyx_t_235 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":462
+  /* "cytricubic.pyx":517
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))
  *         psi[51] = 0.25*((data[xp1,yp2,zp1]-data[xp1,y,zp1])
  *                             -(data[xp1,yp2,zm1]-data[xp1,y,zm1]))             # <<<<<<<<<<<<<<
@@ -6466,7 +6278,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_240 = __pyx_v_y;
   __pyx_t_241 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":461
+  /* "cytricubic.pyx":516
  *         psi[50] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])
  *                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))
  *         psi[51] = 0.25*((data[xp1,yp2,zp1]-data[xp1,y,zp1])             # <<<<<<<<<<<<<<
@@ -6475,7 +6287,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[51]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_230 * __pyx_v_data.strides[0]) ) + __pyx_t_231 * __pyx_v_data.strides[1]) )) + __pyx_t_232)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_233 * __pyx_v_data.strides[0]) ) + __pyx_t_234 * __pyx_v_data.strides[1]) )) + __pyx_t_235)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_236 * __pyx_v_data.strides[0]) ) + __pyx_t_237 * __pyx_v_data.strides[1]) )) + __pyx_t_238)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_239 * __pyx_v_data.strides[0]) ) + __pyx_t_240 * __pyx_v_data.strides[1]) )) + __pyx_t_241)) ))))));
 
-  /* "cytricubic.pyx":463
+  /* "cytricubic.pyx":518
  *         psi[51] = 0.25*((data[xp1,yp2,zp1]-data[xp1,y,zp1])
  *                             -(data[xp1,yp2,zm1]-data[xp1,y,zm1]))
  *         psi[52] = 0.25*((data[x,yp1,zp2]-data[x,ym1,zp2])             # <<<<<<<<<<<<<<
@@ -6489,7 +6301,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_246 = __pyx_v_ym1;
   __pyx_t_247 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":464
+  /* "cytricubic.pyx":519
  *                             -(data[xp1,yp2,zm1]-data[xp1,y,zm1]))
  *         psi[52] = 0.25*((data[x,yp1,zp2]-data[x,ym1,zp2])
  *                             -(data[x,yp1,z]-data[x,ym1,z]))             # <<<<<<<<<<<<<<
@@ -6503,7 +6315,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_252 = __pyx_v_ym1;
   __pyx_t_253 = __pyx_v_z;
 
-  /* "cytricubic.pyx":463
+  /* "cytricubic.pyx":518
  *         psi[51] = 0.25*((data[xp1,yp2,zp1]-data[xp1,y,zp1])
  *                             -(data[xp1,yp2,zm1]-data[xp1,y,zm1]))
  *         psi[52] = 0.25*((data[x,yp1,zp2]-data[x,ym1,zp2])             # <<<<<<<<<<<<<<
@@ -6512,7 +6324,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[52]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_242 * __pyx_v_data.strides[0]) ) + __pyx_t_243 * __pyx_v_data.strides[1]) )) + __pyx_t_244)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_245 * __pyx_v_data.strides[0]) ) + __pyx_t_246 * __pyx_v_data.strides[1]) )) + __pyx_t_247)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_248 * __pyx_v_data.strides[0]) ) + __pyx_t_249 * __pyx_v_data.strides[1]) )) + __pyx_t_250)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_251 * __pyx_v_data.strides[0]) ) + __pyx_t_252 * __pyx_v_data.strides[1]) )) + __pyx_t_253)) ))))));
 
-  /* "cytricubic.pyx":465
+  /* "cytricubic.pyx":520
  *         psi[52] = 0.25*((data[x,yp1,zp2]-data[x,ym1,zp2])
  *                             -(data[x,yp1,z]-data[x,ym1,z]))
  *         psi[53] = 0.25*((data[xp1,yp1,zp2]-data[xp1,ym1,zp2])             # <<<<<<<<<<<<<<
@@ -6526,7 +6338,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_258 = __pyx_v_ym1;
   __pyx_t_259 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":466
+  /* "cytricubic.pyx":521
  *                             -(data[x,yp1,z]-data[x,ym1,z]))
  *         psi[53] = 0.25*((data[xp1,yp1,zp2]-data[xp1,ym1,zp2])
  *                             -(data[xp1,yp1,z]-data[xp1,ym1,z]))             # <<<<<<<<<<<<<<
@@ -6540,7 +6352,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_264 = __pyx_v_ym1;
   __pyx_t_265 = __pyx_v_z;
 
-  /* "cytricubic.pyx":465
+  /* "cytricubic.pyx":520
  *         psi[52] = 0.25*((data[x,yp1,zp2]-data[x,ym1,zp2])
  *                             -(data[x,yp1,z]-data[x,ym1,z]))
  *         psi[53] = 0.25*((data[xp1,yp1,zp2]-data[xp1,ym1,zp2])             # <<<<<<<<<<<<<<
@@ -6549,7 +6361,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[53]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_254 * __pyx_v_data.strides[0]) ) + __pyx_t_255 * __pyx_v_data.strides[1]) )) + __pyx_t_256)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_257 * __pyx_v_data.strides[0]) ) + __pyx_t_258 * __pyx_v_data.strides[1]) )) + __pyx_t_259)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_260 * __pyx_v_data.strides[0]) ) + __pyx_t_261 * __pyx_v_data.strides[1]) )) + __pyx_t_262)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_263 * __pyx_v_data.strides[0]) ) + __pyx_t_264 * __pyx_v_data.strides[1]) )) + __pyx_t_265)) ))))));
 
-  /* "cytricubic.pyx":467
+  /* "cytricubic.pyx":522
  *         psi[53] = 0.25*((data[xp1,yp1,zp2]-data[xp1,ym1,zp2])
  *                             -(data[xp1,yp1,z]-data[xp1,ym1,z]))
  *         psi[54] = 0.25*((data[x,yp2,zp2]-data[x,y,zp2])             # <<<<<<<<<<<<<<
@@ -6563,7 +6375,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_270 = __pyx_v_y;
   __pyx_t_271 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":468
+  /* "cytricubic.pyx":523
  *                             -(data[xp1,yp1,z]-data[xp1,ym1,z]))
  *         psi[54] = 0.25*((data[x,yp2,zp2]-data[x,y,zp2])
  *                             -(data[x,yp2,z]-data[x,y,z]))             # <<<<<<<<<<<<<<
@@ -6577,7 +6389,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_276 = __pyx_v_y;
   __pyx_t_277 = __pyx_v_z;
 
-  /* "cytricubic.pyx":467
+  /* "cytricubic.pyx":522
  *         psi[53] = 0.25*((data[xp1,yp1,zp2]-data[xp1,ym1,zp2])
  *                             -(data[xp1,yp1,z]-data[xp1,ym1,z]))
  *         psi[54] = 0.25*((data[x,yp2,zp2]-data[x,y,zp2])             # <<<<<<<<<<<<<<
@@ -6586,7 +6398,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[54]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_266 * __pyx_v_data.strides[0]) ) + __pyx_t_267 * __pyx_v_data.strides[1]) )) + __pyx_t_268)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_269 * __pyx_v_data.strides[0]) ) + __pyx_t_270 * __pyx_v_data.strides[1]) )) + __pyx_t_271)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_272 * __pyx_v_data.strides[0]) ) + __pyx_t_273 * __pyx_v_data.strides[1]) )) + __pyx_t_274)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_275 * __pyx_v_data.strides[0]) ) + __pyx_t_276 * __pyx_v_data.strides[1]) )) + __pyx_t_277)) ))))));
 
-  /* "cytricubic.pyx":469
+  /* "cytricubic.pyx":524
  *         psi[54] = 0.25*((data[x,yp2,zp2]-data[x,y,zp2])
  *                             -(data[x,yp2,z]-data[x,y,z]))
  *         psi[55] = 0.25*((data[xp2,yp2,zp2]-data[xp2,y,zp2])             # <<<<<<<<<<<<<<
@@ -6600,7 +6412,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_282 = __pyx_v_y;
   __pyx_t_283 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":470
+  /* "cytricubic.pyx":525
  *                             -(data[x,yp2,z]-data[x,y,z]))
  *         psi[55] = 0.25*((data[xp2,yp2,zp2]-data[xp2,y,zp2])
  *                             -(data[xp2,yp2,z]-data[xp2,y,z]))             # <<<<<<<<<<<<<<
@@ -6614,7 +6426,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   __pyx_t_288 = __pyx_v_y;
   __pyx_t_289 = __pyx_v_z;
 
-  /* "cytricubic.pyx":469
+  /* "cytricubic.pyx":524
  *         psi[54] = 0.25*((data[x,yp2,zp2]-data[x,y,zp2])
  *                             -(data[x,yp2,z]-data[x,y,z]))
  *         psi[55] = 0.25*((data[xp2,yp2,zp2]-data[xp2,y,zp2])             # <<<<<<<<<<<<<<
@@ -6623,7 +6435,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
  */
   (__pyx_v_psi[55]) = (0.25 * (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_278 * __pyx_v_data.strides[0]) ) + __pyx_t_279 * __pyx_v_data.strides[1]) )) + __pyx_t_280)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_281 * __pyx_v_data.strides[0]) ) + __pyx_t_282 * __pyx_v_data.strides[1]) )) + __pyx_t_283)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_284 * __pyx_v_data.strides[0]) ) + __pyx_t_285 * __pyx_v_data.strides[1]) )) + __pyx_t_286)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_287 * __pyx_v_data.strides[0]) ) + __pyx_t_288 * __pyx_v_data.strides[1]) )) + __pyx_t_289)) ))))));
 
-  /* "cytricubic.pyx":414
+  /* "cytricubic.pyx":469
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_second_drvtvs_(self, int x, int xm1, int xp1, int xp2,             # <<<<<<<<<<<<<<
@@ -6639,7 +6451,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_second_drvtvs_
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":475
+/* "cytricubic.pyx":530
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_third_drvtv_(self,int x, int xm1, int xp1, int xp2,             # <<<<<<<<<<<<<<
@@ -6847,7 +6659,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   Py_ssize_t __pyx_t_193;
   __Pyx_RefNannySetupContext("_set_third_drvtv_", 0);
 
-  /* "cytricubic.pyx":479
+  /* "cytricubic.pyx":534
  *                                 int z, int zm1, int zp1, int zp2):
  *         cdef:
  *             double *psi = &self.psi[0]             # <<<<<<<<<<<<<<
@@ -6856,7 +6668,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   __pyx_v_psi = (&(__pyx_v_self->psi[0]));
 
-  /* "cytricubic.pyx":480
+  /* "cytricubic.pyx":535
  *         cdef:
  *             double *psi = &self.psi[0]
  *             double[:,:,::1] data = self.data             # <<<<<<<<<<<<<<
@@ -6869,7 +6681,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
 
-  /* "cytricubic.pyx":482
+  /* "cytricubic.pyx":537
  *             double[:,:,::1] data = self.data
  *         # Values of d3f/dxdydz at the corners of the voxel
  *         psi[56] = 0.125*(((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6883,7 +6695,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_6 = __pyx_v_yp1;
   __pyx_t_7 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":483
+  /* "cytricubic.pyx":538
  *         # Values of d3f/dxdydz at the corners of the voxel
  *         psi[56] = 0.125*(((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                                 -(data[xp1,ym1,zp1]-data[xm1,ym1,zp1]))             # <<<<<<<<<<<<<<
@@ -6897,7 +6709,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_12 = __pyx_v_ym1;
   __pyx_t_13 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":484
+  /* "cytricubic.pyx":539
  *         psi[56] = 0.125*(((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])
  *                                 -(data[xp1,ym1,zp1]-data[xm1,ym1,zp1]))
  *                             -((data[xp1,yp1,zm1]-data[xm1,yp1,zm1])             # <<<<<<<<<<<<<<
@@ -6911,7 +6723,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_18 = __pyx_v_yp1;
   __pyx_t_19 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":485
+  /* "cytricubic.pyx":540
  *                                 -(data[xp1,ym1,zp1]-data[xm1,ym1,zp1]))
  *                             -((data[xp1,yp1,zm1]-data[xm1,yp1,zm1])
  *                                 -(data[xp1,ym1,zm1]-data[xm1,ym1,zm1])))             # <<<<<<<<<<<<<<
@@ -6925,7 +6737,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_24 = __pyx_v_ym1;
   __pyx_t_25 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":482
+  /* "cytricubic.pyx":537
  *             double[:,:,::1] data = self.data
  *         # Values of d3f/dxdydz at the corners of the voxel
  *         psi[56] = 0.125*(((data[xp1,yp1,zp1]-data[xm1,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6934,7 +6746,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[56]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_2 * __pyx_v_data.strides[0]) ) + __pyx_t_3 * __pyx_v_data.strides[1]) )) + __pyx_t_4)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_5 * __pyx_v_data.strides[0]) ) + __pyx_t_6 * __pyx_v_data.strides[1]) )) + __pyx_t_7)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_8 * __pyx_v_data.strides[0]) ) + __pyx_t_9 * __pyx_v_data.strides[1]) )) + __pyx_t_10)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_11 * __pyx_v_data.strides[0]) ) + __pyx_t_12 * __pyx_v_data.strides[1]) )) + __pyx_t_13)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_14 * __pyx_v_data.strides[0]) ) + __pyx_t_15 * __pyx_v_data.strides[1]) )) + __pyx_t_16)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_17 * __pyx_v_data.strides[0]) ) + __pyx_t_18 * __pyx_v_data.strides[1]) )) + __pyx_t_19)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_20 * __pyx_v_data.strides[0]) ) + __pyx_t_21 * __pyx_v_data.strides[1]) )) + __pyx_t_22)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_23 * __pyx_v_data.strides[0]) ) + __pyx_t_24 * __pyx_v_data.strides[1]) )) + __pyx_t_25)) )))))));
 
-  /* "cytricubic.pyx":486
+  /* "cytricubic.pyx":541
  *                             -((data[xp1,yp1,zm1]-data[xm1,yp1,zm1])
  *                                 -(data[xp1,ym1,zm1]-data[xm1,ym1,zm1])))
  *         psi[57] = 0.125*(((data[xp2,yp1,zp1]-data[x,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6948,7 +6760,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_30 = __pyx_v_yp1;
   __pyx_t_31 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":487
+  /* "cytricubic.pyx":542
  *                                 -(data[xp1,ym1,zm1]-data[xm1,ym1,zm1])))
  *         psi[57] = 0.125*(((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                                 -(data[xp2,ym1,zp1]-data[x,ym1,zp1]))             # <<<<<<<<<<<<<<
@@ -6962,7 +6774,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_36 = __pyx_v_ym1;
   __pyx_t_37 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":488
+  /* "cytricubic.pyx":543
  *         psi[57] = 0.125*(((data[xp2,yp1,zp1]-data[x,yp1,zp1])
  *                                 -(data[xp2,ym1,zp1]-data[x,ym1,zp1]))
  *                             -((data[xp2,yp1,zm1]-data[x,yp1,zm1])             # <<<<<<<<<<<<<<
@@ -6976,7 +6788,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_42 = __pyx_v_yp1;
   __pyx_t_43 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":489
+  /* "cytricubic.pyx":544
  *                                 -(data[xp2,ym1,zp1]-data[x,ym1,zp1]))
  *                             -((data[xp2,yp1,zm1]-data[x,yp1,zm1])
  *                                 -(data[xp2,ym1,zm1]-data[x,ym1,zm1])))             # <<<<<<<<<<<<<<
@@ -6990,7 +6802,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_48 = __pyx_v_ym1;
   __pyx_t_49 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":486
+  /* "cytricubic.pyx":541
  *                             -((data[xp1,yp1,zm1]-data[xm1,yp1,zm1])
  *                                 -(data[xp1,ym1,zm1]-data[xm1,ym1,zm1])))
  *         psi[57] = 0.125*(((data[xp2,yp1,zp1]-data[x,yp1,zp1])             # <<<<<<<<<<<<<<
@@ -6999,7 +6811,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[57]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_26 * __pyx_v_data.strides[0]) ) + __pyx_t_27 * __pyx_v_data.strides[1]) )) + __pyx_t_28)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_29 * __pyx_v_data.strides[0]) ) + __pyx_t_30 * __pyx_v_data.strides[1]) )) + __pyx_t_31)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_32 * __pyx_v_data.strides[0]) ) + __pyx_t_33 * __pyx_v_data.strides[1]) )) + __pyx_t_34)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_35 * __pyx_v_data.strides[0]) ) + __pyx_t_36 * __pyx_v_data.strides[1]) )) + __pyx_t_37)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_38 * __pyx_v_data.strides[0]) ) + __pyx_t_39 * __pyx_v_data.strides[1]) )) + __pyx_t_40)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_41 * __pyx_v_data.strides[0]) ) + __pyx_t_42 * __pyx_v_data.strides[1]) )) + __pyx_t_43)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_44 * __pyx_v_data.strides[0]) ) + __pyx_t_45 * __pyx_v_data.strides[1]) )) + __pyx_t_46)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_47 * __pyx_v_data.strides[0]) ) + __pyx_t_48 * __pyx_v_data.strides[1]) )) + __pyx_t_49)) )))))));
 
-  /* "cytricubic.pyx":490
+  /* "cytricubic.pyx":545
  *                             -((data[xp2,yp1,zm1]-data[x,yp1,zm1])
  *                                 -(data[xp2,ym1,zm1]-data[x,ym1,zm1])))
  *         psi[58] = 0.125*(((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -7013,7 +6825,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_54 = __pyx_v_yp2;
   __pyx_t_55 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":491
+  /* "cytricubic.pyx":546
  *                                 -(data[xp2,ym1,zm1]-data[x,ym1,zm1])))
  *         psi[58] = 0.125*(((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])
  *                                 -(data[xp1,y,zp1]-data[xm1,y,zp1]))             # <<<<<<<<<<<<<<
@@ -7027,7 +6839,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_60 = __pyx_v_y;
   __pyx_t_61 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":492
+  /* "cytricubic.pyx":547
  *         psi[58] = 0.125*(((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])
  *                                 -(data[xp1,y,zp1]-data[xm1,y,zp1]))
  *                             -((data[xp1,yp2,zm1]-data[xm1,yp2,zm1])             # <<<<<<<<<<<<<<
@@ -7041,7 +6853,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_66 = __pyx_v_yp2;
   __pyx_t_67 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":493
+  /* "cytricubic.pyx":548
  *                                 -(data[xp1,y,zp1]-data[xm1,y,zp1]))
  *                             -((data[xp1,yp2,zm1]-data[xm1,yp2,zm1])
  *                                 -(data[xp1,y,zm1]-data[xm1,y,zm1])))             # <<<<<<<<<<<<<<
@@ -7055,7 +6867,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_72 = __pyx_v_y;
   __pyx_t_73 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":490
+  /* "cytricubic.pyx":545
  *                             -((data[xp2,yp1,zm1]-data[x,yp1,zm1])
  *                                 -(data[xp2,ym1,zm1]-data[x,ym1,zm1])))
  *         psi[58] = 0.125*(((data[xp1,yp2,zp1]-data[xm1,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -7064,7 +6876,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[58]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_50 * __pyx_v_data.strides[0]) ) + __pyx_t_51 * __pyx_v_data.strides[1]) )) + __pyx_t_52)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_53 * __pyx_v_data.strides[0]) ) + __pyx_t_54 * __pyx_v_data.strides[1]) )) + __pyx_t_55)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_56 * __pyx_v_data.strides[0]) ) + __pyx_t_57 * __pyx_v_data.strides[1]) )) + __pyx_t_58)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_59 * __pyx_v_data.strides[0]) ) + __pyx_t_60 * __pyx_v_data.strides[1]) )) + __pyx_t_61)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_62 * __pyx_v_data.strides[0]) ) + __pyx_t_63 * __pyx_v_data.strides[1]) )) + __pyx_t_64)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_65 * __pyx_v_data.strides[0]) ) + __pyx_t_66 * __pyx_v_data.strides[1]) )) + __pyx_t_67)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_68 * __pyx_v_data.strides[0]) ) + __pyx_t_69 * __pyx_v_data.strides[1]) )) + __pyx_t_70)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_71 * __pyx_v_data.strides[0]) ) + __pyx_t_72 * __pyx_v_data.strides[1]) )) + __pyx_t_73)) )))))));
 
-  /* "cytricubic.pyx":494
+  /* "cytricubic.pyx":549
  *                             -((data[xp1,yp2,zm1]-data[xm1,yp2,zm1])
  *                                 -(data[xp1,y,zm1]-data[xm1,y,zm1])))
  *         psi[59] = 0.125*(((data[xp2,yp2,zp1]-data[x,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -7078,7 +6890,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_78 = __pyx_v_yp2;
   __pyx_t_79 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":495
+  /* "cytricubic.pyx":550
  *                                 -(data[xp1,y,zm1]-data[xm1,y,zm1])))
  *         psi[59] = 0.125*(((data[xp2,yp2,zp1]-data[x,yp2,zp1])
  *                                 -(data[xp2,y,zp1]-data[x,y,zp1]))             # <<<<<<<<<<<<<<
@@ -7092,7 +6904,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_84 = __pyx_v_y;
   __pyx_t_85 = __pyx_v_zp1;
 
-  /* "cytricubic.pyx":496
+  /* "cytricubic.pyx":551
  *         psi[59] = 0.125*(((data[xp2,yp2,zp1]-data[x,yp2,zp1])
  *                                 -(data[xp2,y,zp1]-data[x,y,zp1]))
  *                             -((data[xp2,yp2,zm1]-data[x,yp2,zm1])             # <<<<<<<<<<<<<<
@@ -7106,7 +6918,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_90 = __pyx_v_yp2;
   __pyx_t_91 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":497
+  /* "cytricubic.pyx":552
  *                                 -(data[xp2,y,zp1]-data[x,y,zp1]))
  *                             -((data[xp2,yp2,zm1]-data[x,yp2,zm1])
  *                                 -(data[xp2,y,zm1]-data[x,y,zm1])))             # <<<<<<<<<<<<<<
@@ -7120,7 +6932,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_96 = __pyx_v_y;
   __pyx_t_97 = __pyx_v_zm1;
 
-  /* "cytricubic.pyx":494
+  /* "cytricubic.pyx":549
  *                             -((data[xp1,yp2,zm1]-data[xm1,yp2,zm1])
  *                                 -(data[xp1,y,zm1]-data[xm1,y,zm1])))
  *         psi[59] = 0.125*(((data[xp2,yp2,zp1]-data[x,yp2,zp1])             # <<<<<<<<<<<<<<
@@ -7129,7 +6941,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[59]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_74 * __pyx_v_data.strides[0]) ) + __pyx_t_75 * __pyx_v_data.strides[1]) )) + __pyx_t_76)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_77 * __pyx_v_data.strides[0]) ) + __pyx_t_78 * __pyx_v_data.strides[1]) )) + __pyx_t_79)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_80 * __pyx_v_data.strides[0]) ) + __pyx_t_81 * __pyx_v_data.strides[1]) )) + __pyx_t_82)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_83 * __pyx_v_data.strides[0]) ) + __pyx_t_84 * __pyx_v_data.strides[1]) )) + __pyx_t_85)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_86 * __pyx_v_data.strides[0]) ) + __pyx_t_87 * __pyx_v_data.strides[1]) )) + __pyx_t_88)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_89 * __pyx_v_data.strides[0]) ) + __pyx_t_90 * __pyx_v_data.strides[1]) )) + __pyx_t_91)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_92 * __pyx_v_data.strides[0]) ) + __pyx_t_93 * __pyx_v_data.strides[1]) )) + __pyx_t_94)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_95 * __pyx_v_data.strides[0]) ) + __pyx_t_96 * __pyx_v_data.strides[1]) )) + __pyx_t_97)) )))))));
 
-  /* "cytricubic.pyx":498
+  /* "cytricubic.pyx":553
  *                             -((data[xp2,yp2,zm1]-data[x,yp2,zm1])
  *                                 -(data[xp2,y,zm1]-data[x,y,zm1])))
  *         psi[60] = 0.125*(((data[xp1,yp1,zp2]-data[xm1,yp1,zp2])             # <<<<<<<<<<<<<<
@@ -7143,7 +6955,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_102 = __pyx_v_yp1;
   __pyx_t_103 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":499
+  /* "cytricubic.pyx":554
  *                                 -(data[xp2,y,zm1]-data[x,y,zm1])))
  *         psi[60] = 0.125*(((data[xp1,yp1,zp2]-data[xm1,yp1,zp2])
  *                                 -(data[xp1,ym1,zp2]-data[xm1,ym1,zp2]))             # <<<<<<<<<<<<<<
@@ -7157,7 +6969,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_108 = __pyx_v_ym1;
   __pyx_t_109 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":500
+  /* "cytricubic.pyx":555
  *         psi[60] = 0.125*(((data[xp1,yp1,zp2]-data[xm1,yp1,zp2])
  *                                 -(data[xp1,ym1,zp2]-data[xm1,ym1,zp2]))
  *                             -((data[xp1,yp1,z]-data[xm1,yp1,z])             # <<<<<<<<<<<<<<
@@ -7171,7 +6983,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_114 = __pyx_v_yp1;
   __pyx_t_115 = __pyx_v_z;
 
-  /* "cytricubic.pyx":501
+  /* "cytricubic.pyx":556
  *                                 -(data[xp1,ym1,zp2]-data[xm1,ym1,zp2]))
  *                             -((data[xp1,yp1,z]-data[xm1,yp1,z])
  *                                 -(data[xp1,ym1,z]-data[xm1,ym1,z])))             # <<<<<<<<<<<<<<
@@ -7185,7 +6997,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_120 = __pyx_v_ym1;
   __pyx_t_121 = __pyx_v_z;
 
-  /* "cytricubic.pyx":498
+  /* "cytricubic.pyx":553
  *                             -((data[xp2,yp2,zm1]-data[x,yp2,zm1])
  *                                 -(data[xp2,y,zm1]-data[x,y,zm1])))
  *         psi[60] = 0.125*(((data[xp1,yp1,zp2]-data[xm1,yp1,zp2])             # <<<<<<<<<<<<<<
@@ -7194,7 +7006,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[60]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_98 * __pyx_v_data.strides[0]) ) + __pyx_t_99 * __pyx_v_data.strides[1]) )) + __pyx_t_100)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_101 * __pyx_v_data.strides[0]) ) + __pyx_t_102 * __pyx_v_data.strides[1]) )) + __pyx_t_103)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_104 * __pyx_v_data.strides[0]) ) + __pyx_t_105 * __pyx_v_data.strides[1]) )) + __pyx_t_106)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_107 * __pyx_v_data.strides[0]) ) + __pyx_t_108 * __pyx_v_data.strides[1]) )) + __pyx_t_109)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_110 * __pyx_v_data.strides[0]) ) + __pyx_t_111 * __pyx_v_data.strides[1]) )) + __pyx_t_112)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_113 * __pyx_v_data.strides[0]) ) + __pyx_t_114 * __pyx_v_data.strides[1]) )) + __pyx_t_115)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_116 * __pyx_v_data.strides[0]) ) + __pyx_t_117 * __pyx_v_data.strides[1]) )) + __pyx_t_118)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_119 * __pyx_v_data.strides[0]) ) + __pyx_t_120 * __pyx_v_data.strides[1]) )) + __pyx_t_121)) )))))));
 
-  /* "cytricubic.pyx":502
+  /* "cytricubic.pyx":557
  *                             -((data[xp1,yp1,z]-data[xm1,yp1,z])
  *                                 -(data[xp1,ym1,z]-data[xm1,ym1,z])))
  *         psi[61] = 0.125*(((data[xp2,yp1,zp2]-data[x,yp1,zp2])             # <<<<<<<<<<<<<<
@@ -7208,7 +7020,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_126 = __pyx_v_yp1;
   __pyx_t_127 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":503
+  /* "cytricubic.pyx":558
  *                                 -(data[xp1,ym1,z]-data[xm1,ym1,z])))
  *         psi[61] = 0.125*(((data[xp2,yp1,zp2]-data[x,yp1,zp2])
  *                                 -(data[xp2,ym1,zp2]-data[x,ym1,zp2]))             # <<<<<<<<<<<<<<
@@ -7222,7 +7034,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_132 = __pyx_v_ym1;
   __pyx_t_133 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":504
+  /* "cytricubic.pyx":559
  *         psi[61] = 0.125*(((data[xp2,yp1,zp2]-data[x,yp1,zp2])
  *                                 -(data[xp2,ym1,zp2]-data[x,ym1,zp2]))
  *                             -((data[xp2,yp1,z]-data[x,yp1,z])             # <<<<<<<<<<<<<<
@@ -7236,7 +7048,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_138 = __pyx_v_yp1;
   __pyx_t_139 = __pyx_v_z;
 
-  /* "cytricubic.pyx":505
+  /* "cytricubic.pyx":560
  *                                 -(data[xp2,ym1,zp2]-data[x,ym1,zp2]))
  *                             -((data[xp2,yp1,z]-data[x,yp1,z])
  *                                 -(data[xp2,ym1,z]-data[x,ym1,z])))             # <<<<<<<<<<<<<<
@@ -7250,7 +7062,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_144 = __pyx_v_ym1;
   __pyx_t_145 = __pyx_v_z;
 
-  /* "cytricubic.pyx":502
+  /* "cytricubic.pyx":557
  *                             -((data[xp1,yp1,z]-data[xm1,yp1,z])
  *                                 -(data[xp1,ym1,z]-data[xm1,ym1,z])))
  *         psi[61] = 0.125*(((data[xp2,yp1,zp2]-data[x,yp1,zp2])             # <<<<<<<<<<<<<<
@@ -7259,7 +7071,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[61]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_122 * __pyx_v_data.strides[0]) ) + __pyx_t_123 * __pyx_v_data.strides[1]) )) + __pyx_t_124)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_125 * __pyx_v_data.strides[0]) ) + __pyx_t_126 * __pyx_v_data.strides[1]) )) + __pyx_t_127)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_128 * __pyx_v_data.strides[0]) ) + __pyx_t_129 * __pyx_v_data.strides[1]) )) + __pyx_t_130)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_131 * __pyx_v_data.strides[0]) ) + __pyx_t_132 * __pyx_v_data.strides[1]) )) + __pyx_t_133)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_134 * __pyx_v_data.strides[0]) ) + __pyx_t_135 * __pyx_v_data.strides[1]) )) + __pyx_t_136)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_137 * __pyx_v_data.strides[0]) ) + __pyx_t_138 * __pyx_v_data.strides[1]) )) + __pyx_t_139)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_140 * __pyx_v_data.strides[0]) ) + __pyx_t_141 * __pyx_v_data.strides[1]) )) + __pyx_t_142)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_143 * __pyx_v_data.strides[0]) ) + __pyx_t_144 * __pyx_v_data.strides[1]) )) + __pyx_t_145)) )))))));
 
-  /* "cytricubic.pyx":506
+  /* "cytricubic.pyx":561
  *                             -((data[xp2,yp1,z]-data[x,yp1,z])
  *                                 -(data[xp2,ym1,z]-data[x,ym1,z])))
  *         psi[62] = 0.125*(((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -7273,7 +7085,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_150 = __pyx_v_yp2;
   __pyx_t_151 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":507
+  /* "cytricubic.pyx":562
  *                                 -(data[xp2,ym1,z]-data[x,ym1,z])))
  *         psi[62] = 0.125*(((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])
  *                                 -(data[xp1,y,zp2]-data[xm1,y,zp2]))             # <<<<<<<<<<<<<<
@@ -7287,7 +7099,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_156 = __pyx_v_y;
   __pyx_t_157 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":508
+  /* "cytricubic.pyx":563
  *         psi[62] = 0.125*(((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])
  *                                 -(data[xp1,y,zp2]-data[xm1,y,zp2]))
  *                             -((data[xp1,yp2,z]-data[xm1,y,z])             # <<<<<<<<<<<<<<
@@ -7301,7 +7113,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_162 = __pyx_v_y;
   __pyx_t_163 = __pyx_v_z;
 
-  /* "cytricubic.pyx":509
+  /* "cytricubic.pyx":564
  *                                 -(data[xp1,y,zp2]-data[xm1,y,zp2]))
  *                             -((data[xp1,yp2,z]-data[xm1,y,z])
  *                                 -(data[xp1,y,z]-data[xm1,y,z])))             # <<<<<<<<<<<<<<
@@ -7315,7 +7127,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_168 = __pyx_v_y;
   __pyx_t_169 = __pyx_v_z;
 
-  /* "cytricubic.pyx":506
+  /* "cytricubic.pyx":561
  *                             -((data[xp2,yp1,z]-data[x,yp1,z])
  *                                 -(data[xp2,ym1,z]-data[x,ym1,z])))
  *         psi[62] = 0.125*(((data[xp1,yp2,zp2]-data[xm1,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -7324,7 +7136,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[62]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_146 * __pyx_v_data.strides[0]) ) + __pyx_t_147 * __pyx_v_data.strides[1]) )) + __pyx_t_148)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_149 * __pyx_v_data.strides[0]) ) + __pyx_t_150 * __pyx_v_data.strides[1]) )) + __pyx_t_151)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_152 * __pyx_v_data.strides[0]) ) + __pyx_t_153 * __pyx_v_data.strides[1]) )) + __pyx_t_154)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_155 * __pyx_v_data.strides[0]) ) + __pyx_t_156 * __pyx_v_data.strides[1]) )) + __pyx_t_157)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_158 * __pyx_v_data.strides[0]) ) + __pyx_t_159 * __pyx_v_data.strides[1]) )) + __pyx_t_160)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_161 * __pyx_v_data.strides[0]) ) + __pyx_t_162 * __pyx_v_data.strides[1]) )) + __pyx_t_163)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_164 * __pyx_v_data.strides[0]) ) + __pyx_t_165 * __pyx_v_data.strides[1]) )) + __pyx_t_166)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_167 * __pyx_v_data.strides[0]) ) + __pyx_t_168 * __pyx_v_data.strides[1]) )) + __pyx_t_169)) )))))));
 
-  /* "cytricubic.pyx":510
+  /* "cytricubic.pyx":565
  *                             -((data[xp1,yp2,z]-data[xm1,y,z])
  *                                 -(data[xp1,y,z]-data[xm1,y,z])))
  *         psi[63] = 0.125*(((data[xp2,yp2,zp2]-data[x,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -7338,7 +7150,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_174 = __pyx_v_yp2;
   __pyx_t_175 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":511
+  /* "cytricubic.pyx":566
  *                                 -(data[xp1,y,z]-data[xm1,y,z])))
  *         psi[63] = 0.125*(((data[xp2,yp2,zp2]-data[x,yp2,zp2])
  *                                 -(data[xp2,y,zp2]-data[x,y,zp2]))             # <<<<<<<<<<<<<<
@@ -7352,7 +7164,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_180 = __pyx_v_y;
   __pyx_t_181 = __pyx_v_zp2;
 
-  /* "cytricubic.pyx":512
+  /* "cytricubic.pyx":567
  *         psi[63] = 0.125*(((data[xp2,yp2,zp2]-data[x,yp2,zp2])
  *                                 -(data[xp2,y,zp2]-data[x,y,zp2]))
  *                             -((data[xp2,yp2,z]-data[x,yp2,z])             # <<<<<<<<<<<<<<
@@ -7366,7 +7178,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_186 = __pyx_v_yp2;
   __pyx_t_187 = __pyx_v_z;
 
-  /* "cytricubic.pyx":513
+  /* "cytricubic.pyx":568
  *                                 -(data[xp2,y,zp2]-data[x,y,zp2]))
  *                             -((data[xp2,yp2,z]-data[x,yp2,z])
  *                                 -(data[xp2,y,z]-data[x,y,z])))             # <<<<<<<<<<<<<<
@@ -7380,7 +7192,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   __pyx_t_192 = __pyx_v_y;
   __pyx_t_193 = __pyx_v_z;
 
-  /* "cytricubic.pyx":510
+  /* "cytricubic.pyx":565
  *                             -((data[xp1,yp2,z]-data[xm1,y,z])
  *                                 -(data[xp1,y,z]-data[xm1,y,z])))
  *         psi[63] = 0.125*(((data[xp2,yp2,zp2]-data[x,yp2,zp2])             # <<<<<<<<<<<<<<
@@ -7389,7 +7201,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
  */
   (__pyx_v_psi[63]) = (0.125 * ((((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_170 * __pyx_v_data.strides[0]) ) + __pyx_t_171 * __pyx_v_data.strides[1]) )) + __pyx_t_172)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_173 * __pyx_v_data.strides[0]) ) + __pyx_t_174 * __pyx_v_data.strides[1]) )) + __pyx_t_175)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_176 * __pyx_v_data.strides[0]) ) + __pyx_t_177 * __pyx_v_data.strides[1]) )) + __pyx_t_178)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_179 * __pyx_v_data.strides[0]) ) + __pyx_t_180 * __pyx_v_data.strides[1]) )) + __pyx_t_181)) ))))) - (((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_182 * __pyx_v_data.strides[0]) ) + __pyx_t_183 * __pyx_v_data.strides[1]) )) + __pyx_t_184)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_185 * __pyx_v_data.strides[0]) ) + __pyx_t_186 * __pyx_v_data.strides[1]) )) + __pyx_t_187)) )))) - ((*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_188 * __pyx_v_data.strides[0]) ) + __pyx_t_189 * __pyx_v_data.strides[1]) )) + __pyx_t_190)) ))) - (*((double *) ( /* dim=2 */ ((char *) (((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_data.data + __pyx_t_191 * __pyx_v_data.strides[0]) ) + __pyx_t_192 * __pyx_v_data.strides[1]) )) + __pyx_t_193)) )))))));
 
-  /* "cytricubic.pyx":475
+  /* "cytricubic.pyx":530
  *     @cython.wraparound(False)
  *     @cython.initializedcheck(False)
  *     cdef _set_third_drvtv_(self,int x, int xm1, int xp1, int xp2,             # <<<<<<<<<<<<<<
@@ -7405,7 +7217,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__set_third_drvtv_(s
   return __pyx_r;
 }
 
-/* "cytricubic.pyx":515
+/* "cytricubic.pyx":570
  *                                 -(data[xp2,y,z]-data[x,y,z])))
  * 
  *     cdef _solve_by_blas_dgemv_(self):             # <<<<<<<<<<<<<<
@@ -7426,7 +7238,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__solve_by_blas_dgem
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("_solve_by_blas_dgemv_", 0);
 
-  /* "cytricubic.pyx":550
+  /* "cytricubic.pyx":605
  *             # letting the low level BLAS routine perform matrix transposition
  *             # for us. Hence:
  *             char* trans = 'T'             # <<<<<<<<<<<<<<
@@ -7435,7 +7247,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__solve_by_blas_dgem
  */
   __pyx_v_trans = ((char *)"T");
 
-  /* "cytricubic.pyx":557
+  /* "cytricubic.pyx":612
  *             # 'dgemv' needs to know the number of rows (M) and columns (N)
  *             # of the matrix A:
  *             int M = 64, N = 64             # <<<<<<<<<<<<<<
@@ -7445,7 +7257,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__solve_by_blas_dgem
   __pyx_v_M = 64;
   __pyx_v_N = 64;
 
-  /* "cytricubic.pyx":559
+  /* "cytricubic.pyx":614
  *             int M = 64, N = 64
  *             # For our purposes, alpha = 1 and beta = 0:
  *             double alpha = 1, beta = 0             # <<<<<<<<<<<<<<
@@ -7455,7 +7267,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__solve_by_blas_dgem
   __pyx_v_alpha = 1.0;
   __pyx_v_beta = 0.0;
 
-  /* "cytricubic.pyx":561
+  /* "cytricubic.pyx":616
  *             double alpha = 1, beta = 0
  *             # Leading dimension of A: The number of rows in A
  *             int LDA = 64             # <<<<<<<<<<<<<<
@@ -7464,7 +7276,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__solve_by_blas_dgem
  */
   __pyx_v_LDA = 64;
 
-  /* "cytricubic.pyx":566
+  /* "cytricubic.pyx":621
  *             # Increment in Y: Increment for the elements of Y (for our purposes,
  *             #                   Y = self.coeffs)
  *             int INCX = 1, INCY = 1             # <<<<<<<<<<<<<<
@@ -7474,7 +7286,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__solve_by_blas_dgem
   __pyx_v_INCX = 1;
   __pyx_v_INCY = 1;
 
-  /* "cytricubic.pyx":571
+  /* "cytricubic.pyx":626
  *         # algebra library takes Fortran-style pointer arguments,
  *         # leaving the actual function call somewhat convoluted:
  *         cy_dgemv(trans, # Already a pointer             # <<<<<<<<<<<<<<
@@ -7483,7 +7295,7 @@ static PyObject *__pyx_f_10cytricubic_20TricubicInterpolator__solve_by_blas_dgem
  */
   __pyx_f_5scipy_6linalg_11cython_blas_dgemv(__pyx_v_trans, (&__pyx_v_M), (&__pyx_v_N), (&__pyx_v_alpha), (&((__pyx_v_self->A[0])[0])), (&__pyx_v_LDA), (&(__pyx_v_self->psi[0])), (&__pyx_v_INCX), (&__pyx_v_beta), (&(__pyx_v_self->coeffs[0])), (&__pyx_v_INCY));
 
-  /* "cytricubic.pyx":515
+  /* "cytricubic.pyx":570
  *                                 -(data[xp2,y,z]-data[x,y,z])))
  * 
  *     cdef _solve_by_blas_dgemv_(self):             # <<<<<<<<<<<<<<
@@ -7529,7 +7341,7 @@ static PyObject *__pyx_pf_10cytricubic_20TricubicInterpolator_6__reduce_cython__
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7582,7 +7394,7 @@ static PyObject *__pyx_pf_10cytricubic_20TricubicInterpolator_8__setstate_cython
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7774,7 +7586,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 235, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 235, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -7830,7 +7642,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             info.buf = PyArray_DATA(self)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 239, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 239, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -8139,7 +7951,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 276, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 276, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9028,7 +8840,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 823, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 823, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9096,7 +8908,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 827, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 827, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9205,7 +9017,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 847, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(2, 847, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_Raise(__pyx_t_4, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -9885,7 +9697,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1013, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1013, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -10014,7 +9826,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1019, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__14, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1019, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -10140,7 +9952,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1025, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(2, 1025, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -10383,7 +10195,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if itemsize <= 0:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 131, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__16, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 131, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -10415,7 +10227,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if not isinstance(format, bytes):
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 134, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -10450,7 +10262,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_format, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 137, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF_SET(__pyx_v_format, __pyx_t_5);
@@ -10530,7 +10342,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  * 
  */
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 146, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__19, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 146, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_Raise(__pyx_t_5, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -10814,7 +10626,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *             if self.dtype_is_object:
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__21, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 174, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 174, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -11052,7 +10864,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(stru
  *         info.buf = self.data
  *         info.len = self.len
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__22, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 190, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__21, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -11768,7 +11580,7 @@ static PyObject *__pyx_pf___pyx_array___reduce_cython__(CYTHON_UNUSED struct __p
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__22, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -11821,7 +11633,7 @@ static PyObject *__pyx_pf___pyx_array_2__setstate_cython__(CYTHON_UNUSED struct 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__24, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -14464,7 +14276,7 @@ static PyObject *__pyx_memoryview_convert_item_to_object(struct __pyx_memoryview
  *         else:
  *             if len(self.view.format) == 1:
  */
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__25, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 486, __pyx_L5_except_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__24, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 486, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_Raise(__pyx_t_6, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -15303,7 +15115,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_7strides___get__(st
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__26, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 558, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__25, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 558, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -15417,7 +15229,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_10suboffsets___get_
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->view.ndim); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 565, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__27, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 565, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__26, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 565, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_3;
@@ -16424,7 +16236,7 @@ static PyObject *__pyx_pf___pyx_memoryview___reduce_cython__(CYTHON_UNUSED struc
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__28, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__27, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -16477,7 +16289,7 @@ static PyObject *__pyx_pf___pyx_memoryview_2__setstate_cython__(CYTHON_UNUSED st
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__29, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__28, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -16828,9 +16640,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
         __Pyx_GOTREF(__pyx_t_7);
         { Py_ssize_t __pyx_temp;
           for (__pyx_temp=0; __pyx_temp < ((__pyx_v_ndim - __pyx_t_8) + 1); __pyx_temp++) {
-            __Pyx_INCREF(__pyx_slice__30);
-            __Pyx_GIVEREF(__pyx_slice__30);
-            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__30);
+            __Pyx_INCREF(__pyx_slice__29);
+            __Pyx_GIVEREF(__pyx_slice__29);
+            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__29);
           }
         }
         __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_7); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 670, __pyx_L1_error)
@@ -16863,7 +16675,7 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
  *         else:
  */
       /*else*/ {
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__31); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 673, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__30); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 673, __pyx_L1_error)
       }
       __pyx_L7:;
 
@@ -17008,9 +16820,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
     __Pyx_GOTREF(__pyx_t_3);
     { Py_ssize_t __pyx_temp;
       for (__pyx_temp=0; __pyx_temp < __pyx_v_nslices; __pyx_temp++) {
-        __Pyx_INCREF(__pyx_slice__32);
-        __Pyx_GIVEREF(__pyx_slice__32);
-        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__32);
+        __Pyx_INCREF(__pyx_slice__31);
+        __Pyx_GIVEREF(__pyx_slice__31);
+        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__31);
       }
     }
     __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_3); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(1, 684, __pyx_L1_error)
@@ -17134,7 +16946,7 @@ static PyObject *assert_direct_dimensions(Py_ssize_t *__pyx_v_suboffsets, int __
  * 
  * 
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__33, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 691, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__32, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 691, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -19305,7 +19117,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED 
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__34, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__33, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -19358,7 +19170,7 @@ static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUS
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__35, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__34, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_Raise(__pyx_t_1, 0, 0, 0);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -23028,7 +22840,7 @@ static void __pyx_tp_dealloc_10cytricubic_TricubicInterpolator(PyObject *o) {
 
 static PyMethodDef __pyx_methods_10cytricubic_TricubicInterpolator[] = {
   {"ev", (PyCFunction)__pyx_pw_10cytricubic_20TricubicInterpolator_3ev, METH_VARARGS|METH_KEYWORDS, __pyx_doc_10cytricubic_20TricubicInterpolator_2ev},
-  {"ev_grid", (PyCFunction)__pyx_pw_10cytricubic_20TricubicInterpolator_5ev_grid, METH_VARARGS|METH_KEYWORDS, 0},
+  {"ev_grid", (PyCFunction)__pyx_pw_10cytricubic_20TricubicInterpolator_5ev_grid, METH_VARARGS|METH_KEYWORDS, __pyx_doc_10cytricubic_20TricubicInterpolator_4ev_grid},
   {"__reduce_cython__", (PyCFunction)__pyx_pw_10cytricubic_20TricubicInterpolator_7__reduce_cython__, METH_NOARGS, 0},
   {"__setstate_cython__", (PyCFunction)__pyx_pw_10cytricubic_20TricubicInterpolator_9__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
@@ -23801,7 +23613,6 @@ static struct PyModuleDef __pyx_moduledef = {
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_ASCII, __pyx_k_ASCII, sizeof(__pyx_k_ASCII), 0, 0, 1, 1},
-  {&__pyx_kp_s_Array_dimensions_inconsistent, __pyx_k_Array_dimensions_inconsistent, sizeof(__pyx_k_Array_dimensions_inconsistent), 0, 0, 1, 0},
   {&__pyx_kp_s_Buffer_view_does_not_expose_stri, __pyx_k_Buffer_view_does_not_expose_stri, sizeof(__pyx_k_Buffer_view_does_not_expose_stri), 0, 0, 1, 0},
   {&__pyx_kp_s_Can_only_create_a_buffer_that_is, __pyx_k_Can_only_create_a_buffer_that_is, sizeof(__pyx_k_Can_only_create_a_buffer_that_is), 0, 0, 1, 0},
   {&__pyx_kp_s_Cannot_index_with_type_s, __pyx_k_Cannot_index_with_type_s, sizeof(__pyx_k_Cannot_index_with_type_s), 0, 0, 1, 0},
@@ -23955,38 +23766,27 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "cytricubic.pyx":203
- * 
+  /* "cytricubic.pyx":218
+ *         # Derivatives of negative orders are not well-defined:
  *         if(kz < 0 or ky < 0 or kz < 0):
  *             raise RuntimeError("Derivative order must be nonnegative.")             # <<<<<<<<<<<<<<
  * 
- *         if(kx > 3 or ky > 3 or kz > 3):
+ *         # Seeing as this is a *cubic* interpolator, taking derivatives of higher
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_Derivative_order_must_be_nonnega); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_Derivative_order_must_be_nonnega); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 218, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "cytricubic.pyx":206
- * 
+  /* "cytricubic.pyx":223
+ *         # order than 3 will return zero anyways:
  *         if(kx > 3 or ky > 3 or kz > 3):
  *             raise RuntimeError("Derivative order can't be larger than 3.")             # <<<<<<<<<<<<<<
  * 
  * 	# Determine the relative coordinates of the point in question, within
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Derivative_order_can_t_be_larger); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 206, __pyx_L1_error)
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Derivative_order_can_t_be_larger); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 223, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
-
-  /* "cytricubic.pyx":275
- *                 or x_sh1 != y_sh1 or x_sh1 != z_sh1 or y_sh1 != z_sh1
- *                 or x_sh2 != y_sh2 or x_sh2 != z_sh2 or y_sh2 != z_sh2):
- *             raise RuntimeError("Array dimensions inconsistent!")             # <<<<<<<<<<<<<<
- * 
- *         cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x_sh0,
- */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_Array_dimensions_inconsistent); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 275, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -23994,18 +23794,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(1, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(1, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":235
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
@@ -24014,9 +23814,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(2, 235, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(2, 235, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":239
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
@@ -24025,9 +23825,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             info.buf = PyArray_DATA(self)
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(2, 239, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(2, 239, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":276
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -24036,9 +23836,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(2, 276, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(2, 276, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":823
  * 
@@ -24047,9 +23847,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(2, 823, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(2, 823, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":827
  *         if ((child.byteorder == c'>' and little_endian) or
@@ -24058,9 +23858,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(2, 827, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__12);
-  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(2, 827, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":847
  *             t = child.type_num
@@ -24069,9 +23869,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(2, 847, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(2, 847, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":1013
  *         _import_array()
@@ -24080,9 +23880,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(2, 1013, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__14);
-  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(2, 1013, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__13);
+  __Pyx_GIVEREF(__pyx_tuple__13);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":1019
  *         _import_umath()
@@ -24091,18 +23891,18 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(2, 1019, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(2, 1019, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
 
   /* "../../../anaconda3/lib/python3.6/site-packages/Cython/Includes/numpy/__init__.pxd":1025
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(2, 1025, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__16);
-  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(2, 1025, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__15);
+  __Pyx_GIVEREF(__pyx_tuple__15);
 
   /* "View.MemoryView":131
  * 
@@ -24111,9 +23911,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if itemsize <= 0:
  */
-  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(1, 131, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
+  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(1, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
 
   /* "View.MemoryView":134
  * 
@@ -24122,9 +23922,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if not isinstance(format, bytes):
  */
-  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(1, 134, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__18);
-  __Pyx_GIVEREF(__pyx_tuple__18);
+  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(1, 134, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
 
   /* "View.MemoryView":137
  * 
@@ -24133,9 +23933,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         self._format = format  # keep a reference to the byte string
  *         self.format = self._format
  */
-  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(1, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
+  __pyx_tuple__18 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(1, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__18);
+  __Pyx_GIVEREF(__pyx_tuple__18);
 
   /* "View.MemoryView":146
  * 
@@ -24144,9 +23944,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__20 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(1, 146, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__20);
-  __Pyx_GIVEREF(__pyx_tuple__20);
+  __pyx_tuple__19 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(1, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__19);
+  __Pyx_GIVEREF(__pyx_tuple__19);
 
   /* "View.MemoryView":174
  *             self.data = <char *>malloc(self.len)
@@ -24155,9 +23955,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if self.dtype_is_object:
  */
-  __pyx_tuple__21 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(1, 174, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__21);
-  __Pyx_GIVEREF(__pyx_tuple__21);
+  __pyx_tuple__20 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(1, 174, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__20);
+  __Pyx_GIVEREF(__pyx_tuple__20);
 
   /* "View.MemoryView":190
  *             bufmode = PyBUF_F_CONTIGUOUS | PyBUF_ANY_CONTIGUOUS
@@ -24166,9 +23966,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         info.buf = self.data
  *         info.len = self.len
  */
-  __pyx_tuple__22 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(1, 190, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__22);
-  __Pyx_GIVEREF(__pyx_tuple__22);
+  __pyx_tuple__21 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(1, 190, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -24176,18 +23976,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__23 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(1, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__23);
-  __Pyx_GIVEREF(__pyx_tuple__23);
+  __pyx_tuple__22 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__22);
+  __Pyx_GIVEREF(__pyx_tuple__22);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__24 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(1, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__24);
-  __Pyx_GIVEREF(__pyx_tuple__24);
+  __pyx_tuple__23 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__23);
+  __Pyx_GIVEREF(__pyx_tuple__23);
 
   /* "View.MemoryView":486
  *             result = struct.unpack(self.view.format, bytesitem)
@@ -24196,9 +23996,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         else:
  *             if len(self.view.format) == 1:
  */
-  __pyx_tuple__25 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(1, 486, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__25);
-  __Pyx_GIVEREF(__pyx_tuple__25);
+  __pyx_tuple__24 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(1, 486, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__24);
+  __Pyx_GIVEREF(__pyx_tuple__24);
 
   /* "View.MemoryView":558
  *         if self.view.strides == NULL:
@@ -24207,9 +24007,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-  __pyx_tuple__26 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(1, 558, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__26);
-  __Pyx_GIVEREF(__pyx_tuple__26);
+  __pyx_tuple__25 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(1, 558, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__25);
+  __Pyx_GIVEREF(__pyx_tuple__25);
 
   /* "View.MemoryView":565
  *     def suboffsets(self):
@@ -24218,12 +24018,12 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([suboffset for suboffset in self.view.suboffsets[:self.view.ndim]])
  */
-  __pyx_tuple__27 = PyTuple_New(1); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(1, 565, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__27);
+  __pyx_tuple__26 = PyTuple_New(1); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(1, 565, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_INCREF(__pyx_int_neg_1);
   __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_tuple__27, 0, __pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_tuple__27);
+  PyTuple_SET_ITEM(__pyx_tuple__26, 0, __pyx_int_neg_1);
+  __Pyx_GIVEREF(__pyx_tuple__26);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -24231,18 +24031,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__28 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(1, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__28);
-  __Pyx_GIVEREF(__pyx_tuple__28);
+  __pyx_tuple__27 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__27);
+  __Pyx_GIVEREF(__pyx_tuple__27);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__29 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(1, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__29);
-  __Pyx_GIVEREF(__pyx_tuple__29);
+  __pyx_tuple__28 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__28);
+  __Pyx_GIVEREF(__pyx_tuple__28);
 
   /* "View.MemoryView":670
  *         if item is Ellipsis:
@@ -24251,9 +24051,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 seen_ellipsis = True
  *             else:
  */
-  __pyx_slice__30 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__30)) __PYX_ERR(1, 670, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__30);
-  __Pyx_GIVEREF(__pyx_slice__30);
+  __pyx_slice__29 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__29)) __PYX_ERR(1, 670, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__29);
+  __Pyx_GIVEREF(__pyx_slice__29);
 
   /* "View.MemoryView":673
  *                 seen_ellipsis = True
@@ -24262,9 +24062,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             have_slices = True
  *         else:
  */
-  __pyx_slice__31 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__31)) __PYX_ERR(1, 673, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__31);
-  __Pyx_GIVEREF(__pyx_slice__31);
+  __pyx_slice__30 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__30)) __PYX_ERR(1, 673, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__30);
+  __Pyx_GIVEREF(__pyx_slice__30);
 
   /* "View.MemoryView":684
  *     nslices = ndim - len(result)
@@ -24273,9 +24073,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *     return have_slices or nslices, tuple(result)
  */
-  __pyx_slice__32 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__32)) __PYX_ERR(1, 684, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__32);
-  __Pyx_GIVEREF(__pyx_slice__32);
+  __pyx_slice__31 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__31)) __PYX_ERR(1, 684, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__31);
+  __Pyx_GIVEREF(__pyx_slice__31);
 
   /* "View.MemoryView":691
  *     for suboffset in suboffsets[:ndim]:
@@ -24284,9 +24084,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__33 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(1, 691, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__33);
-  __Pyx_GIVEREF(__pyx_tuple__33);
+  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(1, 691, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__32);
+  __Pyx_GIVEREF(__pyx_tuple__32);
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
@@ -24294,18 +24094,18 @@ static int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple__34 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(1, 2, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__34);
-  __Pyx_GIVEREF(__pyx_tuple__34);
+  __pyx_tuple__33 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(1, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__33);
+  __Pyx_GIVEREF(__pyx_tuple__33);
 
   /* "(tree fragment)":4
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__35 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__35)) __PYX_ERR(1, 4, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__35);
-  __Pyx_GIVEREF(__pyx_tuple__35);
+  __pyx_tuple__34 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__34);
+  __Pyx_GIVEREF(__pyx_tuple__34);
 
   /* "View.MemoryView":284
  *         return self.name
@@ -24314,9 +24114,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_tuple__36 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(1, 284, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__36);
-  __Pyx_GIVEREF(__pyx_tuple__36);
+  __pyx_tuple__35 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__35)) __PYX_ERR(1, 284, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__35);
+  __Pyx_GIVEREF(__pyx_tuple__35);
 
   /* "View.MemoryView":285
  * 
@@ -24325,9 +24125,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_tuple__37 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(1, 285, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__37);
-  __Pyx_GIVEREF(__pyx_tuple__37);
+  __pyx_tuple__36 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(1, 285, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__36);
+  __Pyx_GIVEREF(__pyx_tuple__36);
 
   /* "View.MemoryView":286
  * cdef generic = Enum("<strided and direct or indirect>")
@@ -24336,9 +24136,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__38 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(1, 286, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__38);
-  __Pyx_GIVEREF(__pyx_tuple__38);
+  __pyx_tuple__37 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(1, 286, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__37);
+  __Pyx_GIVEREF(__pyx_tuple__37);
 
   /* "View.MemoryView":289
  * 
@@ -24347,9 +24147,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(1, 289, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__39);
-  __Pyx_GIVEREF(__pyx_tuple__39);
+  __pyx_tuple__38 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(1, 289, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__38);
+  __Pyx_GIVEREF(__pyx_tuple__38);
 
   /* "View.MemoryView":290
  * 
@@ -24358,19 +24158,19 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__40 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(1, 290, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__40);
-  __Pyx_GIVEREF(__pyx_tuple__40);
+  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(1, 290, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__39);
+  __Pyx_GIVEREF(__pyx_tuple__39);
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Enum(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
  *     if __pyx_checksum != 0xb068931:
  *         from pickle import PickleError as __pyx_PickleError
  */
-  __pyx_tuple__41 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__41);
-  __Pyx_GIVEREF(__pyx_tuple__41);
-  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_tuple__40 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__40);
+  __Pyx_GIVEREF(__pyx_tuple__40);
+  __pyx_codeobj__41 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__40, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__41)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -24535,7 +24335,7 @@ static int __pyx_pymod_exec_cytricubic(PyObject *__pyx_pyinit_module)
   /*--- Type init code ---*/
   __pyx_vtabptr_10cytricubic_TricubicInterpolator = &__pyx_vtable_10cytricubic_TricubicInterpolator;
   __pyx_vtable_10cytricubic_TricubicInterpolator._ev_ = (double (*)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, double, double, double, int, int, int))__pyx_f_10cytricubic_20TricubicInterpolator__ev_;
-  __pyx_vtable_10cytricubic_TricubicInterpolator.ijk2n = (int (*)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int))__pyx_f_10cytricubic_20TricubicInterpolator_ijk2n;
+  __pyx_vtable_10cytricubic_TricubicInterpolator.ind = (int (*)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int))__pyx_f_10cytricubic_20TricubicInterpolator_ind;
   __pyx_vtable_10cytricubic_TricubicInterpolator._ev_grid_ = (PyObject *(*)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int))__pyx_f_10cytricubic_20TricubicInterpolator__ev_grid_;
   __pyx_vtable_10cytricubic_TricubicInterpolator._calibrate_ = (PyObject *(*)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int))__pyx_f_10cytricubic_20TricubicInterpolator__calibrate_;
   __pyx_vtable_10cytricubic_TricubicInterpolator._set_values_ = (PyObject *(*)(struct __pyx_obj_10cytricubic_TricubicInterpolator *, int, int, int, int, int, int))__pyx_f_10cytricubic_20TricubicInterpolator__set_values_;
@@ -24648,7 +24448,7 @@ static int __pyx_pymod_exec_cytricubic(PyObject *__pyx_pyinit_module)
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__36, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 284, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__35, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(generic);
   __Pyx_DECREF_SET(generic, __pyx_t_2);
@@ -24662,7 +24462,7 @@ static int __pyx_pymod_exec_cytricubic(PyObject *__pyx_pyinit_module)
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__37, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 285, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__36, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(strided);
   __Pyx_DECREF_SET(strided, __pyx_t_2);
@@ -24676,7 +24476,7 @@ static int __pyx_pymod_exec_cytricubic(PyObject *__pyx_pyinit_module)
  * 
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 286, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__37, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(indirect);
   __Pyx_DECREF_SET(indirect, __pyx_t_2);
@@ -24690,7 +24490,7 @@ static int __pyx_pymod_exec_cytricubic(PyObject *__pyx_pyinit_module)
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__39, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 289, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(contiguous);
   __Pyx_DECREF_SET(contiguous, __pyx_t_2);
@@ -24704,7 +24504,7 @@ static int __pyx_pymod_exec_cytricubic(PyObject *__pyx_pyinit_module)
  * 
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__40, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 290, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__39, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_XGOTREF(indirect_contiguous);
   __Pyx_DECREF_SET(indirect_contiguous, __pyx_t_2);
