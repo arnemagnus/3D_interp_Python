@@ -16,9 +16,11 @@ The interpolation assumes periodic boundary conditions along all three
 abscissae.
 """
 
+# NumPy is just about essential regarding scientific computing in Python;
 import numpy as np
 cimport numpy as np
 
+# The cython library has a lot of
 cimport cython
 
 from scipy.linalg.cython_blas cimport dgemv as cy_dgemv
@@ -41,6 +43,10 @@ cdef class TricubicInterpolator:
     This class provides a Python object interface to optimized C code which
     enables tricubic interpolation in three dimensions, where periodic boundary
     conditions in all three dimensions is implicitly assumed.
+
+    This particular implementation guarantees that the interpolated object
+    has continuous first derivatives, and *mixed* second derivatives.
+    In some cases, the
     """
     cdef:
         # The minimum boundaries of the computational domain
