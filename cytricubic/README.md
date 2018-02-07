@@ -9,6 +9,7 @@ To build from the precompiled *.c file:
 To generate a new *.c file, and compile it by means of Cython:
 
 *Cython required*
+
 '''
     python cy_setup.py build_ext -i
 '''
