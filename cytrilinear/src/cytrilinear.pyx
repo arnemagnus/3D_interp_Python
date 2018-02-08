@@ -1,3 +1,15 @@
+"""
+This module contains an object oriented implementation of a trilinear
+interpolation routine routine in 3D.
+
+Two modes are available:
+	a) Periodic boundary conditions
+	b) Pure interpolation, i.e., attempting to evaluate the interpolation
+		object outside of the sampling domain returns zero
+
+Unless otherwise specified, periodic boundary conditions are assumed.
+"""
+
 # The Cython library contains a lot of useful functionalities, such as compiler
 # flags;
 cimport cython
