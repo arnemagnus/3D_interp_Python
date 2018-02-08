@@ -1,5 +1,3 @@
-#!python
-#cython:
 
 """
 This module contains an implementation of a tricubic interpolation routine
@@ -8,52 +6,30 @@ in 3D, the theoretical foundation of which is found in
     Lekien, F and Marsden, J (2005):
         'Tricubic Interpolation in Three Dimensions',
         in Journal of Numerical Methods and Engineering(63), pp. 455-471,
-        available at
-            http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.89.7835
-	(checked February 5th, 2018)
+	doi:10.1002/nme.1296
 
 The interpolation assumes periodic boundary conditions along all three
 abscissae.
 """
 
-# NumPy is just about essential regarding scientific computing in Python,
-# and well integrated with Cython;
-import numpy as np
-cimport numpy as np
-
 # The cython library contains a lot of useful functionalities, such as
 # compiler flags;
 cimport cython
 
-# When evaluating the interpolated function, one generally needs to multiply
-# a 64-by-64 matrix with a 64-by-1 vector in order to obtain correct
-# interpolation coefficients. In order to do this efficiently, we use
-# the BLAS level two function 'dgemv':
-from scipy.linalg.cython_blas cimport dgemv as cy_dgemv
+# The other import commands are defined in the accompanying Cython header file:
+cimport cytricubic
 
-# The C math library contains lots of useful functions. Using these is much
-# more efficient than calling e.g. NumPy's implementation, when working at C
-# level. Hence:
-from libc.math cimport fmod as c_fmod, floor as c_floor, pow as c_pow
-
-# The attached header file "coeff_.h" contains the int (equiv. to
-# numpy.int32) representation of the 64-by-64 matrix defining the linear system
-# used for the three-dimensional interpolation.
-#
-cdef extern from "../include/coeff_.h":
-    int get_coeff(int*, int*)
-#
-# A simple wrapper function, aptly named "get_coeff", extracts the individual
-# matrix elements, which is needed in order to set the system matrix elements
-# for an instance of the TricubicInterpolator class. Explicitly typing
-# the 64-times-64 coefficients by hand is out of the question.
-
-# Here follows the implementation of the Cython extension type:
 cdef class TricubicInterpolator:
     """
     This class provides a Python object interface to optimized C code which
-    enables tricubic interpolation in three dimensions, where periodic boundary
-    conditions in all three dimensions is implicitly assumed.
+    enables local tricubic polynomial interpolation, in three dimensions.
+
+    Two interpolation modes are available:
+        a) Periodic boundary conditions
+        b) Pure interpolation, i.e., attempting to evaluate the interpolation
+            object outside of the sampling domain returns zero
+
+    Unless otherwise specified, periodic boundary conditions are assumed.
 
     This particular implementation guarantees that the interpolated object
     has continuous first derivatives, *mixed* second derivatives (i.e.,
@@ -63,35 +39,6 @@ cdef class TricubicInterpolator:
     and d2f/dz2, may be continuous. The same applies to the third derivatives.
     This depends strongly on the smoothness of the *actual* function.
     """
-    # All extension type attributes must be pre-declared at compile time.
-    # Typed attributes are, by default, only accessible from Cython.
-    cdef:
-        # The minimum boundaries of the physical domain
-        # (needed in order to properly transform input coordinates to
-        # the relevant interpolation voxel)
-        double x_min, y_min, z_min
-        # The number of points along each axis
-        int nx, ny, nz
-        # The grid spacings are needed for the finite difference approximation
-        # of derivatives, in addition to transform input coordinates to
-        # the relevant interpolation voxel
-        double dx, dy, dz
-        # The 3D-data to be interpolated
-        double[:,:,::1] data
-        # The 64-by-64 matrix which defines the linear 3D interpolation system
-        double A[64][64]
-        # Container for the intermediate coefficients needed to compute
-        # interpolation coefficients within a given voxel
-        double psi[64]
-        # Container for the interpolation coefficients within a given voxel
-        double coeffs[64]
-        # Flag indicating whether or not the interpolator has been calibrated
-        # for any voxel
-        bint calibrated
-        # Indices keeping track of which voxel the interpolator calibration
-        # was most recently performed for
-        int xi, yi, zi
-
 
     # The following Cython compilation flags turn off the Pythonic
     # bounds check and wraparound functionality with regards to
@@ -106,9 +53,10 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     def __cinit__(self, double[::1] x not None, double[::1] y not None,
-            double[::1] z not None, double[:,:,::1] data not None):
+            double[::1] z not None, double[:,:,::1] data not None,
+            bint periodic = 1):
         """
-        TricubicInterpolator(x, y, z, data)
+        TricubicInterpolator(x, y, z, data, periodic)
 
         Constructor for a TricubicInterpolator object. Intended for use on
         a Cartesian, three-dimensional grid of rectangular parallelepipeds.
@@ -129,6 +77,9 @@ cdef class TricubicInterpolator:
         param: data -- A 3D numpy array of np.float64, containing the sampled
                        function values f(x,y,z) on the grid spanned by x, y
                        and z. Shape: (len(x),len(y),len(z)).
+        OPTIONAL:
+        param: periodic -- Boolean flag indicating whether or not to use
+                           periodic boundary conditions. Default: True.
         """
         # Local variables:
         cdef:
@@ -143,22 +94,30 @@ cdef class TricubicInterpolator:
             raise RuntimeError("Input data not properly aligned. See\
                                 constructor docstring for details.")
 
-        # Store minimum boundaries of physical domain
+        self.periodic = periodic
         self.x_min = x[0]
         self.y_min = y[0]
         self.z_min = z[0]
-        # Store physical grid spacing
+        self.x_max = x[x.shape[0]-1]
+        self.y_max = y[y.shape[0]-1]
+        self.z_max = z[z.shape[0]-1]
         self.dx = x[1]-x[0]
         self.dy = y[1]-y[0]
         self.dz = z[1]-z[0]
-        # Store number of elements along each abscissa axis
-        self.nx = x.shape[0]-1
-        self.ny = y.shape[0]-1
-        self.nz = z.shape[0]-1
-        # Store function values to interpolate
+        self.nx = x.shape[0]
+        self.ny = y.shape[0]
+        self.nz = z.shape[0]
+        # If periodic boundary conditions are used, we map the last index in
+        # each respective direction to the corresponding first index.
+        # Thus, there is no need to store the data corresponding to the *actual*
+        # last indices in any direction:
+        if self.periodic:
+            self.nx -= 1
+            self.ny -= 1
+            self.nz -= 1
+        # Explicitly specify the data limits in case of periodic boundary
+        # conditions, cf. above.
         self.data = data[:self.nx-1,:self.ny-1,:self.nz-1]
-        # Before the first evaluation, the interpolator object is
-        # uncalibrated
         self.calibrated = 0
         # Explicitly set each element of the matrix A, using the predefined
         # 64-by-64 matrix in the helper file coeff_.h
