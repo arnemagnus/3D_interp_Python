@@ -5,7 +5,7 @@ interpolation routine routine in 3D.
 Two modes are available:
 	a) Periodic boundary conditions
 	b) Pure interpolation, i.e., attempting to evaluate the interpolation
-		object outside of the sampling domain returns zero
+	   object outside of the sampling domain returns zero
 
 Unless otherwise specified, periodic boundary conditions are assumed.
 """
@@ -19,15 +19,30 @@ cimport cytrilinear
 
 cdef class TrilinearInterpolator:
     """
-    This class provides a Python object interface to optimized C code which
-    enables simultaneous linear interpolation in three dimensions.
+    TrilinearInterpolator(x, y, z, data, periodic)
 
-    Two interpolation modes are available:
-        a) Periodic boundary conditions
-        b) Pure interpolation, i.e., attempting to evaluate the interpolation
-            object outside of the sampling domain returns zero.
+    Constructor for a TrilinearInterpolator object. Intended for use on
+    a Cartesian, three-dimensional grid with equidistant grid spacing.
+    The grid spacings need not be the same along any pair of axes.
 
-    Unless otherwise specified, periodic boundary conditions are assumed.
+    param: x    -- A 1D numpy array of np.float64, defining the coordinates
+                   along the first axis, at which the function has been
+                   sampled. Must be strictly increasing.
+                   *IMPORTANT*: len(x) > 1.
+    param: y    -- A 1D numpy array of np.float64, defining the coordinates
+                   along the second axis, at which the function has been
+                   sampled. Must be strictly increasing.
+                   *IMPORTANT*: len(y) > 1.
+    param: z    -- A 1D numpy array of np.float64, defining the coordinates
+                   along the third axis, at which the function has been
+                   sampled. Must be strictly increasing.
+                   *IMPORTANT*: len(z) > 1.
+    param: data -- A 3D numpy array of np.float64, containing the sampled
+                   function values on the grid spanned by x, y and z.
+                   Shape: (len(x),len(y),len(z)).
+    OPTIONAL:
+    param: periodic -- Boolean flag indicating whether or not to use
+                       periodic boundary conditions. Default: True.
     """
 
     # Turning off the explicit bounds check and wraparound functionality of
@@ -37,32 +52,6 @@ cdef class TrilinearInterpolator:
     def __cinit__(self,double[::1] x not None,double[::1] y not None,
             double[::1] z not None,double[:,:,::1] data not None,
             bint periodic = 1):
-        """
-        TrilinearInterpolator(x, y, z, data, periodic)
-
-        Constructor for a TrilinearInterpolator object. Intended for use on
-        a Cartesian, three-dimensional grid with equidistant grid spacing.
-        The grid spacings need not be the same along any pair of axes.
-
-        param: x    -- A 1D numpy array of np.float64, defining the coordinates
-                       along the first axis, at which the function has been
-                       sampled. Must be strictly increasing.
-                       *IMPORTANT*: len(x) > 1.
-        param: y    -- A 1D numpy array of np.float64, defining the coordinates
-                       along the second axis, at which the function has been
-                       sampled. Must be strictly increasing.
-                       *IMPORTANT*: len(y) > 1.
-        param: z    -- A 1D numpy array of np.float64, defining the coordinates
-                       along the third axis, at which the function has been
-                       sampled. Must be strictly increasing.
-                       *IMPORTANT*: len(z) > 1.
-        param: data -- A 3D numpy array of np.float64, containing the sampled
-                       function values on the grid spanned by x, y and z.
-                       Shape: (len(x),len(y),len(z)).
-        OPTIONAL:
-        param: periodic -- Boolean flag indicating whether or not to use
-                           periodic boundary conditions. Default: True.
-        """
 
         if(x.shape[0] == 0 or y.shape[0] == 0 or z.shape[0] == 0):
             raise RuntimeError("Abscissa vectors must have a positive number of\
@@ -299,11 +288,11 @@ cdef class TrilinearInterpolator:
         is allowed. That is, evaluating the interpolated function
         outside of the sampling domain will return zero.
 
-        param: x -- A NumPy array of np.float64, containing the points along
+        param: x -- A 1D NumPy array of np.float64, containing the points along
                     the x abscissa at which an interpolated value is sought
-        param: y -- A NumPy array of np.float64, containing the points along
+        param: y -- A 1D NumPy array of np.float64, containing the points along
                     the y abscissa at which an interpolated value is sought
-        param: z -- A NumPy array of np.float64, containing the points along
+        param: z -- A 1D NumPy array of np.float64, containing the points along
                     the z abscissa at which an interpolated value is sought
 
         return:     A NumPy array of np.float64 interpolated values.

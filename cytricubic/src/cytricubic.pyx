@@ -1,15 +1,27 @@
-
 """
-This module contains an implementation of a tricubic interpolation routine
-in 3D, the theoretical foundation of which is found in
+This module contains an object oriented implementation of a local tricubic
+polynomial interpolation routine in 3D, the theoretical foundation of which is
+found in
 
     Lekien, F and Marsden, J (2005):
         'Tricubic Interpolation in Three Dimensions',
         in Journal of Numerical Methods and Engineering(63), pp. 455-471,
 	doi:10.1002/nme.1296
 
-The interpolation assumes periodic boundary conditions along all three
-abscissae.
+Two interpolation modes are available:
+    a) Periodic boundary conditions
+    b) Pure interpolation, i.e., attempting to evaluate the interpolation
+       object outside of the sampling domain returns zero
+
+Unless otherwise specified, periodic boundary conditions are assumed.
+
+This particular interpolation method guarantees that the interpolated object
+has continuous first derivatives, *mixed* second derivatives (i.e.,
+d2f/dxdy, d2f/dxdz and d2f/dydz) in addition to d3f/dxdydz.
+
+In *some* cases, the other second derivatives, that is, d2f/dx2, d2f/dy2
+and d2f/dz2, may be continuous. The same applies to the third derivatives.
+This depends strongly on the smoothness of the *actual* function.
 """
 
 # The cython library contains a lot of useful functionalities, such as
@@ -21,23 +33,30 @@ cimport cytricubic
 
 cdef class TricubicInterpolator:
     """
-    This class provides a Python object interface to optimized C code which
-    enables local tricubic polynomial interpolation, in three dimensions.
+    TricubicInterpolator(x, y, z, data, periodic)
 
-    Two interpolation modes are available:
-        a) Periodic boundary conditions
-        b) Pure interpolation, i.e., attempting to evaluate the interpolation
-            object outside of the sampling domain returns zero
+    Constructor for a TricubicInterpolator object. Intended for use on
+    a Cartesian, three-dimensional grid of rectangular parallelepipeds.
+    The grid spacings need not be the same along any pair of axes.
 
-    Unless otherwise specified, periodic boundary conditions are assumed.
-
-    This particular implementation guarantees that the interpolated object
-    has continuous first derivatives, *mixed* second derivatives (i.e.,
-    d2f/dxdy, d2f/dxdz and d2f/dydz) in addition to d3f/dxdydz.
-
-    In *some* cases, the other second derivatives, that is, d2f/dx2, d2f/dy2
-    and d2f/dz2, may be continuous. The same applies to the third derivatives.
-    This depends strongly on the smoothness of the *actual* function.
+    param: x    -- A 1D numpy array of np.float64, defining the coordinates
+                   along the first axis, at which the function has been
+                   sampled. Must be strictly increasing.
+                   *IMPORTANT*: len(x) >= 4.
+    param: x    -- A 1D numpy array of np.float64, defining the coordinates
+                   along the second axis, at which the function has been
+                   sampled. Must be strictly increasing.
+                   *IMPORTANT*: len(y) >= 4.
+    param: z    -- A 1D numpy array of np.float64, defining the coordinates
+                   along the third axis, at which the function has been
+                   sampled. Must be strictly increasing.
+                   *IMPORTANT*: len(z) >= 4.
+    param: data -- A 3D numpy array of np.float64, containing the sampled
+                   function values f(x,y,z) on the grid spanned by x, y
+                   and z. Shape: (len(x),len(y),len(z)).
+    OPTIONAL:
+    param: periodic -- Boolean flag indicating whether or not to use
+                       periodic boundary conditions. Default: True.
     """
 
     # The following Cython compilation flags turn off the Pythonic
@@ -55,32 +74,6 @@ cdef class TricubicInterpolator:
     def __cinit__(self, double[::1] x not None, double[::1] y not None,
             double[::1] z not None, double[:,:,::1] data not None,
             bint periodic = 1):
-        """
-        TricubicInterpolator(x, y, z, data, periodic)
-
-        Constructor for a TricubicInterpolator object. Intended for use on
-        a Cartesian, three-dimensional grid of rectangular parallelepipeds.
-        The grid spacings need not be the same along any pair of axes.
-
-        param: x    -- A 1D numpy array of np.float64, defining the coordinates
-                       along the first axis, at which the function has been
-                       sampled. Must be strictly increasing.
-                       *IMPORTANT*: len(x) >= 4.
-        param: x    -- A 1D numpy array of np.float64, defining the coordinates
-                       along the second axis, at which the function has been
-                       sampled. Must be strictly increasing.
-                       *IMPORTANT*: len(y) >= 4.
-        param: z    -- A 1D numpy array of np.float64, defining the coordinates
-                       along the third axis, at which the function has been
-                       sampled. Must be strictly increasing.
-                       *IMPORTANT*: len(z) >= 4.
-        param: data -- A 3D numpy array of np.float64, containing the sampled
-                       function values f(x,y,z) on the grid spanned by x, y
-                       and z. Shape: (len(x),len(y),len(z)).
-        OPTIONAL:
-        param: periodic -- Boolean flag indicating whether or not to use
-                           periodic boundary conditions. Default: True.
-        """
         # Local variables:
         cdef:
             int i, j # Loop counters
@@ -140,11 +133,11 @@ cdef class TricubicInterpolator:
         param: z   -- Double-precision coordinate along the z axis.
         OPTIONAL:
         param: kx  -- Integer specifying the order of the partial derivative
-                        along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.
+                      along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.
         param: ky  -- Integer specifying the order of the partial derivative
-                        along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.
+                      along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.
         param: kz  -- Integer specifying the order of the partial derivative
-                        along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.
+                      along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.
 
         return:       Double-precision interpolated value.
         """
@@ -181,55 +174,62 @@ cdef class TricubicInterpolator:
         if(kx > 3 or ky > 3 or kz > 3):
             raise RuntimeError("Derivative order can't be larger than 3.")
 
-	# Determine the relative coordinates of the point in question, within
-	# the entire interpolation parallelepiped.
-        #
-        # In transforming the physical coordinates to voxel indices,
-        # we subtract the minimum boundary values of the physical domain.
-        # This is due to the interpolation parallelepiped being zero-indexed.
-        # Then, we divide through by the grid spacings, in order to obtain
-        # normalized voxel coordinates.
-        # Lastly, we take the modulo by the number of grid points in order to
-        # enforce periodic boundary conditions.
-        x = c_fmod((x-self.x_min)/self.dx,self.nx)
-        y = c_fmod((y-self.y_min)/self.dy,self.ny)
-        z = c_fmod((z-self.z_min)/self.dz,self.nz)
+        if self.periodic:
+            # Determine the relative coordinates of the point in question, within
+            # the entire interpolation parallelepiped.
+            #
+            # In transforming the physical coordinates to voxel indices,
+            # we subtract the minimum boundary values of the physical domain.
+            # This is due to the interpolation parallelepiped being zero-indexed.
+            # Then, we divide through by the grid spacings, in order to obtain
+            # normalized voxel coordinates.
+            # Lastly, we take the modulo by the number of grid points in order to
+            # enforce periodic boundary conditions.
+            x = c_fmod((x-self.x_min)/self.dx,self.nx)
+            y = c_fmod((y-self.y_min)/self.dy,self.ny)
+            z = c_fmod((z-self.z_min)/self.dz,self.nz)
 
-	# As a second step on the path of enforcing periodic boundary positions,
-        # we ensure that the normalized coordinates lie within the intervals
-        # )0,ni(, i = x, y or z, respectively.
-        while(x < 0):
-            x += self.nx
-        while(y < 0):
-            y += self.ny
-        while(z < 0):
-            z += self.nz
+	    # As a second step on the path of enforcing periodic boundary positions,
+            # we ensure that the normalized coordinates lie within the intervals
+            # )0,ni(, i = x, y or z, respectively.
+            while(x < 0):
+                x += self.nx
+            while(y < 0):
+                y += self.ny
+            while(z < 0):
+                z += self.nz
 
-        # The integer part of the normalized coordinates define the
-        # reference corner of the voxel within which we shall interpolate
-        x_ind = int(c_floor(x))
-        y_ind = int(c_floor(y))
-        z_ind = int(c_floor(z))
+            # The integer part of the normalized coordinates define the
+            # reference corner of the voxel within which we shall interpolate
+            x_ind = int(c_floor(x))
+            y_ind = int(c_floor(y))
+            z_ind = int(c_floor(z))
 
-        # The decimal part of the normalized coordinates are needed to
-        # evaluate the voxel-local tricubic polynomial, hence:
-        x -= x_ind
-        y -= y_ind
-        z -= z_ind
+            # The decimal part of the normalized coordinates are needed to
+            # evaluate the voxel-local tricubic polynomial, hence:
+            x -= x_ind
+            y -= y_ind
+            z -= z_ind
 
-        # If the previous interpolator evaluation was performed within the
-        # same voxel as the one we're looking at now, we don't need to
-        # recompute the interpolation coefficients:
-        if(self.calibrated == 0
+            # If the previous interpolator evaluation was performed within the
+            # same voxel as the one we're looking at now, we don't need to
+            # recompute the interpolation coefficients:
+            if(self.calibrated == 0
                 or x_ind != self.xi or y_ind != self.yi or z_ind != self.zi):
-            self._calibrate_(x_ind,y_ind,z_ind)
-
+                self._calibrate_periodic_(x_ind,y_ind,z_ind)
+        else:
+            if (x < self.x_min or x > self.x_max
+                    or y < self.y_min or y > self.y_max
+                    or z < self.z_min or z > self.z_max):
+                return 0
+            else:
+                return -42 # Placeholder until the logic is in place.
 
         # Loop over the required powers of the voxel coordinates
         for k in range(kz, 4):
             for j in range(ky, 4):
                 for i in range(kx, 4):
-                    cont = self.coeffs[self.ind(i,j,k)]*c_pow(x,i-kx)\
+                    cont = self.coeffs[self._ind_(i,j,k)]*c_pow(x,i-kx)\
                                             *c_pow(y,j-ky)*c_pow(z,k-kz)
                     # Explicitly handle prefactors from derivatives:
                     for w in range(kx):
@@ -240,12 +240,13 @@ cdef class TricubicInterpolator:
                         cont *= (k-w)
                     res += cont
 
-        # Because the derivatives, as computed in self._calibrated_, are not
-        # scaled with the grid spacings, we must do so explicitly in order
-        # to obtain a properly scaled return variable:
+        # Because the derivatives, as computed in self._calibrate_periodic_
+        # or self._calibrate_nonperiodic_ are not scaled with the grid spacings,
+        # we must do so explicitly in order to obtain a properly scaled return
+        # variable:
         return res/(c_pow(self.dx,kx)*c_pow(self.dy,ky)*c_pow(self.dz,kz))
 
-    cdef int ind(self, int i, int j, int k):
+    cdef int _ind_(self, int i, int j, int k):
         # A convenience function, used to transform (tuples of) integers to
         # a single index for the interpolation coefficient array
         return(i + 4*j + 16*k)
@@ -261,29 +262,31 @@ cdef class TricubicInterpolator:
         Evaluate the interpolated function, or its derivatives, at the grid
         spanned by the input x, y and z arrays.
 
-        param: x   -- A NumPy array of np.float64, containing the points along
-                        the x abscissa at which an interpolated value is sought
-        param: y   -- A NumPy array of np.float64, containing the points along
-                        the y abscissa at which an interpolated value is sought
+        param: x   -- A 1D NumPy array of np.float64, containing the points along
+                      the x abscissa at which an interpolated value is sought
+        param: y   -- A 1D NumPy array of np.float64, containing the points along
+                      the y abscissa at which an interpolated value is sought
         param: z   -- A NumPy array of np.float64, containing the points along
-                        the z abscissa at which an interpolated value is sought
+                      the z abscissa at which an interpolated value is sought
         OPTIONAL:
         param: kx  -- Integer specifying the order of the partial derivative
-                        along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.
+                      along the x axis. 0 <= kx <= 3. DEFAULT: kx = 0.
         param: ky  -- Integer specifying the order of the partial derivative
-                        along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.
+                      along the y axis. 0 <= ky <= 3. DEFAULT: ky = 0.
         param: kz  -- Integer specifying the order of the partial derivative
-                        along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.
+                      along the z axis. 0 <= kz <= 3. DEFAULT: kz = 0.
 
         return:       A NumPy array of np.float64 interpolated values.
-                        Shape: (len(x),len(y),len(z)).
+                      Shape: (len(x),len(y),len(z)).
         """
         return self._ev_grid_(x, y, z, kx, ky, kz)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    cdef _ev_grid_(self,double[::1] x, double[::1] y, double[::1] z,
+    cdef np.ndarray[np.float64_t, ndim=3] _ev_grid_(self,double[::1] x,
+                                                         double[::1] y,
+                                                         double[::1] z,
                 int kx, int ky, int kz):
         cdef:
             int i, j, k
@@ -291,9 +294,9 @@ cdef class TricubicInterpolator:
             int ny = y.shape[0]
             int nz = z.shape[0]
 
-        cdef np.ndarray[np.float64_t,ndim=3] res = np.empty((x.shape[0],
-                                                             y.shape[0],
-                                                             z.shape[0]),
+        cdef np.ndarray[np.float64_t, ndim=3] res = np.empty((x.shape[0],
+                                                              y.shape[0],
+                                                              z.shape[0]),
                                                             dtype=np.float64)
 
         for k in range(nz):
@@ -303,77 +306,92 @@ cdef class TricubicInterpolator:
 
         return res
 
+
+
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    cdef _calibrate_(self, int x, int y, int z):
+
+    cdef _set_periodic_voxel_indices_(self,
+                                     int ix, int *ixm1, int *ixp1, int *ixp2,
+                                     int iy, int *iym1, int *iyp1, int *iyp2,
+                                     int iz, int *izm1, int *izp1, int *izp2):
+        ixm1[0] = (ix-1)%self.nx
+        ixp1[0] = (ix+1)%self.nx
+        ixp2[0] = (ix+2)%self.nx
+
+        iym1[0] = (iy-1)%self.ny
+        iyp1[0] = (iy+1)%self.ny
+        iyp2[0] = (iy+2)%self.ny
+
+        izm1[0] = (iz-1)%self.nz
+        izp1[0] = (iz+1)%self.nz
+        izp2[0] = (iz+2)%self.nz
+
+        if(ixm1[0] < 0):
+            ixm1[0] += self.nx
+        if(ixp1[0] < 0):
+            ixp1[0] += self.nx
+        if(ixp2[0] < 0):
+            ixp2[0] += self.nx
+
+        if(iym1[0] < 0):
+            iym1[0] += self.ny
+        if(iyp1[0] < 0):
+            iyp1[0] += self.ny
+        if(iyp2[0] < 0):
+            iyp2[0] += self.ny
+
+        if(izm1[0] < 0):
+            izm1[0] += self.nz
+        if(izp1[0] < 0):
+            izp1[0] += self.nz
+        if(izp2[0] < 0):
+            izp2[0] += self.nz
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.cdivision(True)
+    cdef _calibrate_periodic_(self, int ix, int iy, int iz):
         cdef:
-            int xm1, xp1, xp2
-            int ym1, yp1, yp2
-            int zm1, zp1, zp2
+            int ixm1, ixp1, ixp2
+            int iym1, iyp1, iyp2
+            int izm1, izp1, izp2
 
         # Precompute the voxel indices plus/minus one and two, in order to
         # explicitly provide the Python array wraparound and bounds check
         # feature, so that we can disable it at a Python level (to enhance
         # performance)
-        xm1 = (x-1)%self.nx
-        xp1 = (x+1)%self.nx
-        xp2 = (x+2)%self.nx
-
-        ym1 = (y-1)%self.ny
-        yp1 = (y+1)%self.ny
-        yp2 = (y+2)%self.ny
-
-        zm1 = (z-1)%self.nz
-        zp1 = (z+1)%self.nz
-        zp2 = (z+2)%self.nz
-
-        if(xm1 < 0):
-            xm1 += self.nx
-        if(xp1 < 0):
-            xp1 += self.nx
-        if(xp2 < 0):
-            xp2 += self.nx
-
-        if(ym1 < 0):
-            ym1 += self.ny
-        if(yp1 < 0):
-            yp1 += self.ny
-        if(yp2 < 0):
-            yp2 += self.ny
-
-        if(zm1 < 0):
-            zm1 += self.nz
-        if(zp1 < 0):
-            zp1 += self.nz
-        if(zp2 < 0):
-            zp2 += self.nz
+        self._set_periodic_voxel_indices_(ix, &ixm1, &ixp1, &ixp2,
+                                          iy, &iym1, &iyp1, &iyp2,
+                                          iz, &izm1, &izp1, &izp2)
 
         # Values of f(x,y,z) at the corners of the voxel
-        self._set_values_(x, xp1, y, yp1, z, zp1)
+        self._set_periodic_vals_(ix, ixp1, iy, iyp1, iz, izp1)
         # First derivatives of f(x,y,z) at the corners of the voxel
-        self._set_first_derivatives_(x, xm1, xp1, xp2,
-                                     y, ym1, yp1, yp2,
-                                     z, zm1, zp1, zp2)
+        self._set_periodic_derivs_(ix, ixm1, ixp1, ixp2,
+                                   iy, iym1, iyp1, iyp2,
+                                   iz, izm1, izp1, izp2)
         # Mixed second derivatives of f(x,y,z) at the corners of the voxel
-        self._set_second_drvtvs_(x, xm1, xp1, xp2,
-                                 y, ym1, yp1, yp2,
-                                 z, zm1, zp1, zp2)
+        self._set_periodic_mxd_2derivs_(ix, ixm1, ixp1, ixp2,
+                                        iy, iym1, iyp1, iyp2,
+                                        iz, izm1, izp1, izp2)
         # Values of d3f/dxdydz at the corners of the voxel
-        self._set_third_drvtv_(x, xm1, xp1, xp2,
-                               y, ym1, yp1, yp2,
-                               z, zm1, zp1, zp2)
+        self._set_periodic_mxd_3deriv_(ix, ixm1, ixp1, ixp2,
+                                       iy, iym1, iyp1, iyp2,
+                                       iz, izm1, izp1, izp2)
         # Convert voxel values and partial derivatives to interpolation
         # coefficients
-        self._solve_by_blas_dgemv_()
+
+        self._compute_coeffs_by_blas_dgemv_()
         # Remember the configuration for the next call
-        self.xi, self.yi, self.zi = x, y, z
+        self.xi, self.yi, self.zi = ix, iy, iz
         self.calibrated = 1
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_values_(self, int x, int xp1, int y, int yp1, int z, int zp1):
+    cdef _set_periodic_vals_(self, int x, int xp1, int y, int yp1, int z, int zp1):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
@@ -390,9 +408,9 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_first_derivatives_(self, int x, int xm1, int xp1, int xp2,
-                                       int y, int ym1, int yp1, int yp2,
-                                       int z, int zm1, int zp1, int zp2):
+    cdef _set_periodic_derivs_(self, int x, int xm1, int xp1, int xp2,
+                                     int y, int ym1, int yp1, int yp2,
+                                     int z, int zm1, int zp1, int zp2):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
@@ -427,9 +445,9 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_second_drvtvs_(self, int x, int xm1, int xp1, int xp2,
-                                   int y, int ym1, int yp1, int yp2,
-                                   int z, int zm1, int zp1, int zp2):
+    cdef _set_periodic_mxd_2derivs_(self, int x, int xm1, int xp1, int xp2,
+                                          int y, int ym1, int yp1, int yp2,
+                                          int z, int zm1, int zp1, int zp2):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
@@ -488,9 +506,9 @@ cdef class TricubicInterpolator:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cdef _set_third_drvtv_(self,int x, int xm1, int xp1, int xp2,
-                                int y, int ym1, int yp1, int yp2,
-                                int z, int zm1, int zp1, int zp2):
+    cdef _set_periodic_mxd_3deriv_(self,int x, int xm1, int xp1, int xp2,
+                                        int y, int ym1, int yp1, int yp2,
+                                        int z, int zm1, int zp1, int zp2):
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
@@ -528,7 +546,7 @@ cdef class TricubicInterpolator:
                             -((data[xp2,yp2,z]-data[x,yp2,z])
                                 -(data[xp2,y,z]-data[x,y,z])))
 
-    cdef _solve_by_blas_dgemv_(self):
+    cpdef _compute_coeffs_by_blas_dgemv_(self):
         # Computes matrix-vector product needed to identify interpolation
         # coefficients within a given voxel.
         #

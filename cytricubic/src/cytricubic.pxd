@@ -15,7 +15,7 @@ from libc.math cimport fmod as c_fmod, floor as c_floor, pow as c_pow
 # a 64-by-64 matrix with a 64-by-1 vector in order to obtain correct
 # interpolation coefficients. In order to do this efficiently, we use the
 # BLAS level two function 'dgemv':
-from scipy.linalg.cython_blas import dgemv as cy_dgemv
+from scipy.linalg.cython_blas cimport dgemv as cy_dgemv
 
 # The attached header file "coeff_.h" contains the int (equiv. to
 # numpy.int32) representation of the 64-by-64 matrix defining the linear system
@@ -30,7 +30,7 @@ cdef extern from "../include/coeff_.h":
 # the 64-times-64 coefficients by hand is out of the question.
 
 
-cdef class TrilinearInterpolator:
+cdef class TricubicInterpolator:
     cdef:
         # The boundaries of the physical domain
         # (needed in order to properly transform input coordinates to
@@ -64,6 +64,10 @@ cdef class TrilinearInterpolator:
     # derivatives) in a single point
     cdef double _ev_(self, double x, double y, double z, int kx, int ky, int kz)
 
+    # A convenience function, used to transform (tuples of) integers to
+    # a single index for the interpolation coefficient array
+    cdef int _ind_(self, int i, int j, int k)
+
     # A C level function which evaluates the interpolated function (or its
     # derivatives) on the grid spanned by the one-dimensional input arrays x, y
     # and z
@@ -75,10 +79,10 @@ cdef class TrilinearInterpolator:
 
     # A C level function which finds the indices of the interpolation voxel
     # of interest, subject to periodic boundary conditions
-    cdef _set_periodic_voxel_indices_(self, double *x, double *y, double *z,
-                                    int *ix, int *ixm1, int *ixp1, int *ixp2,
-                                    int *iy, int *iym1, int *iyp1, int *iyp2,
-                                    int *iz, int *izm1, int *izp1, int *izp2)
+    cdef _set_periodic_voxel_indices_(self,
+                                    int ix, int *ixm1, int *ixp1, int *ixp2,
+                                    int iy, int *iym1, int *iyp1, int *iyp2,
+                                    int iz, int *izm1, int *izp1, int *izp2)
 
     # A C level function which inserts the function values at the corners of
     # the interpolation voxel in the right place in the intermediate container
@@ -109,8 +113,8 @@ cdef class TrilinearInterpolator:
 
     # A C level function which computes the interpolation coefficients within
     # the voxel given by the indices of its reference corner:
-    cdef _calibrate_(self, int xi, int yi, int zi)
+    cdef _calibrate_periodic_(self, int xi, int yi, int zi)
 
     # A C level function which computes the interpolation coefficients
     # within a given voxel, making use of the BLAS level two function 'dgemv':
-    cdef _compute_coeffs_by_blas_dgemv_(self)
+    cpdef _compute_coeffs_by_blas_dgemv_(self)
