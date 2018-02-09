@@ -77,6 +77,11 @@ cdef class TricubicInterpolator:
                                                          int kx, int ky, int kz)
 
 
+    # A C level function which computes the interpolation coefficients within
+    # the voxel given by the indices of its reference corner, subject to
+    # periodic boundary conditions:
+    cdef _calibrate_periodic_(self, int xi, int yi, int zi)
+
     # A C level function which finds the indices of the interpolation voxel
     # of interest, subject to periodic boundary conditions
     cdef _set_periodic_voxel_indices_(self,
@@ -92,29 +97,63 @@ cdef class TricubicInterpolator:
 
     # A C level function which inserts centered difference approximations of the
     # first derivatives at the corners of the interpolation voxel in the right
-    # place in the intermediate container
+    # place in the intermediate container, subject to periodic boundary
+    # conditions
     cdef _set_periodic_derivs_(self, int x, int xm1, int xp1, int xp2,
                                      int y, int ym1, int yp1, int yp2,
                                      int z, int zm1, int zp1, int zp2)
 
     # A C level function which inserts centered difference approximations of the
     # mixed second derivatives at the corners of the interpolation voxel in the
-    # right place in the intermediate container
+    # right place in the intermediate container, subject to periodic boundary
+    # conditions
     cdef _set_periodic_mxd_2derivs_(self, int x, int xm1, int xp1, int xp2,
                                           int y, int ym1, int yp1, int yp2,
                                           int z, int zm1, int zp1, int zp2)
 
     # A C level function which inserts centered difference approximations of the
     # mixed third derivative d3f/dxdydz at the corners of the interpolation
-    # voxel in the right place in the intermediate container
+    # voxel in the right place in the intermediate container, subject to
+    # periodic boundary conditions
     cdef _set_periodic_mxd_3deriv_(self, int x, int xm1, int xp1, int xp2,
                                          int y, int ym1, int yp1, int yp2,
                                          int z, int zm1, int zp1, int zp2)
 
     # A C level function which computes the interpolation coefficients within
-    # the voxel given by the indices of its reference corner:
-    cdef _calibrate_periodic_(self, int xi, int yi, int zi)
+    # the voxel given by the indices of its reference corner, when periodic
+    # boundary conditions are not enforced:
+    cdef _calibrate_nonperiodic_(self, int xi, int yi, int zi)
+
+    # A C level function which inserts the function values at the corners of
+    # the interpolation voxel in the right place in the intermediate container
+    cdef _set_nonperiodic_vals_(self, int x, int y, int z)
+
+    # A C level function which inserts finite difference approximations of the
+    # first derivatives at the corners of the interpolation voxel in the right
+    # place in the intermediate container, when periodic boundary conditions
+    # are not enforced
+    cdef _set_nonperiodic_derivs_(self, int x, int y, int z)
+
+    # Computing the derivatives when periodic boundary conditions are not
+    # enforced is sufficiently convoluted to warrant setting each
+    # component separately by its own function. Hence
+    cdef _set_nonperiodic_dfdx_(self, int x, int y, int z)
+    cdef _set_nonperiodic_dfdy_(self, int x, int y, int z)
+    cdef _set_nonperiodic_dfdz_(self, int x, int y, int z)
+
+    # A C level function which inserts finite difference approximations of the
+    # mixed second derivatives at the corners of the interpolation voxel in the
+    # right place in the intermediate container, when periodic boundary
+    # conditions are not enforced
+    cdef _set_nonperiodic_mxd_2derivs_(self, int x, int y, int z)
+
+    # Computing the mixed second derivatives when periodic boundary conditions
+    # are not enforced is sufficiently convoluted to warrant setting each
+    # component separately by its own function. Hence
+    cdef _set_nonperiodic_d2fdxdy_(self, int x, int y, int z)
+    cdef _set_nonperiodic_d2fdxdz_(self, int x, int y, int z)
+    cdef _set_nonperiodic_d2fdydz_(self, int x, int y, int z)
 
     # A C level function which computes the interpolation coefficients
     # within a given voxel, making use of the BLAS level two function 'dgemv':
-    cpdef _compute_coeffs_by_blas_dgemv_(self)
+    cdef _compute_coeffs_by_blas_dgemv_(self)
