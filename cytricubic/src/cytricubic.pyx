@@ -31,6 +31,8 @@ cimport cython
 # The other import commands are defined in the accompanying Cython header file:
 cimport cytricubic
 
+import numpy as np
+
 cdef class TricubicInterpolator:
     """
     TricubicInterpolator(x, y, z, data, periodic)
@@ -533,8 +535,8 @@ cdef class TricubicInterpolator:
                             -(data[x,yp1,zm1]-data[x,ym1,zm1]))
         psi[49] = 0.25*((data[xp1,yp1,zp1]-data[xp1,ym1,zp1])
                             -(data[xp1,yp1,zm1]-data[xp1,ym1,zm1]))
-        psi[50] = 0.25*((data[x,yp1,zp1]-data[x,ym1,zp1])
-                            -(data[x,yp1,zm1]-data[x,ym1,zm1]))
+        psi[50] = 0.25*((data[x,yp2,zp1]-data[x,y,zp1])
+                            -(data[x,yp2,zm1]-data[x,y,zm1]))
         psi[51] = 0.25*((data[xp1,yp2,zp1]-data[xp1,y,zp1])
                             -(data[xp1,yp2,zm1]-data[xp1,y,zm1]))
         psi[52] = 0.25*((data[x,yp1,zp2]-data[x,ym1,zp2])
@@ -543,8 +545,8 @@ cdef class TricubicInterpolator:
                             -(data[xp1,yp1,z]-data[xp1,ym1,z]))
         psi[54] = 0.25*((data[x,yp2,zp2]-data[x,y,zp2])
                             -(data[x,yp2,z]-data[x,y,z]))
-        psi[55] = 0.25*((data[xp2,yp2,zp2]-data[xp2,y,zp2])
-                            -(data[xp2,yp2,z]-data[xp2,y,z]))
+        psi[55] = 0.25*((data[xp1,yp2,zp2]-data[xp1,y,zp2])
+                            -(data[xp1,yp2,z]-data[xp1,y,z]))
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -1216,58 +1218,188 @@ cdef class TricubicInterpolator:
         cdef:
             double *psi = &self.psi[0]
             double[:,:,::1] data = self.data
-        pass
-#        if y == 0:
-#        psi[0]  = data[x,y,z]
-#        psi[1]  = data[x+1,y,z]
-#        psi[2]  = data[x,y+1,z]
-#        psi[3]  = data[x+1,y+1,z]
-#        psi[4]  = data[x,y,z+1]
-#        psi[5]  = data[x+1,y,z+1]
-#        psi[6]  = data[x,y+1,z+1]
-#        psi[7]  = data[x+1,y+1,z+1]
-#            if z == 0:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences when applicable, and second order
-#                # forward differences otherwise
-#            elif z == self.nz-2:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences when applicable, and second order
-#                # forward/backward differences in the y- and z-directions,
-#                # respectively, otherwise.
-#            else:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences when applicable, and second order
-#                # forward differences in the y-direction otherwise.
-#        elif y == self.ny-2:
-#            if z == 0:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences when applicable, and second order
-#                # forward/backward differences in the z- and y- directions,
-#                # respectively, otherwise.
-#            elif z == self.nz-2:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences when applicable, and second order
-#                # backward differences otherwise.
-#            else:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences in both directions when applicable, and
-#                # second order backward differences in the x-direction
-#                # otherwise
-#        else:
-#            if z == 0:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences in both directions when applicable,
-#                # and second order forward differences in the z-direction
-#                # otherwise
-#            elif z == self.nz-2:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences in both directions when applicable,
-#                # and second order backward differences in the z-direction
-#                # otherwise
-#            else:
-#                # Values of d2f/dydz at the corners of the voxel approximated by
-#                # centered differences in both directions
+        if y == 0:
+            if z == 0:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences when applicable, and second order
+                # forward differences otherwise
+                pass
+            elif z == self.nz-2:
+        #psi[0]  = data[x,y,z]
+        #psi[1]  = data[x+1,y,z]
+        #psi[2]  = data[x,y+1,z]
+        #psi[3]  = data[x+1,y+1,z]
+        #psi[4]  = data[x,y,z+1]
+        #psi[5]  = data[x+1,y,z+1]
+        #psi[6]  = data[x,y+1,z+1]
+        #psi[7]  = data[x+1,y+1,z+1]
+                pass
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences when applicable, and second order
+                # forward/backward differences in the y- and z-directions,
+                # respectively, otherwise.
+            else:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences when applicable, and second order
+                # forward differences in the y-direction otherwise.
+                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y+1,z+1])
+                                -(data[x,y+1,z-1]-data[x,y-1,z-1]))
+                psi[49] = 0.25*((data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
+                psi[50] = 0.25*((-data[x,y+1,z+1]+4*data[x,y,z+1]-3*data[x,y-1,z+1])
+                                -(-data[x,y+1,z-1]+4*data[x,y,z-1]-3*data[x,y-1,z-1]))
+                psi[51] = 0.25*((-data[x+1,y+1,z+1]+4*data[x+1,y,z+1]-3*data[x+1,y-1,z+1])
+                                -(-data[x+1,y+1,z-1]+4*data[x+1,y,z-1]-3*data[x+1,y-1,z-1]))
+                psi[52] = 0.25*((data[x,y+1,z+2]-data[x,y-1,z+2])
+                                -(data[x,y+1,z]-data[x,y-1,z]))
+                psi[53] = 0.25*((data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
+                                -(data[x+1,y+1,z]-data[x+1,y-1,z]))
+                psi[54] = 0.25*((-data[x,y+1,z+2]+4*data[x,y,z+2]-3*data[x,y-1,z+2])
+                                -(-data[x,y+1,z]+4*data[x,y,z]-3*data[x,y-1,z]))
+                psi[55] = 0.25*((-data[x+1,y+1,z+2]+4*data[x+1,y,z+2]-3*data[x+1,y-1,z+2])
+                                -(-data[x+1,y+1,z]+4*data[x+1,y,z]-3*data[x+1,y-1,z]))
+
+        elif y == self.ny-2:
+            if z == 0:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences when applicable, and second order
+                # forward/backward differences in the z- and y- directions,
+                # respectively, otherwise.
+                psi[48] = 0.25*(-(data[x,y+1,z+2]-data[x,y-1,z+2])
+                                +4*(data[x,y+1,z+1]-data[x,y-1,z+1])
+                                -3*(data[x,y+1,z]-data[x,y-1,z]))
+                psi[49] = 0.25*(-(data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
+                                +4*(data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -3*(data[x+1,y+1,z]-data[x+1,y-1,z]))
+                psi[50] = 0.25*(-(3*data[x,y+1,z+1]-4*data[x,y,z+1]+data[x,y-1,z+1])
+                                +4*(3*data[x,y+1,z]-4*data[x,y,z]+data[x,y-1,z])
+                                -3*(3*data[x,y+1,z-1]-4*data[x,y,z-1]+data[x,y-1,z-1]))
+                psi[51] = 0.25*(-(3*data[x+1,y+1,z+1]-4*data[x+1,y,z+1]+data[x+1,y-1,z+1])
+                                +4*(3*data[x+1,y+1,z]-4*data[x+1,y,z]+data[x+1,y-1,z])
+                                -3*(3*data[x+1,y+1,z-1]-4*data[x+1,y,z-1]+data[x+1,y-1,z-1]))
+                psi[52] = 0.25*((data[x,y+1,z+2]-data[x,y-1,z+2])
+                                -(data[x,y+1,z]-data[x,y-1,z]))
+                psi[53] = 0.25*((data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
+                                -(data[x+1,y+1,z]-data[x+1,y-1,z]))
+                psi[54] = 0.25*((3*data[x,y+1,z+2]-4*data[x,y,z+2]+data[x,y-1,z+2])
+                                -(3*data[x,y+1,z]-4*data[x,y,z]+data[x,y-1,z]))
+                psi[55] = 0.25*((3*data[x+1,y+1,z+2]-4*data[x+1,y,z+2]+data[x+1,y-1,z+2])
+                                -(3*data[x+1,y+1,z]-4*data[x+1,y,z]+data[x+1,y-1,z]))
+            elif z == self.nz-2:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences when applicable, and second order
+                # backward differences otherwise.
+                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y-1,z+1])
+                                -(data[x,y+1,z-1]-data[x,y-1,z-1]))
+                psi[49] = 0.25*((data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
+                psi[50] = 0.25*((3*data[x,y+1,z+1]-4*data[x,y,z+1]+data[x,y-1,z+1])
+                                -(3*data[x,y+1,z-1]-4*data[x,y,z-1]+data[x,y-1,z-1]))
+                psi[51] = 0.25*((3*data[x+1,y+1,z+1]-4*data[x+1,y,z+1]+data[x+1,y-1,z+1])
+                                -(3*data[x+1,y+1,z-1]-4*data[x+1,y,z-1]+data[x+1,y-1,z-1]))
+                psi[52] = 0.25*(3*(data[x,y+1,z+1]-data[x,y-1,z+1])
+                                -4*(data[x,y+1,z]-data[x,y-1,z])
+                                +(data[x,y+1,z-1]-data[x,y-1,z-1]))
+                psi[53] = 0.25*(3*(data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -4*(data[x+1,y+1,z]-data[x+1,y-1,z])
+                                +(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
+                psi[54] = 0.25*(3*(3*data[x,y+1,z+1]-4*data[x,y,z+1]+data[x,y-1,z+1])
+                                -4*(3*data[x,y+1,z]-4*data[x,y,z]+data[x,y-1,z])
+                                +(3*data[x,y+1,z-1]-4*data[x,y,z-1]+data[x,y-1,z-1]))
+                psi[55] = 0.25*(3*(3*data[x+1,y+1,z+1]-4*data[x+1,y,z+1]+data[x+1,y-1,z+1])
+                                -4*(3*data[x+1,y+1,z]-4*data[x+1,y,z]+data[x+1,y-1,z])
+                                +(3*data[x+1,y+1,z-1]-4*data[x+1,y,z-1]+data[x+1,y-1,z-1]))
+            else:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences in both directions when applicable, and
+                # second order backward differences in the y-direction
+                # otherwise
+                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y-1,z+1])
+                                -(data[x,y+1,z-1]-data[x,y-1,z-1]))
+                psi[49] = 0.25*((data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
+                psi[50] = 0.25*((3*data[x,y+1,z+1]-4*data[x,y,z+1]+data[x,y-1,z+1])
+                                -(3*data[x,y+1,z-1]-4*data[x,y,z-1]+data[x,y-1,z-1]))
+                psi[51] = 0.25*((3*data[x+1,y+1,z+1]-4*data[x+1,y,z+1]+data[x+1,y-1,z+1])
+                                -(3*data[x+1,y+1,z-1]-4*data[x+1,y,z-1]+data[x+1,y-1,z-1]))
+                psi[52] = 0.25*((data[x,y+1,z+2]-data[x,y-1,z+2])
+                                -(data[x,y+1,z]-data[x,y-1,z]))
+                psi[53] = 0.25*((data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
+                                -(data[x+1,y+1,z]-data[x+1,y-1,z]))
+                psi[54] = 0.25*((3*data[x,y+1,z+2]-4*data[x,y,z+2]+data[x,y-1,z+2])
+                                -(3*data[x,y+1,z]-4*data[x,y,z]+data[x,y-1,z]))
+                psi[55] = 0.25*((3*data[x+1,y+1,z+2]-4*data[x+1,y,z+2]+data[x+1,y-1,z+2])
+                                -(3*data[x+1,y+1,z]-4*data[x+1,y,z]+data[x+1,y-1,z]))
+        else:
+            if z == 0:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences in both directions when applicable,
+                # and second order forward differences in the z-direction
+                # otherwise
+                psi[48] = 0.25*(-(data[x,y+1,z+2]-data[x,y-1,z+2])
+                                +4*(data[x,y+1,z+1]-data[x,y-1,z+1])
+                                -3*(data[x,y+1,z]-data[x,y-1,z]))
+                psi[49] = 0.25*(-(data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
+                                +4*(data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -3*(data[x+1,y+1,z]-data[x+1,y-1,z]))
+                psi[50] = 0.25*(-(data[x,y+2,z+2]-data[x,y,z+2])
+                                +4*(data[x,y+2,z+1]-data[x,y,z+1])
+                                -3*(data[x,y+2,z]-data[x,y,z]))
+                psi[51] = 0.25*(-(data[x+1,y+2,z+2]-data[x+1,y,z+2])
+                                +4*(data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -3*(data[x+1,y+2,z]-data[x+1,y,z]))
+                psi[52] = 0.25*((data[x,y+1,z+2]-data[x,y-1,z+2])
+                                -(data[x,y+1,z]-data[x,y-1,z]))
+                psi[53] = 0.25*((data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
+                                -(data[x+1,y+1,z]-data[x+1,y-1,z]))
+                psi[54] = 0.25*((data[x,y+2,z+2]-data[x,y,z+2])
+                                -(data[x,y+2,z]-data[x,y,z]))
+                psi[55] = 0.25*((data[x+1,y+2,z+2]-data[x+1,y,z+2])
+                                -(data[x+1,y+2,z]-data[x+1,y,z]))
+            elif z == self.nz-2:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences in both directions when applicable,
+                # and second order backward differences in the z-direction
+                # otherwise
+                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y-1,z+1])
+                                -(data[x,y+1,z-1]-data[x,y-1,z-1]))
+                psi[49] = 0.25*((data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
+                psi[50] = 0.25*((data[x,y+2,z+1]-data[x,y,z+1])
+                                -(data[x,y+2,z-1]-data[x,y,z-1]))
+                psi[51] = 0.25*((data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -(data[x+1,y+2,z-1]-data[x+1,y,z-1]))
+                psi[52] = 0.25*(3*(data[x,y+1,z+1]-data[x,y-1,z+1])
+                                -4*(data[x,y+1,z]-data[x,y-1,z])
+                                +(data[x,y+1,z-1]-data[x,y-1,z-1]))
+                psi[53] = 0.25*(3*(data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -4*(data[x+1,y+1,z]-data[x+1,y-1,z])
+                                +(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
+                psi[54] = 0.25*(3*(data[x,y+2,z+1]-data[x,y,z+1])
+                                -4*(data[x,y+2,z]-data[x,y,z])
+                                +(data[x,y+2,z-1]-data[x,y,z-1]))
+                psi[55] = 0.25*(3*(data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -4*(data[x+1,y+2,z]-data[x+1,y,z])
+                                +(data[x+1,y+2,z-1]-data[x+1,y,z-1]))
+            else:
+                # Values of d2f/dydz at the corners of the voxel approximated by
+                # centered differences in both directions
+                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y+1,z+1])
+                                -(data[x,y+1,z-1]-data[x,y-1,z-1]))
+                psi[49] = 0.25*((data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
+                                -(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
+                psi[50] = 0.25*((data[x,y+2,z+1]-data[x,y,z+1])
+                                -(data[x,y+2,z-1]-data[x,y,z-1]))
+                psi[51] = 0.25*((data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -(data[x+1,y+2,z-1]-data[x+1,y,z-1]))
+                psi[52] = 0.25*((data[x,y+1,z+2]-data[x,y-1,z+2])
+                                -(data[x,y+1,z]-data[x,y-1,z]))
+                psi[53] = 0.25*((data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
+                                -(data[x+1,y+1,z]-data[x+1,y-1,z]))
+                psi[54] = 0.25*((data[x,y+2,z+2]-data[x,y,z+2])
+                                -(data[x,y+2,z]-data[x,y,z]))
+                psi[55] = 0.25*((data[x+1,y+2,z+2]-data[x+1,y,z+2])
+                                -(data[x+1,y+2,z]-data[x+1,y,z]))
 
     cdef _compute_coeffs_by_blas_dgemv_(self):
         # Computes matrix-vector product needed to identify interpolation
