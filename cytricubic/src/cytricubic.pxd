@@ -154,6 +154,12 @@ cdef class TricubicInterpolator:
     cdef _set_nonperiodic_d2fdxdz_(self, int x, int y, int z)
     cdef _set_nonperiodic_d2fdydz_(self, int x, int y, int z)
 
+    # A C level function which inserts finite difference approximations of the
+    # mixed third derivative at the corners of the interpolation voxel in the
+    # right place in the intermediate container, when periodic boundary
+    # conditions are not enforced
+    cdef _set_nonperiodic_mxd_3deriv_(self, int x, int y, int z)
+
     # A C level function which computes the interpolation coefficients
     # within a given voxel, making use of the BLAS level two function 'dgemv':
     cdef _compute_coeffs_by_blas_dgemv_(self)

@@ -261,8 +261,6 @@ cdef class TricubicInterpolator:
                     self._calibrate_nonperiodic_(x_ind,y_ind,z_ind)
 
 
-                return -42 # Placeholder until the logic is in place.
-
         # Loop over the required powers of the voxel coordinates
         for k in range(kz, 4):
             for j in range(ky, 4):
@@ -602,13 +600,9 @@ cdef class TricubicInterpolator:
         # First derivatives of f(x,y,z) at the corners of the voxel
         self._set_nonperiodic_derivs_(ix, iy, iz)
         # Mixed second derivatives of f(x,y,z) at the corners of the voxel
-        #self._set_nonperiodic_mxd_2derivs_(ix, ixm1, ixp1, ixp2,
-        #                                iy, iym1, iyp1, iyp2,
-        #                                iz, izm1, izp1, izp2)
+        self._set_nonperiodic_mxd_2derivs_(ix, iy, iz)
         ## Values of d3f/dxdydz at the corners of the voxel
-        #self._set_nonperiodic_mxd_3deriv_(ix, ixm1, ixp1, ixp2,
-        #                               iy, iym1, iyp1, iyp2,
-        #                               iz, izm1, izp1, izp2)
+        self._set_nonperiodic_mxd_3deriv_(ix, iy, iz)
         # Convert voxel values and partial derivatives to interpolation
         # coefficients
         self._compute_coeffs_by_blas_dgemv_()
@@ -1223,21 +1217,51 @@ cdef class TricubicInterpolator:
                 # Values of d2f/dydz at the corners of the voxel approximated by
                 # centered differences when applicable, and second order
                 # forward differences otherwise
-                pass
+                psi[48] = 0.25*(-(-data[x,y+2,z+2]+4*data[x,y+1,z+2]-3*data[x,y,z+2])
+                                +4*(-data[x,y+2,z+1]+4*data[x,y+1,z+1]-3*data[x,y,z+1])
+                                -(-data[x,y+2,z]+4*data[x,y+1,z]-3*data[x,y,z]))
+                psi[49] = 0.25*(-(-data[x+1,y+2,z+2]+4*data[x+1,y+1,z+2]-3*data[x+1,y,z+2])
+                                +4*(-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]-3*data[x+1,y,z+1])
+                                -(-data[x+1,y+2,z]+4*data[x+1,y+1,z]-3*data[x+1,y,z]))
+                psi[50] = 0.25*(-(data[x,y+2,z+2]-data[x,y,z+2])
+                                +4*(data[x,y+2,z+1]-data[x,y,z+1])
+                                -3*(data[x,y+2,z]-data[x,y,z]))
+                psi[51] = 0.25*(-(data[x+1,y+2,z+2]-data[x+1,y,z+2])
+                                +4*(data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -3*(data[x+1,y+2,z]-data[x+1,y,z]))
+                psi[52] = 0.25*((-data[x,y+2,z+2]+4*data[x,y+1,z+2]-3*data[x,y,z+2])
+                                -(-data[x,y+2,z]+4*data[x,y+1,z]-3*data[x,y,z]))
+                psi[53] = 0.25*((-data[x+1,y+2,z+2]+4*data[x+1,y+1,z+2]-3*data[x+1,y,z+2])
+                                -(-data[x+1,y+2,z]+4*data[x+1,y+1,z]-3*data[x+1,y,z]))
+                psi[54] = 0.25*((data[x,y+2,z+2]-data[x,y,z+2])
+                                -(data[x,y+2,z]-data[x,y,z]))
+                psi[55] = 0.25*((data[x+1,y+2,z+2]-data[x+1,y,z+2])
+                                -(data[x+1,y+2,z]-data[x+1,y,z]))
             elif z == self.nz-2:
-        #psi[0]  = data[x,y,z]
-        #psi[1]  = data[x+1,y,z]
-        #psi[2]  = data[x,y+1,z]
-        #psi[3]  = data[x+1,y+1,z]
-        #psi[4]  = data[x,y,z+1]
-        #psi[5]  = data[x+1,y,z+1]
-        #psi[6]  = data[x,y+1,z+1]
-        #psi[7]  = data[x+1,y+1,z+1]
-                pass
                 # Values of d2f/dydz at the corners of the voxel approximated by
                 # centered differences when applicable, and second order
                 # forward/backward differences in the y- and z-directions,
                 # respectively, otherwise.
+                psi[48] = 0.25*((-data[x,y+2,z+1]+4*data[x,y+1,z+1]-3*data[x,y,z+1])-
+                        (-data[x,y+2,z-1]+4*data[x,y+1,z-1]-3*data[x,y,z-1]))
+                psi[49] = 0.25*((-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]-3*data[x+1,y,z+1])-
+                        (-data[x+1,y+2,z-1]+4*data[x+1,y+1,z-1]-3*data[x+1,y,z-1]))
+                psi[50] = 0.25*((data[x,y+2,z+1]-data[x,y,z+1])
+                                -(data[x,y+2,z-1]-data[x,y,z-1]))
+                psi[51] = 0.25*((data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -(data[x+1,y+2,z-1]-data[x+1,y,z-1]))
+                psi[52] = 0.25*(3*(-data[x,y+2,z+2]+4*data[x,y+1,z+2]-3*data[x,y,z+2])
+                                -4*(-data[x,y+2,z+1]+4*data[x,y+1,z+1]-3*data[x,y,z+1])
+                                +(-data[x,y+2,z]+4*data[x,y+1,z]-3*data[x,y,z]))
+                psi[53] = 0.25*(3*(-data[x+1,y+2,z+2]+4*data[x+1,y+1,z+2]-3*data[x+1,y,z+2])
+                                -4*(-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]-3*data[x+1,y,z+1])
+                                +(-data[x+1,y+2,z]+4*data[x+1,y+1,z]-3*data[x+1,y,z]))
+                psi[54] = 0.25*(3*(data[x,y+2,z+2]-data[x,y,z+2])
+                                -4*(data[x,y+2,z+1]-data[x,y,z+1])
+                                +(data[x,y+2,z]-data[x,y,z]))
+                psi[55] = 0.25*(3*(data[x+1,y+2,z+2]-data[x+1,y,z+2])
+                                -4*(data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                +(data[x+1,y+2,z]-data[x+1,y,z]))
             else:
                 # Values of d2f/dydz at the corners of the voxel approximated by
                 # centered differences when applicable, and second order
@@ -1401,6 +1425,1732 @@ cdef class TricubicInterpolator:
                 psi[55] = 0.25*((data[x+1,y+2,z+2]-data[x+1,y,z+2])
                                 -(data[x+1,y+2,z]-data[x+1,y,z]))
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.initializedcheck(False)
+    cdef _set_nonperiodic_mxd_3deriv_(self, int x, int y, int z):
+        cdef:
+            double *psi = &self.psi[0]
+            double[:,:,::1] data = self.data
+        if x == 0:
+            if y == 0:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward differences otherwise
+                    psi[56] = 0.125*(-(-(-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        +4*(-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -3*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    +4*(-(-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        +4*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -3*(-(-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        +4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -3*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[57] = 0.125*(-(-(data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        +4*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -3*(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    +4*(-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -3*(-(data[x+2,y+2,z]-data[x,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z])))
+                    psi[58] = 0.125*(-((-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        -(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    +4*((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -3*((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+
+                    psi[59] = 0.125*(-((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    +4*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -3*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+                    psi[60] = 0.125*((-(-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        +4*(-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -3*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        +4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -3*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[61] = 0.125*((-(data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        +4*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -3*(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -(-(data[x+2,y+2,z]-data[x,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z])))
+                    psi[62] = 0.125*(((-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        -(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[63] = 0.125*(((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -((data[x+2,y+2,z]-data[x,y+1,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the x-and-y and
+                    # z-directions, respectively, otherwise
+                    psi[56] = 0.125*((-(-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        +4*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        +4*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -3*(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[57] = 0.125*((-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[58] = 0.125*(((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        -(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[59] = 0.125*(((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*(3*(-(-data[x+2,y+2,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        +4*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -4*((-data[x+2,y+2,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+2,z])
+                                        +4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -3*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z]))
+                                    +(-data[x+2,y+2,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        +4*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -3*(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1]))
+                    psi[61] = 0.125*(3*(-(data[x+2,y+2,z+1]-data[x,y+1,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -4*(-(data[x+2,y+2,z]-data[x+1,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z]))
+                                    +(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[62] = 0.125*(3*((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -4*((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z]))
+                                    +((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        -(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[63] = 0.125*(3*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -4*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z]))
+                                    +((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward differences in the x- and y-directions otherwise
+                    psi[56] = 0.125*((-(-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        +4*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        +4*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -3*(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[57] = 0.125*((-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[58] = 0.125*(((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        -(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[59] = 0.125*(((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*((-(-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        +4*(-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -3*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        +4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -3*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[61] = 0.125*((-(data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        +4*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -3*(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -(-(data[x+2,y+2,z]-data[x,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z])))
+                    psi[62] = 0.125*(((-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        -(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[63] = 0.125*(((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -((data[x+2,y+2,z]-data[x,y+1,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+            elif y == self.ny-2:
+                if z == 0:
+                    pass
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the x-and-z
+                    # and y-directions, respectively, otherwise.
+                    psi[56] = 0.125*(-((-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    +4*((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -3*((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[57] = 0.125*(-((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    +4*((data[x+2,y+1,z+1]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -3*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[58] = 0.125*(-(3*(-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x+2,y+1,z+2])
+                                        -4*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2])
+                                        +(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    +4*(3*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -4*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1])
+                                        +(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1]))
+                                    -3*(3*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -4*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])
+                                        +(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[59] = 0.125*(-(3*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -4*(data[x+2,y,z+2]-data[x,y,z+2])
+                                        +(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    +4*(3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                        +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -3*(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -4*(data[x+2,y,z]-data[x,y,z])
+                                        +(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[60] = 0.125*(((-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    -((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*((3*(-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -4*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2])
+                                        +(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    -(3*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -4*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])
+                                        +(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[63] = 0.125*((3*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -4*(data[x+2,y,z+2]-data[x,y,z+2])
+                                        +(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -4*(data[x+2,y,z]-data[x,y,z])
+                                        +(data[x+2,y-1,z]-data[x,y-1,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the x-
+                    # and y-and-z-directions, respectively, otherwise.
+                    psi[56] = 0.125*(((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -((-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*((3*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -4*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1])
+                                        +(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -(3*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -4*(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])
+                                        +(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[59] = 0.125*((3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                        +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -(3*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -4*(data[x+2,y,z-1]-data[x,y,z-1])
+                                        +(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[60] = 0.125*(3*((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -4*((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z]))
+                                    +((-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[61] = 0.125*(3*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -4*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z]))
+                                    +((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[62] = 0.125*(3*(3*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -4*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1])
+                                        +(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -4*(3*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -4*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z]))
+                                    +(3*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -4*(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])
+                                        +(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[63] = 0.125*(3*(3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                        +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -4*(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -4*(data[x+2,y,z]-data[x,y,z])
+                                        +(data[x+2,y-1,z]-data[x,y-1,z]))
+                                    +(3*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -4*(data[x+2,y,z-1]-data[x,y,z-1])
+                                        +(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the x- and y-directions,
+                    # respectively, otherwise.
+                    psi[56] = 0.125*(((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -((-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*((3*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -4*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1])
+                                        +(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -(3*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -4*(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])
+                                        +(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[59] = 0.125*((3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -(3*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -4*(data[x+1,y,z-1]-data[x-1,y,z-1])
+                                        +(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[60] = 0.125*(((-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    -((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*((3*(-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -4*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2])
+                                        +(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    -(3*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -4*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])
+                                        +(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[63] = 0.125*((3*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -4*(data[x+1,y,z+2]-data[x-1,y,z+2])
+                                        +(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z])))
+            else:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward differences in the x and z-directions otherwise.
+                    psi[56] = 0.125*(-((-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    +4*((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -3*((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[57] = 0.125*(-((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    +4*((data[x+1,y+1,z+1]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -3*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[58] = 0.125*(-((-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        -(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    +4*((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -3*((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[59] = 0.125*(-((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    +4*((data[x+1,y+2,z+1]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -3*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[60] = 0.125*(((-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    -((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*(((-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        -(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[63] = 0.125*(((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the x and z-directions,
+                    # respectively, otherwise.
+                    psi[56] = 0.125*(((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -((-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*(((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        -(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[59] = 0.125*(((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*(3*((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -4*((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z]))
+                                    +((-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[61] = 0.125*(3*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -4*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[62] = 0.125*(3*((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -4*((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z]))
+                                    +((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        -(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[63] = 0.125*(3*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -4*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward differences in the x-direction otherwise.
+                    psi[56] = 0.125*(((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                                            -3*data[x,y+1,z+1])
+                                        -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]
+                                            -3*data[x,y-1,z+1]))
+                                    -((-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                            -3*data[x,y+1,z-1])
+                                        -(-data[x+2,y-1,z-1]+4*data[x+1,y-1,z-1]
+                                            -3*data[x,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*(((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
+                                            -3*data[x,y+2,z+1])
+                                        -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                                            -3*data[x,y,z+1]))
+                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                            -3*data[x,y+2,z-1])
+                                        -(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                            -3*data[x,y,z-1])))
+                    psi[59] = 0.125*(((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*(((-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
+                                            -3*data[x,y+1,z+2])
+                                        -(-data[x+2,y-1,z+2]+4*data[x+1,y-1,z+2]
+                                            -3*data[x,y-1,z+2]))
+                                    -((-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                            -3*data[x,y+1,z])
+                                        -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]
+                                            -3*data[x,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*(((-data[x+2,y+2,z+2]+4*data[x+1,y+2,z+2]
+                                            -3*data[x,y+2,z+2])
+                                        -(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
+                                            -3*data[x,y,z+2]))
+                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                            -3*data[x,y+2,z])
+                                        -(-data[x+2,y,z]+4*data[x+1,y,z]
+                                            -3*data[x,y,z])))
+                    psi[63] = 0.125*(((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+        elif x == self.nx-2:
+            if y == 0:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the y-and-z- and
+                    # x-directions, respectively, otherwise.
+                    psi[56] = 0.125*(-(-(data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        +4*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -3*(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    +4*(-(data[x+1,y+2,z+1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -3*(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[57] = 0.125*(-(-(3*data[x+1,y+2,z+2]-4*data[x,y+2,z+2]
+                                            +data[x-1,y+2,z+2])
+                                        +4*(3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -3*(3*data[x+1,y,z+2]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+2]))
+                                    +4*(-(3*data[x+1,y+2,z+1]-4*data[x,y+2,z+1]
+                                            +data[x-1,y+2,z+1])
+                                        +4*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -3*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1]))
+                                    -3*(-(3*data[x+1,y+2,z]-4*data[x,y+2,z]
+                                            +data[x-1,y+2,z])
+                                        +4*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -3*(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z])))
+                    psi[58] = 0.125*(-((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    +4*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -3*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[59] = 0.125*(-((3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -(3*data[x+1,y-1,z+2]-4*data[x,y-1,z+2]
+                                            +data[x-1,y-1,z+2]))
+                                    +4*((3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]
+                                            +data[x-1,y-1,z+1]))
+                                    -3*((3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -(3*data[x+1,y-1,z]-4*data[x,y-1,z]
+                                            +data[x-1,y-1,z])))
+                    psi[60] = 0.125*((-(data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        +4*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -3*(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[61] = 0.125*((-(3*data[x+1,y+2,z+2]-4*data[x,y+2,z+2]
+                                            +data[x-1,y+2,z+2])
+                                        +4*(3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -3*(3*data[x+1,y,z+2]-4*data[x,y,z+2]
+                                            +data[x-1,y,z+2]))
+                                    -(-(3*data[x+1,y+2,z]-4*data[x,y+2,z]
+                                            +data[x-1,y+2,z])
+                                        +4*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -3*(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z])))
+                    psi[62] = 0.125*(((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*(((-data[x+1,y+2,z+2]+4*data[x,y+2,z+2]
+                                            -3*data[x-1,y+2,z+2])
+                                        -(-data[x+1,y,z+2]+4*data[x,y,z+2]
+                                            -3*data[x-1,y,z+2]))
+                                    -((-data[x+1,y+2,z]+4*data[x,y+2,z]
+                                            -3*data[x-1,y+2,z])
+                                        -(-data[x+1,y,z]+4*data[x,y,z]
+                                            -3*data[x-1,y,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the y- and
+                    # x-and-z-directions, respectively, otherwise.
+                    psi[56] = 0.125*((-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[57] = 0.125*((-(3*data[x+1,y+2,z+1]-4*data[x,y+2,z+1]
+                                            +data[x-1,y+2,z+1])
+                                        +4*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -3*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1]))
+                                    -(-(3*data[x+1,y+2,z-1]-4*data[x,y+2,z-1]
+                                            +data[x-1,y+2,z-1])
+                                        +4*(3*data[x+1,y+1,z-1]-4*data[x,y+1,z-1]
+                                            +data[x-1,y+1,z-1])
+                                        -3*(3*data[x+1,y,z-1]-4*data[x,y,z-1]
+                                            +data[x-1,y,z-1])))
+                    psi[58] = 0.125*(((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*(((-data[x+1,y+2,z+1]+4*data[x,y+2,z+1]
+                                            -3*data[x-1,y+2,z+1])
+                                        -(-data[x+1,y,z+1]+4*data[x,y,z+1]
+                                            -3*data[x-1,y,z+1]))
+                                    -((-data[x+1,y+2,z-1]+4*data[x,y+2,z-1]
+                                            -3*data[x-1,y+2,z-1])
+                                        -(-data[x+1,y,z-1]+4*data[x,y,z-1]
+                                            -3*data[x-1,y,z-1])))
+                    psi[60] = 0.125*(3*(-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -4*(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z]))
+                                    +(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[61] = 0.125*(3*(-(3*data[x+1,y+2,z+1]-4*data[x,y+2,z+1]
+                                            +data[x-1,y+2,z+1])
+                                        +4*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x,y+1,z+1])
+                                        -3*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1]))
+                                    -4*(-(3*data[x+1,y+2,z]-4*data[x,y+2,z]
+                                            +data[x-1,y+2,z])
+                                        +4*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -3*(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z]))
+                                    +(-(3*data[x+1,y+2,z-1]-4*data[x,y+2,z-1]
+                                            +data[x-1,y+2,z-1])
+                                        +4*(3*data[x+1,y+1,z-1]-4*data[x,y+1,z-1]
+                                            +data[x-1,y+1,z-1])
+                                        -3*(3*data[x+1,y,z-1]-4*data[x,y,z-1]
+                                            +data[x-1,y,z-1])))
+                    psi[62] = 0.125*(3*((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -4*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z]))
+                                    +((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[63] = 0.125*(3*((3*data[x+1,y+2,z+1]-4*data[x,y+2,z+1]
+                                            +data[x-1,y+2,z+1])
+                                        -(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1]))
+                                    -4*((3*data[x+1,y+2,z]-4*data[x,y+2,z]
+                                            +data[x-1,y+2,z])
+                                        -(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z]))
+                                    +((3*data[x+1,y+2,z-1]-4*data[x,y+2,z-1]
+                                            +data[x-1,y+2,z-1])
+                                        -(3*data[x+1,y,z-1]-4*data[x,y,z-1]
+                                            +data[x-1,y,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the y- and x-directions,
+                    # respectively, otherwise.
+                    psi[56] = 0.125*((-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[57] = 0.125*((-(3*data[x+1,y+2,z+1]-4*data[x,y+2,z+1]
+                                            +data[x-1,y+2,z+1])
+                                        +4*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -3*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1]))
+                                    -(-(3*data[x+1,y+2,z-1]-4*data[x,y+2,z-1]
+                                            +data[x-1,y+2,z-1])
+                                        +4*(3*data[x+1,y+1,z-1]-4*data[x,y+1,z-1]
+                                            +data[x-1,y+1,z-1])
+                                        -3*(3*data[x+1,y,z-1]-4*data[x,y,z-1]
+                                            +data[x-1,y,z-1])))
+                    psi[58] = 0.125*(((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*(((-data[x+1,y+2,z+1]+4*data[x,y+2,z+1]
+                                            -3*data[x-1,y+2,z+1])
+                                        -(-data[x+1,y,z+1]+4*data[x,y,z+1]
+                                            -3*data[x-1,y,z+1]))
+                                    -((-data[x+1,y+2,z-1]+4*data[x,y+2,z-1]
+                                            -3*data[x-1,y+2,z-1])
+                                        -(-data[x+1,y,z-1]+4*data[x,y,z-1]
+                                            -3*data[x-1,y,z-1])))
+                    psi[60] = 0.125*((-(data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        +4*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -3*(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[61] = 0.125*((-(3*data[x+1,y+2,z+2]-4*data[x,y+2,z+2]
+                                            +data[x-1,y+2,z+2])
+                                        +4*(3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -3*(3*data[x+1,y,z+2]-4*data[x,y,z+2]
+                                            +data[x-1,y,z+2]))
+                                    -(-(3*data[x+1,y+2,z]-4*data[x,y+2,z]
+                                            +data[x-1,y+2,z])
+                                        +4*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -3*(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z])))
+                    psi[62] = 0.125*(((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*(((-data[x+1,y+2,z+2]+4*data[x,y+2,z+2]
+                                            -3*data[x-1,y+2,z+2])
+                                        -(-data[x+1,y,z+2]+4*data[x,y,z+2]
+                                            -3*data[x-1,y,z+2]))
+                                    -((-data[x+1,y+2,z]+4*data[x,y+2,z]
+                                            -3*data[x-1,y+2,z])
+                                        -(-data[x+1,y,z]+4*data[x,y,z]
+                                            -3*data[x-1,y,z])))
+            elif y == self.ny-2:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward/forward differences in the x-and-y and
+                    # z-direction, respectively
+                    psi[56] = 0.125*(-((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    +4*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -3*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[57] = 0.125*(-((3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -(3*data[x+1,y-1,z+2]-4*data[x,y-1,z+2]
+                                            +data[x-1,y-1,z+2]))
+                                    +4*((3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x,y+1,z+1])
+                                        -(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]
+                                            +data[x-1,y-1,z+1]))
+                                    -3*((3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -(3*data[x+1,y-1,z]-4*data[x,y-1,z]
+                                            +data[x-1,y-1,z])))
+                    psi[58] = 0.125*(-(3*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -4*(data[x+1,y,z+2]-data[x-1,y,z+2])
+                                        +(data[x+1,y-1,z+2]-data[x-1,y,z+2]))
+                                    +4*(3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x+1,y-1,z+1]))
+                                    -3*(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[59] = 0.125*(-(3*(3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -4*(3*data[x+1,y,z+2]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+2])
+                                        +(3*data[x+1,y-1,z+2]-4*data[x,y-1,z+2]
+                                            +data[x-1,y-1,z+2]))
+                                    +4*(3*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -4*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1])
+                                        +(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]
+                                            +data[x,y-1,z+1]))
+                                    -3*(3*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -4*(3*data[x+1,y,z]-4*data[x,y,z]+
+                                            data[x-1,y,z])
+                                        +(3*data[x+1,y-1,z]-4*data[x,y-1,z]
+                                            +data[x-1,y-1,z])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((-data[x+1,y+1,z+2]+4*data[x,y+1,z+2]
+                                            -3*data[x-1,y+1,z+2])
+                                        -(-data[x+1,y-1,z+2]+4*data[x,y-1,z+2]
+                                            -3*data[x-1,y-1,z+2]))
+                                    -((-data[x+1,y+1,z]+4*data[x,y+1,z]
+                                            -3*data[x-1,y+1,z])
+                                        -(-data[x+1,y-1,z]+4*data[x,y-1,z]
+                                            -3*data[x-1,y-1,z])))
+                    psi[62] = 0.125*((3*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -4*(data[x+1,y,z+2]-data[x-1,y,z+2])
+                                        +(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[63] = 0.125*((3*(3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -4*(3*data[x+1,y,z+2]-4*data[x,y,z+2]
+                                            +data[x-1,y,z+2])
+                                        +(3*data[x+1,y-1,z+2]-4*data[x,y-1,z+2]
+                                            +data[x-1,y-1,z+2]))
+                                    -(3*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -4*(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z])
+                                        +(3*data[x+1,y-1,z]-4*data[x,y-1,z]
+                                            +data[x-1,y-1,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward differences otherwise.
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((-data[x+1,y+1,z+1]+4*data[x,y+1,z+1]
+                                            -3*data[x-1,y+1,z+1])
+                                        -(-data[x+1,y-1,z+1]+4*data[x,y-1,z+1]
+                                            -3*data[x-1,y-1,z+1]))
+                                    -((-data[x+1,y+1,z-1]+4*data[x,y+1,z-1]
+                                            -3*data[x-1,y+1,z-1])
+                                        -(-data[x+1,y-1,z-1]+4*data[x,y-1,z-1]
+                                            -3*data[x-1,y-1,z-1])))
+                    psi[58] = 0.125*((3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -(3*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -4*(data[x+1,y,z-1]-data[x-1,y,z-1])
+                                        +(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[59] = 0.125*((3*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -4*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1])
+                                        +(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]
+                                            +data[x-1,y-1,z+1]))
+                                    -(3*(3*data[x+1,y+1,z-1]-4*data[x,y+1,z-1]
+                                            +data[x-1,y+1,z-1])
+                                        -4*(3*data[x+1,y,z-1]-4*data[x,y,z-1]
+                                            +data[x-1,y,z-1])
+                                        +(3*data[x+1,y-1,z-1]-4*data[x,y-1,z-1]
+                                            +data[x-1,y-1,z-1])))
+                    psi[60] = 0.125*(3*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -4*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z]))
+                                    +((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[61] = 0.125*(3*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -4*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z]))
+                                    +((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                         -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[62] = 0.125*(3*(3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -4*(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z]))
+                                    +(3*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -4*(data[x+1,y,z-1]-data[x-1,y,z-1])
+                                        +(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[63] = 0.125*(3*(3*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -4*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1])
+                                        +(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]
+                                            +data[x-1,y-1,z+1]))
+                                    -4*(3*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -4*(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z])
+                                        +(3*data[x+1,y-1,z]-4*data[x,y-1,z]
+                                            +data[x-1,y-1,z]))
+                                    +(3*(3*data[x+1,y+1,z-1]-4*data[x,y+1,z-1]
+                                            +data[x-1,y+1,z-1])
+                                        -4*(3*data[x+1,y,z-1]-4*data[x,y,z-1]
+                                            +data[x-1,y,z-1])
+                                        +(3*data[x+1,y-1,z-1]-4*data[x,y-1,z-1]
+                                            +data[x-1,y-1,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward differences in the x- and y-directions otherwise.
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((-data[x+1,y+1,z+1]+4*data[x,y+1,z+1]
+                                            -3*data[x-1,y+1,z+1])
+                                        -(-data[x+1,y-1,z+1]+4*data[x,y-1,z+1]
+                                            -3*data[x-1,y-1,z+1]))
+                                    -((-data[x+1,y+1,z-1]+4*data[x,y+1,z-1]
+                                            -3*data[x-1,y+1,z-1])
+                                        -(-data[x+1,y-1,z-1]+4*data[x,y-1,z-1]
+                                            -3*data[x-1,y-1,z-1])))
+                    psi[58] = 0.125*((3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -(3*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -4*(data[x+1,y,z-1]-data[x-1,y,z-1])
+                                        +(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[59] = 0.125*((3*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -4*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1])
+                                        +(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]
+                                            +data[x-1,y-1,z+1]))
+                                    -(3*(3*data[x+1,y+1,z-1]-4*data[x,y+1,z-1]
+                                            +data[x-1,y+1,z-1])
+                                        -4*(3*data[x+1,y,z-1]-4*data[x,y,z-1]
+                                            +data[x-1,y,z-1])
+                                        +(3*data[x+1,y-1,z-1]-4*data[x,y-1,z-1]
+                                            +data[x-1,y-1,z-1])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((-data[x+1,y+1,z+2]+4*data[x,y+1,z+2]
+                                            -3*data[x-1,y+1,z+2])
+                                        -(-data[x+1,y-1,z+2]+4*data[x,y-1,z+2]
+                                            -3*data[x-1,y-1,z+2]))
+                                    -((-data[x+1,y+1,z]+4*data[x,y+1,z]
+                                            -3*data[x-1,y+1,z])
+                                        -(-data[x+1,y-1,z]+4*data[x,y-1,z]
+                                            -3*data[x-1,y-1,z])))
+                    psi[62] = 0.125*((3*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -4*(data[x+1,y,z+2]-data[x-1,y,z+2])
+                                        +(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[63] = 0.125*((3*(3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -4*(3*data[x+1,y,z+2]-4*data[x,y,z+2]
+                                            +data[x-1,y,z+2])
+                                        +(3*data[x+1,y-1,z+2]-4*data[x,y-1,z+2]
+                                            +data[x-1,y-1,z+2]))
+                                    -(3*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -4*(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z])
+                                        +(3*data[x+1,y-1,z]-4*data[x,y-1,z]
+                                            +data[x-1,y-1,z])))
+            else:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the z- and x-directions,
+                    # respectively, otherwise.
+                    psi[56] = 0.125*(-((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    +4*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -3*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[57] = 0.125*(-((3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                            +data[x-1,y+1,z+2])
+                                        -(3*data[x+1,y-1,z+2]-4*data[x,y-1,z+2]
+                                            +data[x-1,y-1,z+2]))
+                                    +4*((3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                                            +data[x-1,y+1,z+1])
+                                        -(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]
+                                            +data[x-1,y-1,z+1]))
+                                    -3*((3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                            +data[x-1,y+1,z])
+                                        -(3*data[x+1,y-1,z]-4*data[x,y-1,z]
+                                            +data[x-1,y-1,z])))
+                    psi[58] = 0.125*(-((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    +4*((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -3*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[59] = 0.125*(-((3*data[x+1,y+2,z+2]-4*data[x,y+2,z+2]
+                                            +data[x-1,y+2,z+2])
+                                        -(3*data[x+1,y,z+2]-4*data[x,y,z+2]
+                                            +data[x-1,y,z+2]))
+                                    +4*((3*data[x+1,y+2,z+1]-4*data[x,y+2,z+1]
+                                            +data[x-1,y+2,z+1])
+                                        -(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                                            +data[x-1,y,z+1]))
+                                    -3*((3*data[x+1,y+2,z]-4*data[x,y+2,z]
+                                            +data[x-1,y+2,z])
+                                        -(3*data[x+1,y,z]-4*data[x,y,z]
+                                            +data[x-1,y,z])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((-data[x+1,y+1,z+2]+4*data[x,y+1,z+2]
+                                            -3*data[x-1,y+1,z+2])
+                                        -(-data[x+1,y-1,z+2]+4*data[x,y-1,z+2]
+                                            -3*data[x-1,y-1,z+2]))
+                                    -((-data[x+1,y+1,z]+4*data[x,y+1,z]
+                                            -3*data[x-1,y+1,z])
+                                        -(-data[x+1,y-1,z]+4*data[x,y-1,z]
+                                            -3*data[x-1,y-1,z])))
+                    psi[62] = 0.125*(((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*(((-data[x+1,y+2,z+2]+4*data[x,y+2,z+2]
+                                            -3*data[x-1,y+2,z+2])
+                                        -(-data[x+1,y,z+2]+4*data[x,y,z+2]
+                                            -3*data[x-1,y,z+2]))
+                                    -((-data[x+1,y+2,z]+4*data[x,y+2,z]
+                                            -3*data[x-1,y+2,z])
+                                        -(-data[x+1,y,z]+4*data[x,y,z]
+                                            -3*data[x-1,y,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward differences in the x- and z-directions otherwise.
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((-data[x+1,y+1,z+1]+4*data[x,y+1,z+1]
+                                            -3*data[x-1,y+1,z+1])
+                                        -(-data[x+1,y-1,z+1]+4*data[x,y-1,z+1]
+                                            -3*data[x-1,y-1,z+1]))
+                                    -((-data[x+1,y+1,z-1]+4*data[x,y+1,z-1]
+                                            -3*data[x-1,y+1,z-1])
+                                        -(-data[x+1,y-1,z-1]+4*data[x,y-1,z-1]
+                                            -3*data[x-1,y-1,z-1])))
+                    psi[58] = 0.125*(((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*(((-data[x+1,y+2,z+1]+4*data[x,y+2,z+1]
+                                            -3*data[x-1,y+2,z+1])
+                                        -(-data[x+1,y,z+1]+4*data[x,y,z+1]
+                                            -3*data[x-1,y,z+1]))
+                                    -((-data[x+1,y+2,z-1]+4*data[x,y+2,z-1]
+                                            -3*data[x-1,y+2,z-1])
+                                        -(-data[x+1,y,z-1]+4*data[x,y,z-1]
+                                            -3*data[x-1,y,z-1])))
+                    psi[60] = 0.125*(3*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -4*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z]))
+                                    +((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[61] = 0.125*(3*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -4*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z]))
+                                    +((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[62] = 0.125*(3*((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -4*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z]))
+                                    +((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[63] = 0.125*(3*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -4*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z]))
+                                    +((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward differences in the x-direction otherwise.
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((-data[x+1,y+1,z+1]+4*data[x,y+1,z+1]
+                                            -3*data[x-1,y+1,z+1])
+                                        -(-data[x+1,y-1,z+1]+4*data[x,y-1,z+1]
+                                            -3*data[x-1,y-1,z+1]))
+                                    -((-data[x+1,y+1,z-1]+4*data[x,y+1,z-1]
+                                            -3*data[x-1,y+1,z-1])
+                                        -(-data[x+1,y-1,z-1]+4*data[x,y-1,z-1]
+                                            -3*data[x-1,y-1,z-1])))
+                    psi[58] = 0.125*(((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*(((-data[x+1,y+2,z+1]+4*data[x,y+2,z+1]
+                                            -3*data[x-1,y+2,z+1])
+                                        -(-data[x+1,y,z+1]+4*data[x,y,z+1]
+                                            -3*data[x-1,y,z+1]))
+                                    -((-data[x+1,y+2,z-1]+4*data[x,y+2,z-1]
+                                            -3*data[x-1,y+2,z-1])
+                                        -(-data[x+1,y,z-1]+4*data[x,y,z-1]
+                                            -3*data[x-1,y,z-1])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((-data[x+1,y+1,z+2]+4*data[x,y+1,z+2]
+                                            -3*data[x-1,y+1,z+2])
+                                        -(-data[x+1,y-1,z+2]+4*data[x,y-1,z+2]
+                                            -3*data[x-1,y-1,z+2]))
+                                    -((-data[x+1,y+1,z]+4*data[x,y+1,z]
+                                            -3*data[x-1,y+1,z])
+                                        -(-data[x+1,y-1,z]+4*data[x,y-1,z]
+                                            -3*data[x-1,y-1,z])))
+                    psi[62] = 0.125*(((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*(((-data[x+1,y+2,z+2]+4*data[x,y+2,z+2]
+                                            -3*data[x-1,y+2,z+2])
+                                        -(-data[x+1,y,z+2]+4*data[x,y,z+2]
+                                            -3*data[x-1,y,z+2]))
+                                    -((-data[x+1,y+2,z]+4*data[x,y+2,z]
+                                            -3*data[x-1,y+2,z])
+                                        -(-data[x+1,y,z]+4*data[x,y,z]
+                                            -3*data[x-1,y,z])))
+        else:
+            if y == 0:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward differences in the y- and z-directions otherwise
+                    psi[56] = 0.125*(-(-(data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        +4*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -3*(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    +4*(-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -3*(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[57] = 0.125*(-(-(data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        +4*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -3*(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    +4*(-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -3*(-(data[x+2,y+2,z]-data[x,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z])))
+                    psi[58] = 0.125*(-((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    +4*((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -3*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[59] = 0.125*(-((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    +4*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -3*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+                    psi[60] = 0.125*((-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[61] = 0.125*((-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[62] = 0.125*((-(data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        +4*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -3*(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*((-(data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        +4*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -3*(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -(-(data[x+2,y+2,z]-data[x,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward/backward differences in the y- and z-directions,
+                    # respectively, otherwise
+                    psi[56] = 0.125*((-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[57] = 0.125*((-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[58] = 0.125*((-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*((-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*(3*(-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -4*(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z]))
+                                    +(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[61] = 0.125*(3*(-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -4*(-(data[x+2,y+2,z]-data[x,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z]))
+                                    +(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[62] = 0.125*(3*((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -4*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z]))
+                                    -((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[63] = 0.125*(3*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -4*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward differences in the y-direction otherwise
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*((-(data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -3*(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -(-(data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        +4*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -3*(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*((-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -3*(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -(-(data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        +4*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -3*(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*((-(data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        +4*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -3*(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -3*(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*((-(data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        +4*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -3*(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -(-(data[x+2,y+2,z]-data[x,y+2,z])
+                                        +4*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -3*(data[x+2,y,z]-data[x,y,z])))
+            elif y == self.ny-2:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward/forward differences in the y- and z-directions,
+                    # respectively, otherwise
+                    psi[56] = 0.125*(-((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    +4*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -3*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[57] = 0.125*(-((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    +4*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -3*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[58] = 0.125*(-(3*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -4*(data[x+1,y,z+2]-data[x-1,y,z+2])
+                                        +(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    +4*(3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -3*(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[59] = 0.125*(-(3*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -4*(data[x+2,y,z+2]-data[x,y,z+2])
+                                        +(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    +4*(3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                        +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -3*(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -4*(data[x+2,y,z]-data[x,y,z])
+                                        +(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*((3*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -4*(data[x+1,y,z+2]-data[x-1,y,z+2])
+                                        +(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[63] = 0.125*((3*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -4*(data[x+2,y,z+2]-data[x,y,z+2])
+                                        +(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -4*(data[x+2,y,z]-data[x,y,z])
+                                        +(data[x+2,y-1,z]-data[x,y-1,z])))
+                    pass
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward differences in the y- and z-directions otherwise
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*((3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -(3*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -4*(data[x+1,y,z-1]-data[x-1,y,z-1])
+                                        +(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[59] = 0.125*((3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                        +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -(3*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -4*(data[x+2,y,z-1]-data[x,y,z-1])
+                                        +(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[60] = 0.125*(3*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -4*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z]))
+                                    +((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[61] = 0.125*(3*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -4*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z]))
+                                    +((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[62] = 0.125*(3*(3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -4*(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z]))
+                                    +(3*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -4*(data[x+1,y,z-1]-data[x-1,y,z-1])
+                                        +(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[63] = 0.125*(3*(3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                        +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -4*(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -4*(data[x+2,y,z]-data[x,y,z])
+                                        +(data[x+2,y-1,z]-data[x,y-1,z]))
+                                    +(3*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -4*(data[x+2,y,z-1]-data[x,y,z-1])
+                                        +(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward differences in the y-direction otherwise
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*((3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
+                                        +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -(3*(data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -4*(data[x+1,y,z-1]-data[x-1,y,z-1])
+                                        +(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[59] = 0.125*((3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                        +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -(3*(data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -4*(data[x+2,y,z-1]-data[x,y,z-1])
+                                        +(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*((3*(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -4*(data[x+1,y,z+2]-data[x-1,y,z+2])
+                                        +(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -4*(data[x+1,y,z]-data[x-1,y,z])
+                                        +(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[63] = 0.125*((3*(data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -4*(data[x+2,y,z+2]-data[x,y,z+2])
+                                        +(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                        -4*(data[x+2,y,z]-data[x,y,z])
+                                        +(data[x+2,y-1,z]-data[x,y-1,z])))
+            else:
+                if z == 0:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # forward differences in the z-direction otherwise
+                    psi[56] = 0.125*(-((data[x+1,y+1,z+2]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    +4*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -3*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[57] = 0.125*(-((data[x+2,y+1,z+2]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    +4*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -3*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[58] = 0.125*(-((data[x+1,y+2,z+2]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    +4*((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -3*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[59] = 0.125*(-((data[x+2,y+2,z+2]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    +4*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -3*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*(((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*(((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
+                elif z == self.nz-2:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions when applicable, and second order accurate
+                    # backward differences in the z-direction otherwise
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*(((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*(((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*(3*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -4*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z]))
+                                    +((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[61] = 0.125*(3*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -4*((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z]))
+                                    +((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[62] = 0.125*(3*((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -4*((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z]))
+                                    +((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[63] = 0.125*(3*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -4*((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z]))
+                                    +((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                else:
+                    # Values of d3f/dxdydz at the corners of the voxel
+                    # approximated by centered differences in all three
+                    # directions
+                    psi[56] = 0.125*(((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                                        -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
+                                    -((data[x+1,y+1,z-1]-data[x-1,y+1,z-1])
+                                        -(data[x+1,y-1,z-1]-data[x-1,y-1,z-1])))
+                    psi[57] = 0.125*(((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                        -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
+                                    -((data[x+2,y+1,z-1]-data[x,y+1,z-1])
+                                        -(data[x+2,y-1,z-1]-data[x,y-1,z-1])))
+                    psi[58] = 0.125*(((data[x+1,y+2,z+1]-data[x-1,y+2,z+1])
+                                        -(data[x+1,y,z+1]-data[x-1,y,z+1]))
+                                    -((data[x+1,y+2,z-1]-data[x-1,y+2,z-1])
+                                        -(data[x+1,y,z-1]-data[x-1,y,z-1])))
+                    psi[59] = 0.125*(((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                                        -(data[x+2,y,z+1]-data[x,y,z+1]))
+                                    -((data[x+2,y+2,z-1]-data[x,y+2,z-1])
+                                        -(data[x+2,y,z-1]-data[x,y,z-1])))
+                    psi[60] = 0.125*(((data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
+                                        -(data[x+1,y-1,z+2]-data[x-1,y-1,z+2]))
+                                    -((data[x+1,y+1,z]-data[x-1,y+1,z])
+                                        -(data[x+1,y-1,z]-data[x-1,y-1,z])))
+                    psi[61] = 0.125*(((data[x+2,y+1,z+2]-data[x,y+1,z+2])
+                                        -(data[x+2,y-1,z+2]-data[x,y-1,z+2]))
+                                    -((data[x+2,y+1,z]-data[x,y+1,z])
+                                        -(data[x+2,y-1,z]-data[x,y-1,z])))
+                    psi[62] = 0.125*(((data[x+1,y+2,z+2]-data[x-1,y+2,z+2])
+                                        -(data[x+1,y,z+2]-data[x-1,y,z+2]))
+                                    -((data[x+1,y+2,z]-data[x-1,y+2,z])
+                                        -(data[x+1,y,z]-data[x-1,y,z])))
+                    psi[63] = 0.125*(((data[x+2,y+2,z+2]-data[x,y+2,z+2])
+                                        -(data[x+2,y,z+2]-data[x,y,z+2]))
+                                    -((data[x+2,y+2,z]-data[x,y+2,z])
+                                        -(data[x+2,y,z]-data[x,y,z])))
     cdef _compute_coeffs_by_blas_dgemv_(self):
         # Computes matrix-vector product needed to identify interpolation
         # coefficients within a given voxel.
