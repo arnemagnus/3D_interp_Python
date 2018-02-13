@@ -17,6 +17,8 @@ cimport cython
 # The other import commands are defined in the accompanying Cython header file:
 cimport cytrilinear
 
+import numpy as np
+
 cdef class TrilinearInterpolator:
     """
     TrilinearInterpolator(x, y, z, data, periodic)
