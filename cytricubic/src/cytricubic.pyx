@@ -110,6 +110,9 @@ cdef class TricubicInterpolator:
             self.nx -= 1
             self.ny -= 1
             self.nz -= 1
+        else:
+            print('NOTE: Nonperiodic boundary conditions currently not fully '\
+                    'operational. Use at your own peril!')
         # Explicitly specify the data limits in case of periodic boundary
         # conditions, cf. above.
         self.data = data[:self.nx-1,:self.ny-1,:self.nz-1]
@@ -739,7 +742,7 @@ cdef class TricubicInterpolator:
             psi[28] = 0.5*(data[x,y,z+2]-data[x,y,z])
             psi[29] = 0.5*(data[x+1,y,z+2]-data[x+1,y,z])
             psi[30] = 0.5*(data[x,y+1,z+2]-data[x,y+1,z])
-            psi[31] = 0.5*(data[x+1,y+1,z-2]-data[x+1,y+1,z])
+            psi[31] = 0.5*(data[x+1,y+1,z+2]-data[x+1,y+1,z])
         elif z == self.nz-2:
             # Values of df/dz at the corners of the voxel approximated by
             # centered differences where applicaple, and second order accurate
@@ -762,7 +765,7 @@ cdef class TricubicInterpolator:
             psi[28] = 0.5*(data[x,y,z+2]-data[x,y,z])
             psi[29] = 0.5*(data[x+1,y,z+2]-data[x+1,y,z])
             psi[30] = 0.5*(data[x,y+1,z+2]-data[x,y+1,z])
-            psi[31] = 0.5*(data[x+1,y+1,z-2]-data[x+1,y+1,z])
+            psi[31] = 0.5*(data[x+1,y+1,z+2]-data[x+1,y+1,z])
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -791,7 +794,7 @@ cdef class TricubicInterpolator:
                                 +4*(data[x+2,y+1,z]-data[x,y+1,z])
                                 -3*(data[x+2,y,z]-data[x,y,z]))
                 psi[34] = 0.25*((-data[x+2,y+2,z]+4*data[x+1,y+2,z]-3*data[x,y+2,z])
-                                -(data[x+2,y,z]+4*data[x+1,y,z]-3*data[x,y,z]))
+                                -(-data[x+2,y,z]+4*data[x+1,y,z]-3*data[x,y,z]))
                 psi[35] = 0.25*((data[x+2,y+2,z]-data[x,y+2,z])
                                 -(data[x+2,y,z]-data[x,y,z]))
                 psi[36] = 0.25*(-(-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]-3*data[x,y+2,z+1])
@@ -801,7 +804,7 @@ cdef class TricubicInterpolator:
                                 +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
                                 -3*(data[x+2,y,z+1]-data[x,y,z+1]))
                 psi[38] = 0.25*((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]-3*data[x,y+2,z+1])
-                                -(data[x+2,y,z+1]+4*data[x+1,y,z+1]-3*data[x,y,z+1]))
+                                -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]-3*data[x,y,z+1]))
                 psi[39] = 0.25*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
                                 -(data[x+2,y,z+1]-data[x,y,z+1]))
             elif y == self.ny-2:
@@ -809,43 +812,45 @@ cdef class TricubicInterpolator:
                 # centered differences when applicable, and second order
                 # forward/backward differences in the x- and y-directions,
                 # respectively, otherwise.
-                psi[33] = 0.25*((-data[x+2,y+1,z]+4*data[x+1,y,z]-3*data[x,y,z])
+                psi[32] = 0.25*( (-data[x+2,y+1,z]+4*data[x+1,y,z]-3*data[x,y,z])
                                 -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]-3*data[x,y-1,z]))
-                psi[34] = 0.25*((data[x+2,y+1,z]-data[x,y+1,z])
+                psi[33] = 0.25*((data[x+2,y+1,z]-data[x,y+1,z])
                                 -(data[x+2,y-1,z]-data[x,y-1,z]))
-                psi[35] = 0.25*(3*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]-3*data[x,y+1,z])
+                psi[34] = 0.25*(3*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]-3*data[x,y+1,z])
                                 -4*(-data[x+2,y,z]+4*data[x+1,y,z]-3*data[x,y,z])
                                 +(-data[x+2,y-1,z]+4*data[x+1,y-1,z]-3*data[x,y-1,z]))
-                psi[36] = 0.25*((data[x+2,y+2,z]-data[x,y+2,z])
-                                -(data[x+2,y,z]-data[x,y,z]))
-                psi[37] = 0.25*((-data[x+2,y+1,z+1]+4*data[x+1,y,z+1]-3*data[x,y,z+1])
+                psi[35] = 0.25*(3*(data[x+2,y+1,z]-data[x,y+1,z])
+                                -4*(data[x+2,y,z]-data[x,y,z])
+                                +(data[x+2,y-1,z]-data[x,y-1,z]))
+                psi[36] = 0.25*((-data[x+2,y+1,z+1]+4*data[x+1,y,z+1]-3*data[x,y,z+1])
                                 -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]-3*data[x,y-1,z+1]))
-                psi[38] = 0.25*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                psi[37] = 0.25*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
                                 -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
-                psi[39] = 0.25*(3*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]-3*data[x,y+1,z+1])
+                psi[38] = 0.25*(3*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]-3*data[x,y+1,z+1])
                                 -4*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]-3*data[x,y,z+1])
                                 +(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]-3*data[x,y-1,z+1]))
-                psi[40] = 0.25*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
-                                -(data[x+2,y,z+1]-data[x,y,z+1]))
+                psi[39] = 0.25*(3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                                -4*(data[x+2,y,z+1]-data[x,y,z+1])
+                                +(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
             else:
                 # Values of d2f/dxdy at the corners of the voxel approximated by
                 # centered differences when applicable, and second order
                 # forward differences in the x-direction otherwise.
-                psi[33] = 0.25*((-data[x+2,y+1,z]+4*data[x+1,y+1,z]-3*data[x,y+1,z])
+                psi[32] = 0.25*((-data[x+2,y+1,z]+4*data[x+1,y+1,z]-3*data[x,y+1,z])
                                 -(-data[x+2,y-1,z]+4*data[x+1,y-1,z]-3*data[x,y-1,z]))
-                psi[34] = 0.25*((data[x+2,y+1,z]-data[x,y+1,z])
+                psi[33] = 0.25*((data[x+2,y+1,z]-data[x,y+1,z])
                                 -(data[x+2,y-1,z]-data[x,y-1,z]))
-                psi[35] = 0.25*((-data[x+2,y+2,z]+4*data[x+1,y+2,z]-3*data[x,y+2,z])
+                psi[34] = 0.25*((-data[x+2,y+2,z]+4*data[x+1,y+2,z]-3*data[x,y+2,z])
                                 -(-data[x+2,y,z]+4*data[x+1,y,z]-3*data[x,y,z]))
-                psi[36] = 0.25*((data[x+2,y+2,z]-data[x,y+2,z])
+                psi[35] = 0.25*((data[x+2,y+2,z]-data[x,y+2,z])
                                 -(data[x+2,y,z]-data[x,y,z]))
-                psi[37] = 0.25*((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]-3*data[x,y+1,z+1])
+                psi[36] = 0.25*((-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]-3*data[x,y+1,z+1])
                                 -(-data[x+2,y-1,z+1]+4*data[x+1,y-1,z+1]-3*data[x,y-1,z+1]))
-                psi[38] = 0.25*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
+                psi[37] = 0.25*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
                                 -(data[x+2,y-1,z+1]-data[x,y-1,z+1]))
-                psi[39] = 0.25*((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]-3*data[x,y+2,z+1])
+                psi[38] = 0.25*((-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]-3*data[x,y+2,z+1])
                                 -(-data[x+2,y,z+1]+4*data[x+1,y,z+1]-3*data[x,y,z+1]))
-                psi[40] = 0.25*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
+                psi[39] = 0.25*((data[x+2,y+2,z+1]-data[x,y+2,z+1])
                                 -(data[x+2,y,z+1]-data[x,y,z+1]))
         elif x == self.nx-2:
             if y == 0:
@@ -853,10 +858,10 @@ cdef class TricubicInterpolator:
                 # centered differences when applicable, and second order
                 # forward/backward differences in the y- and x- directions,
                 # respectively, otherwise.
-                psi[33] = 0.25*(-(data[x+1,y+2,z]-data[x-1,y+2,z])
+                psi[32] = 0.25*(-(data[x+1,y+2,z]-data[x-1,y+2,z])
                                 +4*(data[x+1,y+1,z]-data[x-1,y+1,z])
                                 -3*(data[x+1,y,z]-data[x-1,y,z]))
-                psi[34] = 0.25*(-(3*data[x+1,y+2,z]-4*data[x,y+2,z]+data[x-1,y+2,z])
+                psi[33] = 0.25*(-(3*data[x+1,y+2,z]-4*data[x,y+2,z]+data[x-1,y+2,z])
                                 +4*(3*data[x+1,y+1,z]-4*data[x,y+1,z]+data[x-1,y+1,z])
                                 -3*(3*data[x+1,y,z]-4*data[x,y,z]+data[x-1,y,z]))
                 psi[34] = 0.25*((data[x+1,y+2,z]-data[x-1,y+2,z])
@@ -877,24 +882,24 @@ cdef class TricubicInterpolator:
                 # Values of d2f/dxdy at the corners of the voxel approximated by
                 # centered differences when applicable, and second order
                 # backward differences otherwise.
-                psi[33] = 0.25*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                psi[32] = 0.25*((data[x+1,y+1,z]-data[x-1,y+1,z])
                                 -(data[x+1,y-1,z]-data[x-1,y-1,z]))
-                psi[34] = 0.25*((3*data[x+1,y+1,z]+4*data[x,y+1,z]-data[x-1,y+1,z])
+                psi[33] = 0.25*((3*data[x+1,y+1,z]+4*data[x,y+1,z]-data[x-1,y+1,z])
                                 -(3*data[x+1,y-1,z]+4*data[x,y-1,z]-data[x-1,y-1,z]))
-                psi[35] = 0.25*(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
+                psi[34] = 0.25*(3*(data[x+1,y+1,z]-data[x-1,y+1,z])
                                 -4*(data[x+1,y,z]-data[x-1,y,z])
                                 +(data[x+1,y-1,z]-data[x-1,y-1,z]))
-                psi[36] = 0.25*(3*(3*data[x+1,y+1,z]-4*data[x,y+1,z]+data[x-1,y+1,z])
+                psi[35] = 0.25*(3*(3*data[x+1,y+1,z]-4*data[x,y+1,z]+data[x-1,y+1,z])
                                 -4*(3*data[x+1,y,z]-4*data[x,y,z]+data[x-1,y,z])
                                 +(3*data[x+1,y-1,z]-4*data[x,y-1,z]+data[x-1,y-1,z]))
-                psi[37] = 0.25*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                psi[36] = 0.25*((data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
                                 -(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
-                psi[38] = 0.25*((3*data[x+1,y+1,z+1]+4*data[x,y+1,z+1]-data[x-1,y+1,z+1])
+                psi[37] = 0.25*((3*data[x+1,y+1,z+1]+4*data[x,y+1,z+1]-data[x-1,y+1,z+1])
                                 -(3*data[x+1,y-1,z+1]+4*data[x,y-1,z+1]-data[x-1,y-1,z+1]))
-                psi[39] = 0.25*(3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
+                psi[38] = 0.25*(3*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
                                 -4*(data[x+1,y,z+1]-data[x-1,y,z+1])
                                 +(data[x+1,y-1,z+1]-data[x-1,y-1,z+1]))
-                psi[40] = 0.25*(3*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]+data[x-1,y+1,z+1])
+                psi[39] = 0.25*(3*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]+data[x-1,y+1,z+1])
                                 -4*(3*data[x+1,y,z+1]-4*data[x,y,z+1]+data[x-1,y,z+1])
                                 +(3*data[x+1,y-1,z+1]-4*data[x,y-1,z+1]+data[x-1,y-1,z+1]))
             else:
@@ -902,9 +907,9 @@ cdef class TricubicInterpolator:
                 # centered differences in both directions when applicable, and
                 # second order backward differences in the x-direction
                 # otherwise
-                psi[33] = 0.25*((data[x+1,y+1,z]-data[x-1,y+1,z])
+                psi[32] = 0.25*((data[x+1,y+1,z]-data[x-1,y+1,z])
                                 -(data[x+1,y-1,z]-data[x-1,y-1,z]))
-                psi[34] = 0.25*((3*data[x+1,y+1,z]-4*data[x,y+1,z]+data[x-1,y+1,z])
+                psi[33] = 0.25*((3*data[x+1,y+1,z]-4*data[x,y+1,z]+data[x-1,y+1,z])
                                 -(3*data[x+1,y-1,z]-4*data[x,y-1,z]+data[x-1,y-1,z]))
                 psi[34] = 0.25*((data[x+1,y+2,z]-data[x-1,y+2,z])
                                 -(data[x+1,y,z]-data[x-1,y,z]))
@@ -1031,21 +1036,21 @@ cdef class TricubicInterpolator:
                                 -(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]-3*data[x,y+1,z-1]))
                 psi[43] = 0.25*((data[x+2,y+1,z+1]-data[x,y+1,z+1])
                                 -(data[x+2,y+1,z-1]-data[x,y+1,z-1]))
-                psi[44] = 0.25*(3*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
-                                    -3*data[x,y,z+2])
-                                -4*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
+                psi[44] = 0.25*(3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
                                     -3*data[x,y,z+1])
-                                +(-data[x+2,y,z]+4*data[x+1,y,z]
-                                    -3*data[x,y,z]))
+                                -4*(-data[x+2,y,z]+4*data[x+1,y,z]
+                                    -3*data[x,y,z])
+                                +(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
+                                    -3*data[x,y,z-1]))
                 psi[45] = 0.25*(3*(data[x+2,y,z+1]-data[x,y,z+1])
                                 -4*(data[x+2,y,z]-data[x,y,z])
                                 +(data[x+2,y,z-1]-data[x,y,z-1]))
-                psi[46] = 0.25*(3*(-data[x+2,y+1,z+2]+4*data[x+1,y+1,z+2]
-                                    -3*data[x,y+1,z+2])
-                                -4*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
+                psi[46] = 0.25*(3*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
                                     -3*data[x,y+1,z+1])
-                                +(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
-                                    -3*data[x,y+1,z]))
+                                -4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
+                                    -3*data[x,y+1,z])
+                                +(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
+                                    -3*data[x,y+1,z-1]))
                 psi[47] = 0.25*(3*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
                                 -4*(data[x+2,y+1,z]-data[x,y+1,z])
                                 +(data[x+2,y+1,z-1]-data[x,y+1,z-1]))
@@ -1075,24 +1080,24 @@ cdef class TricubicInterpolator:
                 # centered differences when applicable, and second order
                 # forward/backward differences in the z- and x- directions,
                 # respectively, otherwise.
-                psi[40] = 0.25*(-(data[x+1,y,z+2]-data[x-1,y,z])
+                psi[40] = 0.25*(-(data[x+1,y,z+2]-data[x-1,y,z+2])
                                 +4*(data[x+1,y,z+1]-data[x-1,y,z+1])
                                 -3*(data[x+1,y,z]-data[x-1,y,z]))
-                psi[41] = 0.25*(-(3*data[x+1,y,z+1]-4*data[x,y,z+1]
+                psi[41] = 0.25*(-(3*data[x+1,y,z+2]-4*data[x,y,z+2]
+                                    +data[x-1,y,z+2])
+                                +4*(3*data[x+1,y,z+1]-4*data[x,y,z+1]
                                     +data[x-1,y,z+1])
-                                +4*(3*data[x+1,y,z]-4*data[x,y,z]
-                                    +data[x-1,y,z])
-                                -3*(3*data[x+1,y,z-1]-4*data[x,y,z-1]
-                                    +data[x-1,y,z-1]))
-                psi[42] = 0.25*(-(data[x+1,y+1,z+2]-data[x-1,y+1,z])
+                                -3*(3*data[x+1,y,z]-4*data[x,y,z]
+                                    +data[x-1,y,z]))
+                psi[42] = 0.25*(-(data[x+1,y+1,z+2]-data[x-1,y+1,z+2])
                                 +4*(data[x+1,y+1,z+1]-data[x-1,y+1,z+1])
                                 -3*(data[x+1,y+1,z]-data[x-1,y+1,z]))
-                psi[43] = 0.25*(-(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
+                psi[43] = 0.25*(-(3*data[x+1,y+1,z+2]-4*data[x,y+1,z+2]
+                                    +data[x-1,y+1,z+2])
+                                +4*(3*data[x+1,y+1,z+1]-4*data[x,y+1,z+1]
                                     +data[x-1,y+1,z+1])
-                                +4*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
-                                    +data[x-1,y+1,z])
-                                -3*(3*data[x+1,y+1,z-1]-4*data[x,y+1,z-1]
-                                    +data[x-1,y+1,z-1]))
+                                -3*(3*data[x+1,y+1,z]-4*data[x,y+1,z]
+                                    +data[x-1,y+1,z]))
                 psi[44] = 0.25*((data[x+1,y,z+2]-data[x-1,y,z+2])
                                 -(data[x+1,y,z]-data[x-1,y,z]))
                 psi[45] = 0.25*((3*data[x+1,y,z+2]-4*data[x,y,z+2]
@@ -1251,20 +1256,12 @@ cdef class TricubicInterpolator:
                 # Values of d2f/dydz at the corners of the voxel approximated by
                 # centered differences when applicable, and second order
                 # forward differences otherwise
-#        psi[0]  = data[x,y,z]
-#        psi[1]  = data[x+1,y,z]
-#        psi[2]  = data[x,y+1,z]
-#        psi[3]  = data[x+1,y+1,z]
-#        psi[4]  = data[x,y,z+1]
-#        psi[5]  = data[x+1,y,z+1]
-#        psi[6]  = data[x,y+1,z+1]
-#        psi[7]  = data[x+1,y+1,z+1]
-                psi[48] = 0.25*(-(-data[x,y+2,z+2]+4*data[x,y+1,z+2]-3*data[x,y,z+2])
+                psi[48] = 0.25*(  -(-data[x,y+2,z+2]+4*data[x,y+1,z+2]-3*data[x,y,z+2])
                                 +4*(-data[x,y+2,z+1]+4*data[x,y+1,z+1]-3*data[x,y,z+1])
-                                -(-data[x,y+2,z]+4*data[x,y+1,z]-3*data[x,y,z]))
+                                -3*(-data[x,y+2,z]+4*data[x,y+1,z]-3*data[x,y,z]))
                 psi[49] = 0.25*(-(-data[x+1,y+2,z+2]+4*data[x+1,y+1,z+2]-3*data[x+1,y,z+2])
                                 +4*(-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]-3*data[x+1,y,z+1])
-                                -(-data[x+1,y+2,z]+4*data[x+1,y+1,z]-3*data[x+1,y,z]))
+                                -3*(-data[x+1,y+2,z]+4*data[x+1,y+1,z]-3*data[x+1,y,z]))
                 psi[50] = 0.25*(-(data[x,y+2,z+2]-data[x,y,z+2])
                                 +4*(data[x,y+2,z+1]-data[x,y,z+1])
                                 -3*(data[x,y+2,z]-data[x,y,z]))
@@ -1284,47 +1281,64 @@ cdef class TricubicInterpolator:
                 # centered differences when applicable, and second order
                 # forward/backward differences in the y- and z-directions,
                 # respectively, otherwise.
-                psi[48] = 0.25*((-data[x,y+2,z+1]+4*data[x,y+1,z+1]-3*data[x,y,z+1])-
-                        (-data[x,y+2,z-1]+4*data[x,y+1,z-1]-3*data[x,y,z-1]))
-                psi[49] = 0.25*((-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]-3*data[x+1,y,z+1])-
-                        (-data[x+1,y+2,z-1]+4*data[x+1,y+1,z-1]-3*data[x+1,y,z-1]))
+                psi[48] = 0.25*((-data[x,y+2,z+1]+4*data[x,y+1,z+1]
+                                        -3*data[x,y,z+1])
+                                -(-data[x,y+2,z-1]+4*data[x,y+1,z-1]
+                                        -3*data[x,y,z-1]))
+                psi[49] = 0.25*((-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]
+                                        -3*data[x+1,y,z+1])
+                                -(-data[x+1,y+2,z-1]+4*data[x+1,y+1,z-1]
+                                        -3*data[x+1,y,z-1]))
                 psi[50] = 0.25*((data[x,y+2,z+1]-data[x,y,z+1])
                                 -(data[x,y+2,z-1]-data[x,y,z-1]))
                 psi[51] = 0.25*((data[x+1,y+2,z+1]-data[x+1,y,z+1])
                                 -(data[x+1,y+2,z-1]-data[x+1,y,z-1]))
-                psi[52] = 0.25*(3*(-data[x,y+2,z+2]+4*data[x,y+1,z+2]-3*data[x,y,z+2])
-                                -4*(-data[x,y+2,z+1]+4*data[x,y+1,z+1]-3*data[x,y,z+1])
-                                +(-data[x,y+2,z]+4*data[x,y+1,z]-3*data[x,y,z]))
-                psi[53] = 0.25*(3*(-data[x+1,y+2,z+2]+4*data[x+1,y+1,z+2]-3*data[x+1,y,z+2])
-                                -4*(-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]-3*data[x+1,y,z+1])
-                                +(-data[x+1,y+2,z]+4*data[x+1,y+1,z]-3*data[x+1,y,z]))
-                psi[54] = 0.25*(3*(data[x,y+2,z+2]-data[x,y,z+2])
-                                -4*(data[x,y+2,z+1]-data[x,y,z+1])
-                                +(data[x,y+2,z]-data[x,y,z]))
-                psi[55] = 0.25*(3*(data[x+1,y+2,z+2]-data[x+1,y,z+2])
-                                -4*(data[x+1,y+2,z+1]-data[x+1,y,z+1])
-                                +(data[x+1,y+2,z]-data[x+1,y,z]))
+                psi[52] = 0.25*(3*(-data[x,y+2,z+1]+4*data[x,y+1,z+1]
+                                        -3*data[x,y,z+1])
+                                -4*(-data[x,y+2,z]+4*data[x,y+1,z]
+                                        -3*data[x,y,z])
+                                +(-data[x,y+2,z-1]+4*data[x,y+1,z-1]
+                                        -3*data[x,y,z-1]))
+                psi[53] = 0.25*(3*(-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]
+                                        -3*data[x+1,y,z+1])
+                                -4*(-data[x+1,y+2,z]+4*data[x+1,y+1,z]
+                                        -3*data[x+1,y,z])
+                                +(-data[x+1,y+2,z-1]+4*data[x+1,y+1,z-1]
+                                        -3*data[x+1,y,z-1]))
+                psi[54] = 0.25*(3*(data[x,y+2,z+1]-data[x,y,z+1])
+                                -4*(data[x,y+2,z]-data[x,y,z])
+                                +(data[x,y+2,z-1]-data[x,y,z-1]))
+                psi[55] = 0.25*(3*(data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -4*(data[x+1,y+2,z]-data[x+1,y,z])
+                                +(data[x+1,y+2,z-1]-data[x+1,y,z-1]))
             else:
                 # Values of d2f/dydz at the corners of the voxel approximated by
                 # centered differences when applicable, and second order
                 # forward differences in the y-direction otherwise.
-                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y+1,z+1])
-                                -(data[x,y+1,z-1]-data[x,y-1,z-1]))
-                psi[49] = 0.25*((data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
-                                -(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
-                psi[50] = 0.25*((-data[x,y+1,z+1]+4*data[x,y,z+1]-3*data[x,y-1,z+1])
-                                -(-data[x,y+1,z-1]+4*data[x,y,z-1]-3*data[x,y-1,z-1]))
-                psi[51] = 0.25*((-data[x+1,y+1,z+1]+4*data[x+1,y,z+1]-3*data[x+1,y-1,z+1])
-                                -(-data[x+1,y+1,z-1]+4*data[x+1,y,z-1]-3*data[x+1,y-1,z-1]))
-                psi[52] = 0.25*((data[x,y+1,z+2]-data[x,y-1,z+2])
-                                -(data[x,y+1,z]-data[x,y-1,z]))
-                psi[53] = 0.25*((data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
-                                -(data[x+1,y+1,z]-data[x+1,y-1,z]))
-                psi[54] = 0.25*((-data[x,y+1,z+2]+4*data[x,y,z+2]-3*data[x,y-1,z+2])
-                                -(-data[x,y+1,z]+4*data[x,y,z]-3*data[x,y-1,z]))
-                psi[55] = 0.25*((-data[x+1,y+1,z+2]+4*data[x+1,y,z+2]-3*data[x+1,y-1,z+2])
-                                -(-data[x+1,y+1,z]+4*data[x+1,y,z]-3*data[x+1,y-1,z]))
-
+                psi[48] = 0.25*((-data[x,y+2,z+1]+4*data[x,y+1,z+1]
+                                        -3*data[x,y,z+1])
+                                -(-data[x,y+2,z-1]+4*data[x,y+1,z-1]
+                                        -3*data[x,y,z-1]))
+                psi[49] = 0.25*((-data[x+1,y+2,z+1]+4*data[x+1,y+1,z+1]
+                                        -3*data[x+1,y,z+1])
+                                -(-data[x+1,y+2,z-1]+4*data[x+1,y+1,z-1]
+                                        -3*data[x+1,y,z-1]))
+                psi[50] = 0.25*((data[x,y+2,z+1]-data[x,y,z+1])
+                                -(data[x,y+2,z-1]-data[x,y,z-1]))
+                psi[51] = 0.25*((data[x+1,y+2,z+1]-data[x+1,y,z+1])
+                                -(data[x+1,y+2,z-1]-data[x+1,y,z-1]))
+                psi[52] = 0.25*((-data[x,y+2,z+2]+4*data[x,y+1,z+2]
+                                        -3*data[x,y,z+2])
+                                -(-data[x,y+2,z]+4*data[x,y+1,z]
+                                        -3*data[x,y,z]))
+                psi[53] = 0.25*((-data[x+1,y+2,z+2]+4*data[x+1,y+1,z+2]
+                                        -3*data[x+1,y,z+2])
+                                -(-data[x+1,y+2,z]+4*data[x+1,y+1,z]
+                                        -3*data[x+1,y,z]))
+                psi[54] = 0.25*((data[x,y+2,z+2]-data[x,y,z+2])
+                                -(data[x,y+2,z]-data[x,y,z]))
+                psi[55] = 0.25*((data[x+1,y+2,z+2]-data[x+1,y,z+2])
+                                -(data[x+1,y+2,z]-data[x+1,y,z]))
         elif y == self.ny-2:
             if z == 0:
                 # Values of d2f/dydz at the corners of the voxel approximated by
@@ -1337,12 +1351,12 @@ cdef class TricubicInterpolator:
                 psi[49] = 0.25*(-(data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
                                 +4*(data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
                                 -3*(data[x+1,y+1,z]-data[x+1,y-1,z]))
-                psi[50] = 0.25*(-(3*data[x,y+1,z+1]-4*data[x,y,z+1]+data[x,y-1,z+1])
-                                +4*(3*data[x,y+1,z]-4*data[x,y,z]+data[x,y-1,z])
-                                -3*(3*data[x,y+1,z-1]-4*data[x,y,z-1]+data[x,y-1,z-1]))
-                psi[51] = 0.25*(-(3*data[x+1,y+1,z+1]-4*data[x+1,y,z+1]+data[x+1,y-1,z+1])
-                                +4*(3*data[x+1,y+1,z]-4*data[x+1,y,z]+data[x+1,y-1,z])
-                                -3*(3*data[x+1,y+1,z-1]-4*data[x+1,y,z-1]+data[x+1,y-1,z-1]))
+                psi[50] = 0.25*(-(3*data[x,y+1,z+2]-4*data[x,y,z+2]+data[x,y-1,z+2])
+                                +4*(3*data[x,y+1,z+1]-4*data[x,y,z+1]+data[x,y-1,z+1])
+                                -3*(3*data[x,y+1,z]-4*data[x,y,z]+data[x,y-1,z]))
+                psi[51] = 0.25*(-(3*data[x+1,y+1,z+2]-4*data[x+1,y,z+2]+data[x+1,y-1,z+2])
+                                +4*(3*data[x+1,y+1,z+1]-4*data[x+1,y,z+1]+data[x+1,y-1,z+1])
+                                -3*(3*data[x+1,y+1,z]-4*data[x+1,y,z]+data[x+1,y-1,z]))
                 psi[52] = 0.25*((data[x,y+1,z+2]-data[x,y-1,z+2])
                                 -(data[x,y+1,z]-data[x,y-1,z]))
                 psi[53] = 0.25*((data[x+1,y+1,z+2]-data[x+1,y-1,z+2])
@@ -1450,7 +1464,7 @@ cdef class TricubicInterpolator:
             else:
                 # Values of d2f/dydz at the corners of the voxel approximated by
                 # centered differences in both directions
-                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y+1,z+1])
+                psi[48] = 0.25*((data[x,y+1,z+1]-data[x,y-1,z+1])
                                 -(data[x,y+1,z-1]-data[x,y-1,z-1]))
                 psi[49] = 0.25*((data[x+1,y+1,z+1]-data[x+1,y-1,z+1])
                                 -(data[x+1,y+1,z-1]-data[x+1,y-1,z-1]))
@@ -1532,7 +1546,7 @@ cdef class TricubicInterpolator:
                                             -3*data[x,y+1,z+2])
                                         -3*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
                                             -3*data[x,y,z+2]))
-                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                    -(-(-data[x+2,y+2,z]+4*data[x+1,y+2,z]
                                             -3*data[x,y+2,z])
                                         +4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
                                             -3*data[x,y+1,z])
@@ -1568,7 +1582,7 @@ cdef class TricubicInterpolator:
                                             -3*data[x,y+1,z+1])
                                         -3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
                                             -3*data[x,y,z+1]))
-                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                    -(-(-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
                                             -3*data[x,y+2,z-1])
                                         +4*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
                                             -3*data[x,y+1,z-1])
@@ -1592,25 +1606,25 @@ cdef class TricubicInterpolator:
                                         -(data[x+2,y,z+1]-data[x,y,z+1]))
                                     -((data[x+2,y+2,z-1]-data[x,y+1,z-1])
                                         -(data[x+2,y,z-1]-data[x,y,z-1])))
-                    psi[60] = 0.125*(3*(-(-data[x+2,y+2,z+1]+4*data[x+1,y+1,z+1]
+                    psi[60] = 0.125*(3*(-(-data[x+2,y+2,z+1]+4*data[x+1,y+2,z+1]
                                             -3*data[x,y+2,z+1])
                                         +4*(-data[x+2,y+1,z+1]+4*data[x+1,y+1,z+1]
                                             -3*data[x,y+1,z+1])
                                         -3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
                                             -3*data[x,y,z+1]))
-                                    -4*((-data[x+2,y+2,z]+4*data[x+1,y+1,z]
+                                    -4*(-(-data[x+2,y+2,z]+4*data[x+1,y+2,z]
                                             -3*data[x,y+2,z])
                                         +4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
                                             -3*data[x,y+1,z])
                                         -3*(-data[x+2,y,z]+4*data[x+1,y,z]
                                             -3*data[x,y,z]))
-                                    +(-data[x+2,y+2,z-1]+4*data[x+1,y+1,z-1]
+                                    +(-(-data[x+2,y+2,z-1]+4*data[x+1,y+1,z-1]
                                             -3*data[x,y+2,z-1])
                                         +4*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
                                             -3*data[x,y+1,z-1])
                                         -3*(-data[x+2,y,z-1]+4*data[x+1,y,z-1]
-                                            -3*data[x,y,z-1]))
-                    psi[61] = 0.125*(3*(-(data[x+2,y+2,z+1]-data[x,y+1,z+1])
+                                            -3*data[x,y,z-1])))
+                    psi[61] = 0.125*(3*(-(data[x+2,y+2,z+1]-data[x,y+2,z+1])
                                         +4*(data[x+2,y+1,z+1]-data[x,y+1,z+1])
                                         -3*(data[x+2,y,z+1]-data[x,y,z+1]))
                                     -4*(-(data[x+2,y+2,z]-data[x+1,y+2,z])
@@ -1648,7 +1662,7 @@ cdef class TricubicInterpolator:
                                             -3*data[x,y+1,z+1])
                                         -3*(-data[x+2,y,z+1]+4*data[x+1,y,z+1]
                                             -3*data[x,y,z+1]))
-                                    -((-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
+                                    -(-(-data[x+2,y+2,z-1]+4*data[x+1,y+2,z-1]
                                             -3*data[x,y+2,z-1])
                                         +4*(-data[x+2,y+1,z-1]+4*data[x+1,y+1,z-1]
                                             -3*data[x,y+1,z-1])
@@ -1678,7 +1692,7 @@ cdef class TricubicInterpolator:
                                             -3*data[x,y+1,z+2])
                                         -3*(-data[x+2,y,z+2]+4*data[x+1,y,z+2]
                                             -3*data[x,y,z+2]))
-                                    -((-data[x+2,y+2,z]+4*data[x+1,y+2,z]
+                                    -(-(-data[x+2,y+2,z]+4*data[x+1,y+2,z]
                                             -3*data[x,y+2,z])
                                         +4*(-data[x+2,y+1,z]+4*data[x+1,y+1,z]
                                             -3*data[x,y+1,z])
@@ -1703,6 +1717,14 @@ cdef class TricubicInterpolator:
                                     -((data[x+2,y+2,z]-data[x,y+1,z])
                                         -(data[x+2,y,z]-data[x,y,z])))
             elif y == self.ny-2:
+#        psi[0]  = data[x,y,z]
+#        psi[1]  = data[x+1,y,z]
+#        psi[2]  = data[x,y+1,z]
+#        psi[3]  = data[x+1,y+1,z]
+#        psi[4]  = data[x,y,z+1]
+#        psi[5]  = data[x+1,y,z+1]
+#        psi[6]  = data[x,y+1,z+1]
+#        psi[7]  = data[x+1,y+1,z+1]
                 if z == 0:
                     pass
                     # Values of d3f/dxdydz at the corners of the voxel
