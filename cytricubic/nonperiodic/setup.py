@@ -1,11 +1,34 @@
 from distutils.core import setup
-import sys
+from distutils.extension import Extension
+import numpy
 
 try:
-    from Cython.Build import cythonize
+    from Cython.Distutils import build_ext
 except ImportError:
-    print('A working Cython installation is required to run this install script!')
-    sys.exit(1)
+    use_cython = False
+else:
+    use_cython = True
 
-setup(name="cytricubicnonperiodic",
-      ext_modules=cythonize("src/cytricubicnonperiodic.pyx"))
+cmdclass = { }
+ext_modules = [ ]
+
+if use_cython:
+    ext_modules += [
+        Extension('cytricubicnonperiodic', ['src/cytricubicnonperiodic.pyx'],
+                  include_dirs = [numpy.get_include(),
+                                  './include']),
+    ]
+    cmdclass.update({ 'build_ext': build_ext })
+else:
+    ext_modules += [
+        Extension('cytricubicnonperiodic', ['src/cytricubicnonperiodic.c'],
+                  include_dirs = [numpy.get_include(),
+                                  './include']),
+    ]
+
+setup(
+    name = 'Eels',
+    cmdclass = cmdclass,
+    ext_modules = ext_modules,
+)
+
