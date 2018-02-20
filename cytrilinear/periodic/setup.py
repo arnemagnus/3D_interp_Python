@@ -14,16 +14,14 @@ ext_modules = [ ]
 
 if use_cython:
     ext_modules += [
-        Extension('cytrilinearperiodic', ['src/cytrilinearperiodic.pyx'],
-                  include_dirs = [numpy.get_include(),
-                                  './include']),
+        Extension('cytrilinearnonperiodic', ['src/cytrilinearnonperiodic.pyx'],
+                  include_dirs = [numpy.get_include()]),
     ]
     cmdclass.update({ 'build_ext': build_ext })
 else:
     ext_modules += [
-        Extension('cytrilinearperiodic', ['src/cytrilinearperiodic.c'],
-                  include_dirs = [numpy.get_include(),
-                                  './include']),
+        Extension('cytrilinearnonperiodic', ['src/cytrilinearnonperiodic.c'],
+                  include_dirs = [numpy.get_include()]),
     ]
 
 setup(
